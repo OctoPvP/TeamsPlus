@@ -8,6 +8,7 @@ import net.badbird5907.blib.bLib;
 import net.badbird5907.blib.bstats.Metrics;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.api.TeamsPlusAPI;
+import net.badbird5907.teams.commands.CommandManager;
 import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
@@ -40,7 +41,8 @@ public final class TeamsPlus extends JavaPlugin {
         new bLib(this,"[Teams+]");
         Logger.info("Starting TeamsPlus v." + getDescription().getVersion());
         new Metrics(this,12438);
-        bLib.getCommandFramework().registerCommandsInPackage("net.badbird5907.teams.commands");
+        //bLib.getCommandFramework().registerCommandsInPackage("net.badbird5907.teams.commands");
+        CommandManager.init();
         bLib.getInstance().registerListenersInPackage("net.badbird5907.teams.listeners");
         api = new TeamsPlusAPI();
         File messages = new File(getDataFolder() + "/messages.yml");
@@ -60,6 +62,7 @@ public final class TeamsPlus extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        disabling = true;
         PlayerManager.getPlayers().forEach((uuid,data)->{
             PlayerManager.getPlayers().remove(uuid);
             StorageManager.getStorageHandler().saveData(data);
@@ -68,6 +71,12 @@ public final class TeamsPlus extends JavaPlugin {
         StorageManager.getStorageHandler().disable();
         HookManager.disable();
     }
+
+    /**
+     * because {@link net.badbird5907.teams.storage.impl.FlatFileStorageHandler}
+     */
+    @Getter
+    private static boolean disabling = false;
 
     @Override
     public void reloadConfig() {

@@ -4,7 +4,7 @@ team-already-exists: '%prefix% &cThat team already exists!'
 team-does-not-exist: '%prefix% &cThat team does not exist!'
 must-be-in-team: '%prefix% &cYou must be in a team to do that!'
 already-in-team: '%prefix% &cYou are already in a team!'
-
+player-not-found: '%prefix% &cCould not find that player!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
 

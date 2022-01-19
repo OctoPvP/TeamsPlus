@@ -11,6 +11,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import lombok.Getter;
 import net.badbird5907.blib.util.Logger;
+import net.badbird5907.blib.util.PlayerUtil;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.player.PlayerData;
 import net.badbird5907.teams.storage.StorageHandler;
@@ -74,12 +75,17 @@ public class MongoStorageHandler implements StorageHandler {
 
     @Override
     public PlayerData getData(UUID player) {
+        if (!doesDataExist(player))
+            return new PlayerData(player);
         return TeamsPlus.getGson().fromJson(usersCollection.find(Filters.eq("uuid",player.toString())).first().toJson(getJsonWriterSettings()),PlayerData.class);
     }
 
     @Override
     public PlayerData getData(String name) {
-        return TeamsPlus.getGson().fromJson(usersCollection.find(Filters.eq("name",name)).first().toJson(getJsonWriterSettings()),PlayerData.class);
+        if (usersCollection.find(Filters.eq("name",name)).first() != null)
+            return TeamsPlus.getGson().fromJson(usersCollection.find(Filters.eq("name",name)).first().toJson(getJsonWriterSettings()),PlayerData.class);
+        else
+            return new PlayerData(PlayerUtil.getPlayerUUID(name));
     }
 
     @Override

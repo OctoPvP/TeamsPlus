@@ -24,32 +24,7 @@ public class PlayerManager {
         Tasks.runAsync(()-> {
             PlayerData data = StorageManager.getStorageHandler().getData(player.getUniqueId());
             players.put(player.getUniqueId(), data);
-            if (data.getName().equals(player.getName()))
-                return;
             data.join(player);
-            Logger.info("%1 has changed their name from %2 to %1. updating data...",player.getName(),data.getName());
-            data.setName(player.getName());
-            if (data.isInTeam()){
-                if (!data.getPlayerTeam().getMembers().get(player.getUniqueId()).getValue0().equalsIgnoreCase(player.getName())){
-                    TeamRank rank = data.getPlayerTeam().getMembers().get(player.getUniqueId()).getValue1();
-                    data.getPlayerTeam().getMembers().remove(player.getUniqueId());
-                    data.getPlayerTeam().getMembers().put(player.getUniqueId(),player.getName(),rank);
-                }
-            }
-            for (Team team : TeamsPlus.getInstance().getTeamsManager().getTeams()) { //not made for like 10k teams lol
-                team.getAlliedPlayers().forEach(((uuid, s) -> {
-                    if (uuid.toString().equalsIgnoreCase(player.getUniqueId().toString()) && !s.equalsIgnoreCase(player.getName())){
-                        team.getAlliedPlayers().remove(uuid);
-                        team.getAlliedPlayers().put(uuid,player.getName());
-                    }
-                }));
-                team.getEnemiedPlayers().forEach((uuid,level,name)->{
-                    if (uuid.toString().equalsIgnoreCase(player.getUniqueId().toString()) && name != player.getName()){
-                        team.getEnemiedPlayers().remove(uuid);
-                        team.getEnemiedPlayers().put(uuid,level,player.getName());
-                    }
-                });
-            }
         });
     }
     public static void leave(Player player){

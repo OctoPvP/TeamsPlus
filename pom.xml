@@ -7,9 +7,9 @@
     <groupId>net.badbird5907</groupId>
     <artifactId>TeamsPlus</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>Teams+</name>
+    <name>TeamsPlus</name>
 
     <description>Teams plugin</description>
     <properties>
@@ -26,6 +26,14 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>${project.basedir}/run/plugins</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,6 +99,12 @@
             <version>1.0.3</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/AntiCombatLog-1.0.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.jonahseguin</groupId>
+            <artifactId>drink</artifactId>
+            <version>1.0.3</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

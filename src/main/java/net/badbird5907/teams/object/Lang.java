@@ -17,6 +17,7 @@ public enum Lang {
     TEAM_DOES_NOT_EXIST("team-does-not-exist","%prefix% &cThat team does not exist!"),
     MUST_BE_IN_TEAM("must-be-in-team","%prefix% &cYou must be in a team to do that!"),
     ALREADY_IN_TEAM("already-in-team","%prefix% &cYou are already in a team!"),
+    PLAYER_NOT_FOUND("player-not-found","%prefix% &cCould not find that player!"),
 
     TEAM_INFO_MESSAGE("team-info.message",new String[]{"%separator%","&b&l%1","&9 * &bOwner: %2","&9 * &bAllies: %3","&9 * &bEnemies: %4","&9 * &bMembers: &8[&f%5&7/&f%6&8] %9","%separator%"}),
     TEAM_INFO_ONLINE_MEMBER_ENTRY("team-info.online-member-entry","&a%1"),
@@ -50,7 +51,8 @@ public enum Lang {
     PLAYER_NEUTRAL_TEAM("enemy.player-neutral-team","&aYou are now neutral with &b%1"),
 
     TEAM_PVP_DISALLOW("pvp.team-disallow","&cYou can't damage &6%1&c because you're in the same team as them!"),
-    ALLY_PVP_DISALLOW("pvp.ally-disallow","&cYou can't damage &6%1&c because you're allied with them!")
+    ALLY_PVP_DISALLOW("pvp.ally-disallow","&cYou can't damage &6%1&c because you're allied with them!"),
+
     ;
     @Getter
     private String configPath,def;

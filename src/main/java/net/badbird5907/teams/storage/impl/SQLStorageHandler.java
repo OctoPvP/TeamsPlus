@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
-public class SQLStorageHandler implements StorageHandler {
+public class SQLStorageHandler implements StorageHandler { //TODO
     @Override
     public void init() {
 

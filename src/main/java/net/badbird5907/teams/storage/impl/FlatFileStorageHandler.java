@@ -59,15 +59,19 @@ public class FlatFileStorageHandler implements StorageHandler {
     @Override
     public void saveData(PlayerData playerData) {
         File dataFile = new File(TeamsPlus.getInstance().getDataFolder() + "/players/" + playerData + ".json");
-        Tasks.runAsync(()->{
-            try {
-                PrintStream ps = new PrintStream(dataFile);
-                ps.print(TeamsPlus.getGson().toJson(playerData));
-                ps.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
+        if (TeamsPlus.isDisabling()) //you can't run a scheduler when a plugin is disabling
+            saveData(playerData,dataFile);
+        else Tasks.runAsync(()-> saveData(playerData,dataFile));
+    }
+
+    private void saveData(PlayerData data,File file){
+        try {
+            PrintStream ps = new PrintStream(file);
+            ps.print(TeamsPlus.getGson().toJson(data));
+            ps.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @SneakyThrows
