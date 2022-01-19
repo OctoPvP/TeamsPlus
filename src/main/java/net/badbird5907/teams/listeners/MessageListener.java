@@ -13,16 +13,16 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class MessageListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onMessage(AsyncPlayerChatEvent event){
+    public void onMessage(AsyncPlayerChatEvent event) {
         if (event.isCancelled())
             return;
-        if (TeamsPlus.getInstance().getConfig().getBoolean("chat.custom-chat")){
+        if (TeamsPlus.getInstance().getConfig().getBoolean("chat.custom-chat")) {
             PlayerData data = PlayerManager.getData(event.getPlayer().getUniqueId());
             if (data != null)
                 event.setCancelled(true); //for custom chat handling
             else return;
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.sendMessage(MessageManager.formatGlobal(event.getMessage(),event.getPlayer(),onlinePlayer));
+                onlinePlayer.sendMessage(MessageManager.formatGlobal(event.getMessage(), event.getPlayer(), onlinePlayer));
             }//TODO team/ally chat
         }
     }

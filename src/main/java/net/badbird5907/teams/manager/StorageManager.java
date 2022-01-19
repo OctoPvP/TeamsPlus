@@ -12,13 +12,14 @@ import net.badbird5907.teams.storage.impl.SQLStorageHandler;
 import org.bukkit.Bukkit;
 
 public class StorageManager {
+    @Getter
+    private static StorageManager instance;
     @Setter
     private StorageHandler storageHandler = new FlatFileStorageHandler();
     @Getter
-    private static StorageManager instance;
-    @Getter
     private boolean currentlyInit = false;
-    public StorageManager(){
+
+    public StorageManager() {
         instance = this;
         StorageType type = StorageType.valueOf(TeamsPlus.getInstance().getConfig().getString("data-storage"));
         if (type == StorageType.MONGO)
@@ -27,13 +28,14 @@ public class StorageManager {
             storageHandler = new SQLStorageHandler();
         //dont need to check flatfile since thats default
         currentlyInit = true;
-        StorageManagerLoadEvent event = new StorageManagerLoadEvent(this,storageHandler);
+        StorageManagerLoadEvent event = new StorageManagerLoadEvent(this, storageHandler);
         Bukkit.getPluginManager().callEvent(event);
         storageHandler = event.getStorageHandler();
         currentlyInit = false;
         storageHandler.init();
     }
-    public static StorageHandler getStorageHandler(){
+
+    public static StorageHandler getStorageHandler() {
         return getInstance().storageHandler;
     }
 }

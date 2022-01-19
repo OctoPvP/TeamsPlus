@@ -7,13 +7,12 @@ already-in-team: '%prefix% &cYou are already in a team!'
 player-not-found: '%prefix% &cCould not find that player!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
-
+  player-leave: '&3%1&b has left the team!'
+  leave: '&aYou have left the team!'
 team-info:
   online-member-entry: '&a%1'
   offline-member-entry: '&c%1'
   allies-team-entry: '&b%1'
-  allies-player-entry: '&a%1'
-  enemied-player-entry: ' &a%1 '
   enemied-team-entry: ' &b%1 '
   enemies-list: '&8[&a%1&8] %2'
   allies-list: '&8[&a%1&8] %2'
@@ -32,7 +31,8 @@ invite:
   expired: '&aYour invite to &6%1&a has expired.'
   team: '&6%1 &ahas invited &6%2&a to the team!'
   already-sent: '&cYou already have sent %1 a invite!'
-  joined: '&c%1 has joined the team!'
+  joined: '&a%1 has joined the team!'
+  no-invite: '&cYou have no invite to %1!'
 
 enemy:
   team-enemy-team: '&cYou have been enemied with the team &6%1&c!'
@@ -48,10 +48,8 @@ enemy:
   player-neutral-team: '&aYou are now neutral with &b%1'
 
 ally:
-  team-ally-team: '&aYou are now allied with the team &b%1'
-  team-neutral-team: '&aYou are now neutral with the team &b%1'
-
-  player-ally-player: '&a'
+  team-ally-team: '&bYou are now allied with the team &3%1'
+  team-neutral-team: '&bYou are now neutral with the team &3%1'
 
 pvp:
   team-disallow: '&cYou can''t damage &6%1&c because you''re in the same team as them!'

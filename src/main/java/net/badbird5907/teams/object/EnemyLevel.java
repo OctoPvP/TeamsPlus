@@ -7,5 +7,5 @@ public enum EnemyLevel {
 
     WAR_1,
     WAR_2,
-    WAR_3;
+    WAR_3
 }

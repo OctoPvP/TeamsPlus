@@ -8,8 +8,11 @@ import net.badbird5907.teams.TeamsPlus;
 @Getter
 public abstract class Hook {
     private final String plugin;
+
     public abstract void init(TeamsPlus plugin);
+
     public abstract void disable(TeamsPlus plugin);
-    public void reload(){
+
+    public void reload() {
     }
 }

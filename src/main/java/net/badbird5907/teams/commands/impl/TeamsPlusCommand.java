@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 public class TeamsPlusCommand {
 
     @Command(name = "", desc = "Base teamsplus command")
-    public void execute(@Sender CommandSender sender, String[] args) {
+    public void execute(@Sender CommandSender sender) {
         sender.sendMessage("Hello World!");
     }
 }

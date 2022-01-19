@@ -8,11 +8,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class SessionListener implements Listener {
     @EventHandler
-    public void onJoin(PlayerJoinEvent event){
+    public void onJoin(PlayerJoinEvent event) {
         PlayerManager.join(event.getPlayer());
     }
+
     @EventHandler
-    public void onQuit(PlayerQuitEvent event){
+    public void onQuit(PlayerQuitEvent event) {
         PlayerManager.leave(event.getPlayer());
     }
 }

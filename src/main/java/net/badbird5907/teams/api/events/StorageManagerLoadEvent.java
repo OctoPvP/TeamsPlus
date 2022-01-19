@@ -14,6 +14,7 @@ public class StorageManagerLoadEvent extends Event {
     private final StorageManager storageManager;
     @Getter
     private final StorageHandler storageHandler;
+
     @NotNull
     @Override
     public HandlerList getHandlers() {

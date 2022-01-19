@@ -11,13 +11,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class CombatListener implements Listener {
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event){
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player){
-            Player victim = (Player) event.getEntity(),attacker = (Player) event.getDamager();
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+            Player victim = (Player) event.getEntity(), attacker = (Player) event.getDamager();
             PlayerData attackerData = PlayerManager.getData(attacker.getUniqueId());
             PvPCheckResult checkResult = attackerData.canDamage(victim);
             if (checkResult != PvPCheckResult.ALLOWED) {
-                switch (checkResult){
+                switch (checkResult) {
                     case DISALLOW_ALLY:
                         event.setCancelled(true);
                         attacker.sendMessage(Lang.ALLY_PVP_DISALLOW.toString(victim.getName()));
