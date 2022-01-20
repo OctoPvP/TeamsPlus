@@ -3,7 +3,7 @@ package net.badbird5907.teams.manager;
 import lombok.Getter;
 import net.badbird5907.blib.command.Sender;
 import net.badbird5907.blib.util.Tasks;
-import net.badbird5907.teams.object.player.PlayerData;
+import net.badbird5907.teams.object.PlayerData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

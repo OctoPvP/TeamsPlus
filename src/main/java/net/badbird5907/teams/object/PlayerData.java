@@ -1,4 +1,4 @@
-package net.badbird5907.teams.object.player;
+package net.badbird5907.teams.object;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,11 +6,12 @@ import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
-import net.badbird5907.teams.object.*;
+import net.badbird5907.teams.util.UUIDUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @Setter
@@ -19,13 +20,15 @@ public class PlayerData {
     private String name;
     private UUID teamId = null; //no team by default
 
-    private Map<UUID, EnemyLevel> enemiedPlayers = new HashMap<>();
+    //private Map<UUID, EnemyLevel> enemiedPlayers = new HashMap<>();
     private Map<UUID, EnemyLevel> enemiedTeams = new HashMap<>();
-    private Set<UUID> alliedPlayers = new HashSet<>();
+    //private Set<UUID> alliedPlayers = new HashSet<>();
     private Set<UUID> alliedTeams = new HashSet<>();
     private List<String> pendingMessages = new ArrayList<>();
 
     private ChatChannel currentChannel = ChatChannel.GLOBAL;
+
+    private Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
 
     /**
      * teamid | seconds
@@ -66,7 +69,7 @@ public class PlayerData {
         PlayerData data = PlayerManager.getDataLoadIfNeedTo(player);
         if (!data.isInTeam())
             return false;
-        return data.getTeamId().toString().equalsIgnoreCase(this.teamId.toString()); //ptsd
+        return UUIDUtil.equals(data.getTeamId(), this.teamId);
     }
 
     public boolean isInTeam() {
@@ -89,6 +92,7 @@ public class PlayerData {
             }
             pendingInvites.put(teamid, timeleft - 1);
         });
+        updateAllyRequests();
     }
 
     public void save() {
@@ -128,8 +132,16 @@ public class PlayerData {
     }
 
     public boolean isEnemy(Player player) {
-        //this data enemy, target enemy player, target enemy team,
         PlayerData targetData = PlayerManager.getData(player);
+        Team targetTeam = targetData.getPlayerTeam();
+        Team playerTeam = getPlayerTeam();
+
+        if (targetTeam == null || playerTeam == null) {
+            return false;
+        }
+        return targetTeam.isEnemy(this) || playerTeam.isEnemy(targetData);
+
+        /*
         boolean b = enemiedPlayers.containsKey(player.getUniqueId()) || targetData.getEnemiedPlayers().containsKey(uuid);
         if (!b)
             return false;
@@ -140,9 +152,19 @@ public class PlayerData {
         if (isInTeam())
             return getPlayerTeam().isEnemy(targetData);
         return false;
+         */
     }
 
     public boolean isAlly(Player player) {
+        PlayerData targetData = PlayerManager.getData(player);
+        Team targetTeam = targetData.getPlayerTeam();
+        Team playerTeam = getPlayerTeam();
+
+        if (targetTeam == null || playerTeam == null) {
+            return false;
+        }
+        return targetTeam.isAlly(this) || playerTeam.isAlly(targetData);
+        /*
         //this data enemy, target enemy player, target enemy team,
         PlayerData targetData = PlayerManager.getData(player);
         boolean b = alliedPlayers.contains(player.getUniqueId()) || targetData.alliedPlayers.contains(uuid);
@@ -155,8 +177,9 @@ public class PlayerData {
         if (isInTeam())
             return getPlayerTeam().isAlly(targetData);
         return false;
+         */
     }
-
+    /*
     public void neutralPlayer(UUID uuid) {
         if (!enemiedPlayers.containsKey(uuid) && !alliedPlayers.contains(uuid))
             return;
@@ -170,10 +193,14 @@ public class PlayerData {
         data.save();
         sendMessage(Lang.PLAYER_NEUTRAL_PLAYER.toString(name), true);
     }
-
     public void removeEnemyTeam(UUID uuid) {
         Team target = TeamsManager.getInstance().getTeamById(uuid);
         target.neutralPlayer(this.uuid);
+    }
+     */
+
+    public boolean isOnline() {
+        return Bukkit.getPlayer(uuid) != null;
     }
 
     public void joinTeam(Team team) {
@@ -182,5 +209,34 @@ public class PlayerData {
 
     public void leaveTeam() {
         getPlayerTeam().playerLeave(this);
+    }
+
+    public void updateAllyRequests() {
+        Iterator<Map.Entry<UUID, Long>> it = allyRequests.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, Long> pair = it.next();
+            long time = pair.getValue();
+            UUID id = pair.getKey();
+            if (time <= System.currentTimeMillis()) {
+                Team team = TeamsManager.getInstance().getTeamById(id);
+                if (team == null) {
+                    it.remove();
+                    continue;
+                } else {
+                    team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), TeamRank.ADMIN, TeamRank.OWNER);
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    protected void requestToAlly(Team team) {
+        sendMessage(Lang.TEAM_ALLY_PLAYER_ASK.toString(team.getName()));
+        long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
+        allyRequests.put(team.getTeamId(), timestamp);
+    }
+
+    public void askAlly(Team team) {
+        team.requestToAlly(this);
     }
 }

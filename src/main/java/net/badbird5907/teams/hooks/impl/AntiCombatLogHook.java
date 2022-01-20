@@ -34,6 +34,8 @@ public class AntiCombatLogHook extends Hook implements Listener {
     public void reload() {
         super.reload();
         File file = new File(TeamsPlus.getInstance().getDataFolder() + "/hooks/AntiCombatLog.yml");
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
         if (!file.exists()) {
             Files.copy(TeamsPlus.getInstance().getResource("AntiCombatLog.yml"), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }

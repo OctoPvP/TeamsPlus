@@ -1,7 +1,7 @@
 package net.badbird5907.teams.storage.impl;
 
+import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
-import net.badbird5907.teams.object.player.PlayerData;
 import net.badbird5907.teams.storage.StorageHandler;
 import org.jetbrains.annotations.NotNull;
 

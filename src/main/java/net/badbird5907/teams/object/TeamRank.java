@@ -4,5 +4,7 @@ public enum TeamRank {
     OWNER,
     ADMIN,
     MODERATOR,
-    MEMBER
+    TRUSTED,
+    MEMBER,
+    RECRUIT
 }

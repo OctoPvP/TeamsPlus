@@ -41,13 +41,10 @@ public enum Lang {
     TEMP_PVP_ENABLED("team.temp-pvp-enable", "&6%1&a has enabled temp-pvp for &b%2&a seconds!"),
 
     TEAM_ENEMY_TEAM("enemy.team-enemy-team", "&cYou have been enemied with the team &6%1&c!"),
-    TEAM_NEUTRAL_TEAM("enemy.team-neutral-team", "&bYou are now neutral with the team &3%1"),
+    TEAM_NEUTRAL_TEAM("neutral.team-neutral-team", "&bYou are now neutral with the team &3%1"),
 
     TEAM_ENEMY_PLAYER("enemy.team-enemy-player", "&cYou are now enemied with &6%1"),
     TEAM_NEUTRAL_PLAYER("enemy.team-neutral-player", "&aYour team is now neutral with &b%1"),
-
-    PLAYER_ENEMY_PLAYER("enemy.player-enemy-player", "&cYou have been enemied with &6%1&c!"),
-    PLAYER_NEUTRAL_PLAYER("enemy.player-neutral-player", "&aYou are now neutral with &n%1"),
 
     PLAYER_ENEMY_TEAM("enemy.player-enemy-team", "&cYou have been enemied with &6%1&c!"),
     PLAYER_NEUTRAL_TEAM("enemy.player-neutral-team", "&aYou are now neutral with &b%1"),
@@ -55,14 +52,22 @@ public enum Lang {
     TEAM_PVP_DISALLOW("pvp.team-disallow", "&cYou can't damage &6%1&c because you're in the same team as them!"),
     ALLY_PVP_DISALLOW("pvp.ally-disallow", "&cYou can't damage &6%1&c because you're allied with them!"),
 
-    TEAM_ALLY_TEAM("ally.team-ally-team", "&bYou are now allied with the team &3%1"),
-    ;
+    ALLY_SUCCESS("ally.ally-success", "&bYou are now allied with &3%1"),
+
+    TEAM_ALLY_TEAM_ASK("ally.team-ally-team-ask", "&6%1&b would like to ally with your team. Do &a/team ally %1&b to accept!"),
+    TEAM_ALLY_PLAYER_ASK("ally.team-ally-player-ask", "&6%1&b would like to ally with you. Do &a/team ally %1&b to accept!"),
+    PLAYER_ALLY_TEAM_ASK("ally.player-ally-team-ask", "&6%1&b would like to ally with your team. Do &a/team ally %1&b to accept!"),
+    ALLY_REQUEST_DENY_TIMEOUT("ally.ally-request-deny-timeout", "&c%1 took too long to answer your ally request!"),
+    CANNOT_ALLY_PLAYER("ally.cannot-ally-player", "&cYou cannot ally with players! You must be in a team!"),
+    CANNOT_ALLY_SELF("ally.cannot-ally-self", "&cYou cannot ally your own team!"),
+    ALREADY_SENT_ALLY_REQUEST("ally.already-sent-request", "&cYou already sent %1 an ally request!"),
+    ALLY_SENT_REQUEST("ally.sent-request", "&aSent a request to &6%1&a to ally with your team!");
     @Getter
     private final String configPath;
+    private final String finalMessage;
     @Getter
     private String def;
     private List<String> messageList;
-    private final String finalMessage;
 
     Lang(String configPath, String def) {
         this.configPath = configPath;

@@ -4,7 +4,7 @@ import com.jonahseguin.drink.argument.CommandArg;
 import com.jonahseguin.drink.exception.CommandExitMessage;
 import com.jonahseguin.drink.parametric.DrinkProvider;
 import net.badbird5907.teams.manager.PlayerManager;
-import net.badbird5907.teams.object.player.PlayerData;
+import net.badbird5907.teams.object.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;

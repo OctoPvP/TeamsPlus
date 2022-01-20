@@ -28,4 +28,8 @@ public class HookManager {
     public static void disable() {
         set.forEach(hook -> hook.disable(TeamsPlus.getInstance())); //should have used a method refrence but i'm too lazy
     }
+
+    public static Set<Hook> getHooks() {
+        return set;
+    }
 }

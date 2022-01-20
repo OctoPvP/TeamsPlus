@@ -5,13 +5,14 @@ import com.jonahseguin.drink.Drink;
 import net.badbird5907.blib.command.Sender;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.commands.impl.TeamsPlusCommand;
+import net.badbird5907.teams.commands.impl.managment.AllyCommand;
 import net.badbird5907.teams.commands.impl.managment.InviteCommand;
 import net.badbird5907.teams.commands.impl.managment.JoinCommand;
 import net.badbird5907.teams.commands.impl.util.CreateTeamCommand;
 import net.badbird5907.teams.commands.impl.util.ReloadCommand;
 import net.badbird5907.teams.commands.impl.util.TeamInfoCommand;
+import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
-import net.badbird5907.teams.object.player.PlayerData;
 import net.badbird5907.teams.util.PlayerDataProvider;
 import net.badbird5907.teams.util.SenderProvider;
 import net.badbird5907.teams.util.TeamProvider;
@@ -29,7 +30,7 @@ public class CommandManager {
                 .registerSub(new InviteCommand())
                 .registerSub(new JoinCommand())
                 .registerSub(new ReloadCommand())
-        ;
+                .registerSub(new AllyCommand());
         drink.registerCommands();
     }
 }

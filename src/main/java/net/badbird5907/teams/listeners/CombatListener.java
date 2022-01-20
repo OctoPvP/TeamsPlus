@@ -2,8 +2,8 @@ package net.badbird5907.teams.listeners;
 
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.object.Lang;
+import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.PvPCheckResult;
-import net.badbird5907.teams.object.player.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

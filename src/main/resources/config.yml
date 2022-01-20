@@ -28,7 +28,8 @@ team:
   temp-pvp: #teams can do /team temppvp to enable pvping teammates, for duels etc...
     enable: true
     seconds: 300
-
+ally:
+  request-timeout: 300 # 5 minutes
 pvp:
   pvp-team: false
   pvp-ally: false

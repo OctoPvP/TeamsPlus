@@ -30,9 +30,9 @@ import java.util.Objects;
 
 public final class TeamsPlus extends JavaPlugin {
     @Getter
-    private static TeamsPlus instance;
-    @Getter
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    @Getter
+    private static TeamsPlus instance;
     @Getter
     private static TeamsPlusAPI api;
     @Getter
@@ -51,9 +51,7 @@ public final class TeamsPlus extends JavaPlugin {
         langFile = new YamlConfiguration();
         try {
             langFile.load(new File(instance.getDataFolder() + "/messages.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
