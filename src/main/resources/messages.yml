@@ -5,6 +5,8 @@ team-does-not-exist: '%prefix% &cThat team does not exist!'
 must-be-in-team: '%prefix% &cYou must be in a team to do that!'
 already-in-team: '%prefix% &cYou are already in a team!'
 player-not-found: '%prefix% &cCould not find that player!'
+cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!'
+no-permission: '%prefix% &cYou do not have permission to do that!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
   player-leave: '&3%1&b has left the team!'
@@ -12,6 +14,7 @@ team:
 team-info:
   online-member-entry: '&a%1'
   offline-member-entry: '&c%1'
+  member-entry-separator: '&7, '
   allies-team-entry: '&b%1'
   enemied-team-entry: ' &b%1 '
   enemies-list: '&8[&a%1&8] %2'

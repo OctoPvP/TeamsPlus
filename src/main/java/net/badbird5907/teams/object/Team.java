@@ -12,6 +12,7 @@ import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.util.UUIDUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,10 +77,24 @@ public class Team {
         StorageManager.getStorageHandler().saveTeam(this);
     }
 
+    public void rename(Player sender,String name) {
+        broadcast(Lang.TEAM_RENAME.toString(sender.getName(),name));
+        this.name = name;
+        save();
+    }
+
     public void broadcast(String message) {
         members.forEach((uuid, rank) -> {
             if (Bukkit.getPlayer(uuid) != null)
                 Bukkit.getPlayer(uuid).sendMessage(message);
+        });
+    }
+    public void broadcastToPermissionLevelAndAbove(int level, String message) {
+        members.forEach((uuid,rank) -> {
+            if (rank.getPermissionLevel() >= level) {
+                if (Bukkit.getPlayer(uuid) != null)
+                    Bukkit.getPlayer(uuid).sendMessage(message);
+            }
         });
     }
 
@@ -98,7 +113,7 @@ public class Team {
         members.put(data.getUuid(), TeamRank.MEMBER);
         if (isEnemy(data) || isAlly(data))
             neutralPlayer(data.getUuid());
-        broadcast(Lang.TEAM_JOINED.toString());
+        broadcast(Lang.TEAM_JOINED.toString(data.getName()));
     }
 
     public void neutralPlayer(UUID uuid, boolean... broadcast) {
@@ -197,6 +212,8 @@ public class Team {
         if (player.isOnline()) {
             broadcastToRanks(Lang.PLAYER_ALLY_TEAM_ASK.toString(player.getName()), TeamRank.OWNER, TeamRank.ADMIN);
             long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
+            if (allyRequests == null)
+                allyRequests = new ConcurrentHashMap<>();
             allyRequests.put(player.getUuid(), timestamp);
         } else
             return;

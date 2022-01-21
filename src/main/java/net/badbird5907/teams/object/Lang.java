@@ -17,10 +17,14 @@ public enum Lang {
     MUST_BE_IN_TEAM("must-be-in-team", "%prefix% &cYou must be in a team to do that!"),
     ALREADY_IN_TEAM("already-in-team", "%prefix% &cYou are already in a team!"),
     PLAYER_NOT_FOUND("player-not-found", "%prefix% &cCould not find that player!"),
+    NO_PERMISSION("no-permission","%prefix% &cYou do not have permission to do that!"),
+
+    CANNOT_CREATE_TEAM_BLOCKED_NAME("cannot-create-blocked-name","%prefix% &cYou cannot create a team with that name!"),
 
     TEAM_INFO_MESSAGE("team-info.message", new String[]{"%separator%", "&3 - &b&l%1 &r &3", "&9 * &bOwner: %2", "&9 * &bAllies: %3", "&9 * &bEnemies: %4", "&9 * &bMembers: &8[&f%5&7/&f%6&8] %9", "%separator%"}),
     TEAM_INFO_ONLINE_MEMBER_ENTRY("team-info.online-member-entry", "&a%1"),
     TEAM_INFO_OFFLINE_MEMBER_ENTRY("team-info.offline-member-entry", "&c%1"),
+    TEAM_INFO_MEMBER_ENTRY_SEPARATOR("team-info.member-entry-separator", "&7, "),
     TEAM_INFO_ALLIES_TEAM_ENTRY("team-info.allies-team-entry", "&b%1"),
     TEAM_INFO_ALLIES_PLAYER_ENTRY("team-info.allies-player-entry", "&a%1"),
     TEAM_INFO_ENEMIED_PLAYER_ENTRY("team-info.enemied-player-entry", " &a%1 "),
@@ -28,6 +32,8 @@ public enum Lang {
     TEAM_INFO_ENEMIES_LIST("team-info.enemies-list", "&8[&a%1&8] %2"),
     TEAM_INFO_ALLIES_LIST("team-info.allies-list", "&8[&a%1&8] %2"),
     TEAM_INFO_MEMBERS_LIST("team-info.members-list", "&8[&f%1&7/&f%2&8] %3"),
+
+    TEAM_RENAME("team.rename","&3%1&b has renamed the team to &3%2"),
 
     INVITE("invite.player", "&6%1&b has invited you to join the team &6%2&b do &a/team join %2&b to join!"),
     INVITE_TEAM_MESSAGE("invite.team", "&aYour invite to &6%1&a has expired."),

@@ -10,16 +10,19 @@ import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.Team;
+import net.badbird5907.teams.object.TeamRank;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TeamInfoCommand {
-    private static void sendTeamInfo(CommandSender sender, Team targetTeam) {
-        OfflinePlayer owner = Bukkit.getPlayer(targetTeam.getOwner());
+    public static void sendTeamInfo(CommandSender sender, Team targetTeam) {
+        OfflinePlayer owner = Bukkit.getOfflinePlayer(targetTeam.getOwner());
         String enemies;
         if (targetTeam.getSettings().isShowEnemies()) {
             StringBuilder sb = new StringBuilder();
@@ -33,21 +36,25 @@ public class TeamInfoCommand {
         if (targetTeam.getSettings().isShowAllies()) {
             StringBuilder sb = new StringBuilder();
             targetTeam.getAlliedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString(name)));
-            targetTeam.getAlliedPlayers().forEach((uuid,name) -> sb.append(Lang.TEAM_INFO_ALLIES_PLAYER_ENTRY.toString(name)));
+            targetTeam.getAlliedPlayers().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_PLAYER_ENTRY.toString(name)));
             allies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ALLIES_LIST.toString((targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size()), sb.toString()));
         } else allies = CC.GREEN + (targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size());
         String members;
         int membersAll = targetTeam.getMembers().size();
         AtomicInteger membersOnline = new AtomicInteger();
         StringBuilder sb = new StringBuilder();
-        targetTeam.getMembers().forEach((uuid, role) -> {
+        int a = 0;
+        for (Map.Entry<UUID, TeamRank> entry : targetTeam.getMembers().entrySet()) {
+            a++;
+            UUID uuid = entry.getKey();
+            TeamRank rank = entry.getValue();
             if (Bukkit.getPlayer(uuid) != null) {
                 membersOnline.getAndIncrement();
-                sb.append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
+                sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
             } else {
-                sb.append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
+                sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
             }
-        });
+        }
         members = Lang.TEAM_INFO_MEMBERS_LIST.toString(membersOnline, membersAll, sb.toString());
         String message = Lang.TEAM_INFO_MESSAGE.toString(targetTeam.getName(), owner.getName(), allies, enemies, members);
         sender.sendMessage(CC.translate(message));

@@ -28,6 +28,9 @@ team:
   temp-pvp: #teams can do /team temppvp to enable pvping teammates, for duels etc...
     enable: true
     seconds: 300
+  blocked-names:
+    - player # messes with the /team info command
+    - self #
 ally:
   request-timeout: 300 # 5 minutes
 pvp:

@@ -73,14 +73,7 @@ public class PlayerData {
     }
 
     public boolean isInTeam() {
-        boolean b = teamId != null;
-        if (b) {
-            if (getPlayerTeam().getMembers().get(uuid) == null) { //incase something went wrong
-                b = false;
-                teamId = null;
-            }
-        }
-        return false;
+        return teamId != null;
     }
 
     public void update() {
