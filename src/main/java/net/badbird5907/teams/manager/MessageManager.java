@@ -1,6 +1,6 @@
 package net.badbird5907.teams.manager;
 
-import net.badbird5907.anticombatlog.utils.CC;
+import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.PlayerData;

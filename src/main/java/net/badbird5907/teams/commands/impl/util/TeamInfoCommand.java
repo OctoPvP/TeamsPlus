@@ -33,7 +33,7 @@ public class TeamInfoCommand {
         if (targetTeam.getSettings().isShowAllies()) {
             StringBuilder sb = new StringBuilder();
             targetTeam.getAlliedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString(name)));
-            targetTeam.getAlliedPlayers().forEach((uuid) -> sb.append(Lang.TEAM_INFO_ALLIES_PLAYER_ENTRY.toString(PlayerUtil.getPlayerName(uuid))));
+            targetTeam.getAlliedPlayers().forEach((uuid,name) -> sb.append(Lang.TEAM_INFO_ALLIES_PLAYER_ENTRY.toString(name)));
             allies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ALLIES_LIST.toString((targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size()), sb.toString()));
         } else allies = CC.GREEN + (targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size());
         String members;

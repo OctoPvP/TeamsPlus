@@ -54,7 +54,7 @@ public class AllyCommand {
                 return;
             }
             if (UUIDUtil.contains(targetTeam.getAllyRequests(), selfTeam.getTeamId())) {
-                sender.sendMessage(Lang.ALREADY_SENT_ALLY_REQUEST.toString());
+                sender.sendMessage(Lang.ALREADY_SENT_ALLY_REQUEST.toString(targetTeam.getName()));
                 return;
             }
             selfTeam.requestToAllyAnotherTeam(targetTeam);

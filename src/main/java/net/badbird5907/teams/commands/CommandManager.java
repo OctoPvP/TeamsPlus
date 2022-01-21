@@ -14,6 +14,7 @@ import net.badbird5907.teams.commands.impl.util.TeamInfoCommand;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.util.PlayerDataProvider;
+import net.badbird5907.teams.util.PlayerDataSenderProvider;
 import net.badbird5907.teams.util.SenderProvider;
 import net.badbird5907.teams.util.TeamProvider;
 
@@ -23,6 +24,7 @@ public class CommandManager {
         drink.bind(Sender.class).toProvider(new SenderProvider());
         drink.bind(TeamsPlus.class).toInstance(TeamsPlus.getInstance());
         drink.bind(PlayerData.class).toProvider(new PlayerDataProvider());
+        drink.bind(PlayerData.class).annotatedWith(com.jonahseguin.drink.annotation.Sender.class).toProvider(new PlayerDataSenderProvider());
         drink.bind(Team.class).toProvider(new TeamProvider());
         drink.register(new TeamsPlusCommand(), "teamsplus", "teams+", "team", "teams")
                 .registerSub(new CreateTeamCommand())
