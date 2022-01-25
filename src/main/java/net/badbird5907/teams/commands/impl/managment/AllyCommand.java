@@ -1,19 +1,11 @@
 package net.badbird5907.teams.commands.impl.managment;
 
 import com.jonahseguin.drink.annotation.Command;
-import com.jonahseguin.drink.annotation.Flag;
 import com.jonahseguin.drink.annotation.Sender;
-import com.jonahseguin.drink.annotation.Text;
-import net.badbird5907.blib.util.CC;
-import net.badbird5907.teams.manager.PlayerManager;
-import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.util.UUIDUtil;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class AllyCommand {
     @Command(name = "ally", desc = "Ally a team", usage = "<team>")

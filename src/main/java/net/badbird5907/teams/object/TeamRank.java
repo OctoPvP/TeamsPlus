@@ -7,7 +7,7 @@ public enum TeamRank {
     TRUSTED(2),
     MEMBER(1),
     RECRUIT(0);
-    private int permissionLevel;
+    private final int permissionLevel;
 
     TeamRank(int level) {
         this.permissionLevel = level;

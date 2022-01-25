@@ -77,8 +77,8 @@ public class Team {
         StorageManager.getStorageHandler().saveTeam(this);
     }
 
-    public void rename(Player sender,String name) {
-        broadcast(Lang.TEAM_RENAME.toString(sender.getName(),name));
+    public void rename(Player sender, String name) {
+        broadcast(Lang.TEAM_RENAME.toString(sender.getName(), name));
         this.name = name;
         save();
     }
@@ -89,8 +89,9 @@ public class Team {
                 Bukkit.getPlayer(uuid).sendMessage(message);
         });
     }
+
     public void broadcastToPermissionLevelAndAbove(int level, String message) {
-        members.forEach((uuid,rank) -> {
+        members.forEach((uuid, rank) -> {
             if (rank.getPermissionLevel() >= level) {
                 if (Bukkit.getPlayer(uuid) != null)
                     Bukkit.getPlayer(uuid).sendMessage(message);

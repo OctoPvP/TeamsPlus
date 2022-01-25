@@ -2,7 +2,6 @@ package net.badbird5907.teams.commands.impl.util;
 
 import com.jonahseguin.drink.annotation.Command;
 import com.jonahseguin.drink.annotation.Sender;
-import com.jonahseguin.drink.annotation.Text;
 import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.manager.PlayerManager;
@@ -11,8 +10,6 @@ import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import org.bukkit.entity.Player;
-
-import java.util.Locale;
 
 public class CreateTeamCommand {
     @Command(name = "create", desc = "Create a new team", usage = "<name>")
