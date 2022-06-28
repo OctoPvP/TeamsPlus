@@ -1,6 +1,7 @@
 package net.badbird5907.teams.storage.impl;
 
 import lombok.SneakyThrows;
+import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.FileUtils;
 import net.badbird5907.teams.TeamsPlus;
@@ -25,7 +26,7 @@ import java.util.UUID;
 public class FlatFileStorageHandler implements StorageHandler {
     @Override
     public void init() {
-        Bukkit.getLogger().warning("[Teams+] You are using flat file storage! It is highly advised to use a mongodb or SQL database.");
+        Logger.error("You are using flat file storage! It is highly advised to use a mongodb or SQL database.");
     }
 
     @Override

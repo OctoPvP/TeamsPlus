@@ -16,6 +16,7 @@ import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
+import net.badbird5907.teams.runnable.DataUpdateRunnable;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -61,7 +62,7 @@ public final class TeamsPlus extends JavaPlugin {
     public void onEnable() {
         long start = System.currentTimeMillis();
         instance = this;
-        new bLib(this, "[Teams+]");
+        bLib.create(this);
         Logger.info("Starting TeamsPlus v." + getDescription().getVersion());
         new Metrics(this, 12438);
         setupConfig();
@@ -87,16 +88,14 @@ public final class TeamsPlus extends JavaPlugin {
 
         storageManager = new StorageManager();
         teamsManager = new TeamsManager();
+
+        new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20l);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
     }
 
     @Override
     public void onDisable() {
         disabling = true;
-        PlayerManager.getPlayers().forEach((uuid, data) -> {
-            PlayerManager.getPlayers().remove(uuid);
-            StorageManager.getStorageHandler().saveData(data);
-        });
         teamsManager.saveTeams(StorageManager.getStorageHandler());
         StorageManager.getStorageHandler().disable();
         HookManager.disable();

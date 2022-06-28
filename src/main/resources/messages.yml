@@ -1,4 +1,4 @@
-prefix: '&b[&aTeams+&b]&r'
+prefix: '&7[&aTeams+&7]&r'
 created-team: '%prefix% &aSuccessfully created team &6%1'
 team-already-exists: '%prefix% &cThat team already exists!'
 team-does-not-exist: '%prefix% &cThat team does not exist!'
@@ -7,10 +7,20 @@ already-in-team: '%prefix% &cYou are already in a team!'
 player-not-found: '%prefix% &cCould not find that player!'
 cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!'
 no-permission: '%prefix% &cYou do not have permission to do that!'
+canceled: '%prefix% &cCanceled!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
   player-leave: '&3%1&b has left the team!'
   leave: '&aYou have left the team!'
+  cannot-leave-own-team: '&cYou cannot leave your own team!'
+  disband: '&cYour team ''%1'' has been disbanded!'
+  player-not-in-team: '&cThis player is not in a team!'
+  list:
+    header: '&7&m-------------------------------------'
+    title: '&aAll Teams (%max_pages% total):'
+    footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
+    entry: '&7 - &a%1'
+    invalid: '&cInvalid entry number! min: %1 max: %2'
 team-info:
   online-member-entry: '&a%1'
   offline-member-entry: '&c%1'
@@ -62,3 +72,6 @@ neutral:
 pvp:
   team-disallow: '&cYou can''t damage &6%1&c because you''re in the same team as them!'
   ally-disallow: '&cYou can''t damage &6%1&c because you''re allied with them!'
+staff:
+  disbanded-team: '&aSuccessfully disbanded %1.'
+

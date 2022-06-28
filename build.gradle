@@ -1,0 +1,90 @@
+plugins {
+    id 'java'
+}
+
+group = 'dev.badbird'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation 'net.badbird5907:bLib-Bukkit:2.1.8-REL'
+
+    implementation 'net.octopvp:Commander-Bukkit:1.0-SNAPSHOT'
+
+    implementation 'org.mongodb:mongodb-driver-sync:4.2.2'
+
+    compileOnly 'net.badbird5907:AntiCombatLog:2.1.1'
+
+
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+jar {
+    archiveFileName = 'TeamsPlus-' + version + '.jar'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE;
+
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+task copyPlugin(type: Copy) {
+    var jarName = 'TeamsPlus-' + version
+    from 'build/libs/' + jarName + '.jar'
+    into 'run/plugins'
+}
+copyPlugin.dependsOn(jar)
+task runDev(type: JavaExec) {
+    classpath = files('run/paper.jar')
+    //run the serverJar, main from MANIFEST.MF
+    //args('nogui')
+    workingDir(file('run'))
+}
+runDev.dependsOn(project.tasks.copyPlugin)
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}

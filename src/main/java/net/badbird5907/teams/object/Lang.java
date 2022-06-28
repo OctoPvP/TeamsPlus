@@ -44,6 +44,10 @@ public enum Lang {
     PLAYER_LEAVE_TEAM("team.player-leave", "&3%1&b has left the team!"),
     LEFT_TEAM("team.leave", "&aYou have left the team!"),
 
+    CANNOT_LEAVE_OWN_TEAM("team.cannot-leave-own-team", "&cYou cannot leave your own team!"),
+
+    TEAM_DISBANDED("team.disband", "&cYour team '%1' has been disbanded!"),
+
     TEMP_PVP_ENABLED("team.temp-pvp-enable", "&6%1&a has enabled temp-pvp for &b%2&a seconds!"),
 
     TEAM_ENEMY_TEAM("enemy.team-enemy-team", "&cYou have been enemied with the team &6%1&c!"),
@@ -67,7 +71,24 @@ public enum Lang {
     CANNOT_ALLY_PLAYER("ally.cannot-ally-player", "&cYou cannot ally with players! You must be in a team!"),
     CANNOT_ALLY_SELF("ally.cannot-ally-self", "&cYou cannot ally your own team!"),
     ALREADY_SENT_ALLY_REQUEST("ally.already-sent-request", "&cYou already sent %1 an ally request!"),
-    ALLY_SENT_REQUEST("ally.sent-request", "&aSent a request to &6%1&a to ally with your team!");
+    ALLY_SENT_REQUEST("ally.sent-request", "&aSent a request to &6%1&a to ally with your team!"),
+
+    STAFF_DISBAND_TEAM("staff.disband-team", "&aSuccessfully disbanded %1."),
+
+    PLAYER_NOT_IN_TEAM("team.player-not-in-team", "&cYou are not in a team!"),
+
+    CANCELED("canceled", "%prefix% &cCanceled!"),
+
+    LIST_HEADER("team.list.header", "&7&m-------------------------------------"),
+
+    LIST_TITLE("team.list.title", "&aAll Teams (%max_pages% total):"),
+
+    LIST_FOOTER("team.list.footer", "&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------"),
+
+    LIST_ENTRY("team.list.entry", "&7 - &a%1"),
+
+    INVALID_ENTRY_NUMBER("team.list.invalid", "&cInvalid entry number! min: %1 max: %2"),
+    ;
     @Getter
     private final String configPath;
     private final String finalMessage;

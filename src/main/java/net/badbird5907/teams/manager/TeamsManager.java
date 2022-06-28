@@ -5,7 +5,7 @@ import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.storage.StorageHandler;
 import net.badbird5907.teams.util.UUIDUtil;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public class TeamsManager {
     public Team getTeamByName(String name) {
         String a = StringEscapeUtils.escapeJava(name);
         if (StorageManager.getStorageHandler().getClass().getName().toLowerCase().contains("sql")) //prevent sql injection attacks
-            a = StringEscapeUtils.escapeSql(name);
+            a = a.replace("'", "''"); //This is what StringEscapeUtils.escapeSql does in apache commons lang, was removed in lang3
         String finalA = a;
         return teams.stream().filter(team -> team != null && team.getName().equalsIgnoreCase(finalA)).findFirst().orElse(null);
     }
@@ -51,5 +51,10 @@ public class TeamsManager {
     @Nullable
     public Team getPlayerTeam(UUID player) {
         return teams.stream().filter(team -> team.getMembers().keySet().stream().filter(id -> id.toString().equals(player.toString())).findFirst().orElse(null) != null).findFirst().orElse(null);
+    }
+
+    public void removeTeam(Team team) {
+        teams.remove(team);
+        saveTeams(StorageManager.getStorageHandler());
     }
 }

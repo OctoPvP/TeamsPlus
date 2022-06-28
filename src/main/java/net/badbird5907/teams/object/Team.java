@@ -37,6 +37,7 @@ public class Team {
      */
     private Pair<UUID, Boolean> currentAllyChat = new Pair<>(null, false);
 
+
     public Team(String name, UUID owner) {
         this.name = name;
         this.owner = owner;
@@ -44,30 +45,26 @@ public class Team {
     }
 
     public void update() {
-        if (tempPvPSeconds != -1)
-            tempPvPSeconds--;
-        if (allyRequests == null)
-            allyRequests = new ConcurrentHashMap<>();
-        {
-            Iterator<Map.Entry<UUID, Long>> it = allyRequests.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<UUID, Long> pair = it.next();
-                long time = pair.getValue();
-                UUID id = pair.getKey();
-                if (time <= System.currentTimeMillis()) {
-                    Team team = TeamsManager.getInstance().getTeamById(id);
-                    PlayerData data = PlayerManager.getDataLoadIfNeedTo(id);
-                    if (team == null && data == null) {
-                        it.remove();
+        if (tempPvPSeconds != -1) tempPvPSeconds--;
+        if (allyRequests == null) allyRequests = new ConcurrentHashMap<>();
+        Iterator<Map.Entry<UUID, Long>> it = allyRequests.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, Long> pair = it.next();
+            long time = pair.getValue();
+            UUID id = pair.getKey();
+            if (time <= System.currentTimeMillis()) {
+                Team team = TeamsManager.getInstance().getTeamById(id);
+                PlayerData data = PlayerManager.getDataLoadIfNeedTo(id);
+                if (team == null && data == null) {
+                    it.remove();
+                } else {
+                    if (team != null) {
+                        team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), TeamRank.ADMIN, TeamRank.OWNER);
                     } else {
-                        if (team != null) {
-                            team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), TeamRank.ADMIN, TeamRank.OWNER);
-                        } else {
-                            data.sendMessage(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), true);
-                            data.save();
-                        }
-                        it.remove();
+                        data.sendMessage(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), true);
+                        data.save();
                     }
+                    it.remove();
                 }
             }
         }
@@ -84,24 +81,35 @@ public class Team {
     }
 
     public void broadcast(String message) {
+        broadcast(message, false);
+    }
+
+    public void broadcast(String message, boolean offline) {
         members.forEach((uuid, rank) -> {
-            if (Bukkit.getPlayer(uuid) != null)
-                Bukkit.getPlayer(uuid).sendMessage(message);
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) {
+                if (offline) {
+                    PlayerData data = PlayerManager.getDataLoadIfNeedTo(uuid);
+                    if (data != null) {
+                        data.sendMessage(message, true);
+                    }
+                }
+            } else {
+                player.sendMessage(message);
+            }
         });
     }
 
     public void broadcastToPermissionLevelAndAbove(int level, String message) {
         members.forEach((uuid, rank) -> {
             if (rank.getPermissionLevel() >= level) {
-                if (Bukkit.getPlayer(uuid) != null)
-                    Bukkit.getPlayer(uuid).sendMessage(message);
+                if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(message);
             }
         });
     }
 
     public boolean isEnemy(PlayerData data) {
-        if (data.getEnemiedTeams().containsKey(data.getTeamId()))
-            return true;
+        if (data.getEnemiedTeams().containsKey(data.getTeamId())) return true;
         return UUIDUtil.contains(enemiedPlayers, data.getUuid()) || (data.isInTeam() && UUIDUtil.contains(enemiedTeams, data.getPlayerTeam().getTeamId()));
     }
 
@@ -112,21 +120,18 @@ public class Team {
 
     public void join(PlayerData data) {
         members.put(data.getUuid(), TeamRank.MEMBER);
-        if (isEnemy(data) || isAlly(data))
-            neutralPlayer(data.getUuid());
+        if (isEnemy(data) || isAlly(data)) neutralPlayer(data.getUuid());
         broadcast(Lang.TEAM_JOINED.toString(data.getName()));
     }
 
     public void neutralPlayer(UUID uuid, boolean... broadcast) {
-        if (!UUIDUtil.contains(enemiedPlayers, uuid))
-            return;
+        if (!UUIDUtil.contains(enemiedPlayers, uuid)) return;
         PlayerData data = PlayerManager.getDataLoadIfNeedTo(uuid);
         neutralPlayer(data, broadcast);
     }
 
     public void neutralPlayer(PlayerData data, boolean... broadcast) {
-        if (!UUIDUtil.contains(enemiedPlayers, data.getUuid()))
-            return;
+        if (!UUIDUtil.contains(enemiedPlayers, data.getUuid())) return;
         this.enemiedPlayers.remove(data.getUuid());
         data.getEnemiedTeams().remove(this.teamId);
         data.getAlliedTeams().remove(this.teamId);
@@ -138,8 +143,7 @@ public class Team {
     }
 
     public void neutralTeam(UUID uuid) {
-        if (!UUIDUtil.contains(enemiedTeams, uuid) && !UUIDUtil.contains(alliedTeams, uuid))
-            return;
+        if (!UUIDUtil.contains(enemiedTeams, uuid) && !UUIDUtil.contains(alliedTeams, uuid)) return;
         //String name = PlayerUtil.getPlayerName(uuid);
         Team team = TeamsManager.getInstance().getTeamById(uuid);
         neutralTeam(team);
@@ -166,6 +170,10 @@ public class Team {
     }
 
     public void playerLeave(PlayerData data) {
+        if (owner.equals(data.getUuid())) {
+            data.sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.toString());
+            return;
+        }
         members.remove(data.getUuid());
         data.sendMessage(Lang.LEFT_TEAM.toString());
         broadcast(Lang.PLAYER_LEAVE_TEAM.toString(data.getName()));
@@ -213,11 +221,9 @@ public class Team {
         if (player.isOnline()) {
             broadcastToRanks(Lang.PLAYER_ALLY_TEAM_ASK.toString(player.getName()), TeamRank.OWNER, TeamRank.ADMIN);
             long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
-            if (allyRequests == null)
-                allyRequests = new ConcurrentHashMap<>();
+            if (allyRequests == null) allyRequests = new ConcurrentHashMap<>();
             allyRequests.put(player.getUuid(), timestamp);
-        } else
-            return;
+        } else return;
     }
 
     public void requestToAllyPlayer(PlayerData player) {
@@ -238,5 +244,19 @@ public class Team {
             broadcast(Lang.ALLY_SUCCESS.toString(player.getName()));
             player.sendMessage(Lang.ALLY_SUCCESS.toString(this.name));
         }
+    }
+
+    public void disband() {
+        String message = Lang.TEAM_DISBANDED.toString(this.name);
+        members.entrySet().removeIf((entry) -> {
+            PlayerData playerData = PlayerManager.getData(entry.getKey());
+            if (playerData != null) {
+                playerData.sendMessage(message, true);
+                playerData.setTeamId(null);
+            }
+            return true;
+        });
+        owner = null;
+        TeamsManager.getInstance().removeTeam(this); // We'll let java gc handle this
     }
 }
