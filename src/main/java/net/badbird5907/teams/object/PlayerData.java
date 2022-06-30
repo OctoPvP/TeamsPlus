@@ -20,10 +20,6 @@ public class PlayerData {
     private String name;
     private UUID teamId = null; //no team by default
 
-    //private Map<UUID, EnemyLevel> enemiedPlayers = new HashMap<>();
-    private Map<UUID, EnemyLevel> enemiedTeams = new HashMap<>();
-    //private Set<UUID> alliedPlayers = new HashSet<>();
-    private Set<UUID> alliedTeams = new HashSet<>();
     private List<String> pendingMessages = new ArrayList<>();
 
     private ChatChannel currentChannel = ChatChannel.GLOBAL;
@@ -221,15 +217,5 @@ public class PlayerData {
                 }
             }
         }
-    }
-
-    protected void requestToAlly(Team team) {
-        sendMessage(Lang.TEAM_ALLY_PLAYER_ASK.toString(team.getName()));
-        long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
-        allyRequests.put(team.getTeamId(), timestamp);
-    }
-
-    public void askAlly(Team team) {
-        team.requestToAlly(this);
     }
 }

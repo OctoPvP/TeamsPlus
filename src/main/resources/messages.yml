@@ -50,21 +50,13 @@ invite:
 enemy:
   team-enemy-team: '&cYou have been enemied with the team &6%1&c!'
 
-  team-enemy-player: '&cYou are now enemied with &6%1'
-  team-neutral-player: '&aYour team is now neutral with &b%1'
-
-  player-enemy-team: '&cYou are now enemied with &6%1'
-  player-neutral-team: '&aYou are now neutral with &b%1'
-
 ally:
   ally-success: '&bYou are now allied with the team &3%1'
   team-ally-team-ask: '&6%1&b would like to ally with your team. Do &a/team ally %1&b to accept!'
-  team-ally-player-ask: '&6%1&b would like to ally with you. Do &a/team ally %1&b to accept!'
   sent-request: '&aSent a request to &6%1&a to ally with your team!'
   ally-request-deny-timeout: '&c%1 took too long to answer your ally request!'
   already-sent-request: '&cYou already sent %1 an ally request!'
   cannot-ally-self: '&cYou already sent %1 an ally request!'
-  cannot-ally-player: '&cYou cannot ally with players! You must be in a team!'
 
 neutral:
   team-neutral-team: '&bYou are now neutral with the team &3%1'

@@ -89,7 +89,7 @@ public final class TeamsPlus extends JavaPlugin {
         storageManager = new StorageManager();
         teamsManager = new TeamsManager();
 
-        new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20l);
+        new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
     }
 

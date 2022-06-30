@@ -18,16 +18,16 @@ public class CombatListener implements Listener {
             PvPCheckResult checkResult = attackerData.canDamage(victim);
             if (checkResult != PvPCheckResult.ALLOWED) {
                 switch (checkResult) {
-                    case DISALLOW_ALLY:
+                    case DISALLOW_ALLY -> {
                         event.setCancelled(true);
                         attacker.sendMessage(Lang.ALLY_PVP_DISALLOW.toString(victim.getName()));
-                        break;
-                    case DISALLOW_TEAM:
+                    }
+                    case DISALLOW_TEAM -> {
                         event.setCancelled(true);
                         attacker.sendMessage(Lang.TEAM_PVP_DISALLOW.toString(victim.getName()));
-                        break;
-                    default:
-                        break;
+                    }
+                    default -> {
+                    }
                 }
             }
         }

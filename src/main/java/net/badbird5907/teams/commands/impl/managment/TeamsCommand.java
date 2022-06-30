@@ -42,18 +42,16 @@ public class TeamsCommand {
         if (targetTeam.getSettings().isShowEnemies()) {
             StringBuilder sb = new StringBuilder();
             targetTeam.getEnemiedTeams().forEach((uuid, level, name) -> sb.append(Lang.TEAM_INFO_ENEMIED_TEAM_ENTRY.toString(name)));
-            targetTeam.getEnemiedPlayers().forEach(((uuid, enemyLevel) -> sb.append(Lang.TEAM_INFO_ENEMIED_PLAYER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)))));
-            enemies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ENEMIES_LIST.toString((targetTeam.getEnemiedTeams().size() + targetTeam.getEnemiedPlayers().size()), sb.toString()));
+            enemies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ENEMIES_LIST.toString((targetTeam.getEnemiedTeams().size()), sb.toString()));
         } else {
-            enemies = CC.GREEN + targetTeam.getEnemiedTeams().size() + targetTeam.getEnemiedPlayers().size();
+            enemies = CC.GREEN + targetTeam.getEnemiedTeams().size();
         }
         String allies;
         if (targetTeam.getSettings().isShowAllies()) {
             StringBuilder sb = new StringBuilder();
             targetTeam.getAlliedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString(name)));
-            targetTeam.getAlliedPlayers().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_PLAYER_ENTRY.toString(name)));
-            allies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ALLIES_LIST.toString((targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size()), sb.toString()));
-        } else allies = CC.GREEN + (targetTeam.getAlliedTeams().size() + targetTeam.getAlliedPlayers().size());
+            allies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ALLIES_LIST.toString((targetTeam.getAlliedTeams().size()), sb.toString()));
+        } else allies = CC.GREEN + (targetTeam.getAlliedTeams().size());
         String members;
         int membersAll = targetTeam.getMembers().size();
         AtomicInteger membersOnline = new AtomicInteger();

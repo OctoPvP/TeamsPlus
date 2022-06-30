@@ -25,10 +25,9 @@ public class Team {
     private Map<UUID, TeamRank> members = new HashMap<>();
     private UUID owner;
     private TeamSettings settings = new TeamSettings();
-    private Map<UUID, EnemyLevel> enemiedPlayers = new HashMap<>();
     private HashPairMap<UUID, EnemyLevel, String> enemiedTeams = new HashPairMap<>();
-    private Map<UUID, String> alliedPlayers = new HashMap<>(); //save team/player names so we don't need to make extra db queries.
     private Map<UUID, String> alliedTeams = new HashMap<>();
+
     private Map<String, StoredLocation> waypoints = new HashMap<>();
     private transient Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
@@ -109,37 +108,17 @@ public class Team {
     }
 
     public boolean isEnemy(PlayerData data) {
-        if (data.getEnemiedTeams().containsKey(data.getTeamId())) return true;
-        return UUIDUtil.contains(enemiedPlayers, data.getUuid()) || (data.isInTeam() && UUIDUtil.contains(enemiedTeams, data.getPlayerTeam().getTeamId()));
+        return data.isInTeam() && UUIDUtil.contains(enemiedTeams, data.getPlayerTeam().getTeamId());
     }
 
     public boolean isAlly(PlayerData data) {
-        return data.getAlliedTeams().contains(data.getTeamId()) || (data.getPlayerTeam() != null && UUIDUtil.contains(data.getPlayerTeam().getAlliedTeams(), this.teamId));
+        return data.getPlayerTeam() != null && UUIDUtil.contains(data.getPlayerTeam().getAlliedTeams(), this.teamId);
         //return alliedPlayers.contains(data.getUuid()) || (data.isInTeam() && alliedPlayers.contains(data.getPlayerTeam().getTeamId()));
     }
 
     public void join(PlayerData data) {
         members.put(data.getUuid(), TeamRank.MEMBER);
-        if (isEnemy(data) || isAlly(data)) neutralPlayer(data.getUuid());
         broadcast(Lang.TEAM_JOINED.toString(data.getName()));
-    }
-
-    public void neutralPlayer(UUID uuid, boolean... broadcast) {
-        if (!UUIDUtil.contains(enemiedPlayers, uuid)) return;
-        PlayerData data = PlayerManager.getDataLoadIfNeedTo(uuid);
-        neutralPlayer(data, broadcast);
-    }
-
-    public void neutralPlayer(PlayerData data, boolean... broadcast) {
-        if (!UUIDUtil.contains(enemiedPlayers, data.getUuid())) return;
-        this.enemiedPlayers.remove(data.getUuid());
-        data.getEnemiedTeams().remove(this.teamId);
-        data.getAlliedTeams().remove(this.teamId);
-        if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
-            data.sendMessage(Lang.PLAYER_NEUTRAL_TEAM.toString(this.name), true);
-            broadcast(Lang.TEAM_NEUTRAL_PLAYER.toString(name));
-        }
-        data.save();
     }
 
     public void neutralTeam(UUID uuid) {
@@ -151,9 +130,7 @@ public class Team {
 
     public void neutralTeam(Team team, boolean... broadcast) {
         UUID uuid = team.getTeamId();
-        UUIDUtil.remove(enemiedPlayers, uuid);
         UUIDUtil.remove(alliedTeams, uuid);
-        UUIDUtil.remove(team.getEnemiedPlayers(), teamId);
         UUIDUtil.remove(team.getEnemiedTeams(), teamId);
         UUIDUtil.remove(team.getAlliedTeams(), teamId);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
@@ -214,35 +191,6 @@ public class Team {
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
             broadcast(Lang.ALLY_SUCCESS.toString(otherTeam.getName()));
             otherTeam.broadcast(Lang.ALLY_SUCCESS.toString(this.name));
-        }
-    }
-
-    public void requestToAlly(PlayerData player) {
-        if (player.isOnline()) {
-            broadcastToRanks(Lang.PLAYER_ALLY_TEAM_ASK.toString(player.getName()), TeamRank.OWNER, TeamRank.ADMIN);
-            long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
-            if (allyRequests == null) allyRequests = new ConcurrentHashMap<>();
-            allyRequests.put(player.getUuid(), timestamp);
-        } else return;
-    }
-
-    public void requestToAllyPlayer(PlayerData player) {
-        if (UUIDUtil.contains(allyRequests, player.getUuid())) { //other team already sent request to this team
-            neutralPlayer(player);
-            allyPlayer(player, true); //ally team
-            UUIDUtil.remove(allyRequests, player.getUuid());
-            return;
-        }
-        player.requestToAlly(this);
-        broadcast(Lang.ALLY_SENT_REQUEST.toString(player.getName()));
-    }
-
-    public void allyPlayer(PlayerData player, boolean... broadcast) {
-        alliedPlayers.put(player.getUuid(), player.getName());
-        player.getAlliedTeams().add(this.teamId);
-        if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
-            broadcast(Lang.ALLY_SUCCESS.toString(player.getName()));
-            player.sendMessage(Lang.ALLY_SUCCESS.toString(this.name));
         }
     }
 

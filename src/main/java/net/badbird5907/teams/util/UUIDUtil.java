@@ -9,12 +9,7 @@ import java.util.UUID;
 
 public class UUIDUtil {
     public static boolean contains(Collection<UUID> col, UUID uuid) {
-        for (UUID u : col) {
-            if (u.equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
+        return col.contains(uuid);
     }
 
     public static boolean contains(Set<? extends Map.Entry<UUID, ?>> entries, UUID uuid) {
