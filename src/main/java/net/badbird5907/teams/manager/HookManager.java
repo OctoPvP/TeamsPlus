@@ -4,6 +4,7 @@ import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.Hook;
 import net.badbird5907.teams.hooks.impl.AntiCombatLogHook;
+import net.badbird5907.teams.hooks.impl.VanishHook;
 import org.bukkit.Bukkit;
 
 import java.util.HashSet;
@@ -11,15 +12,18 @@ import java.util.Set;
 
 public class HookManager {
     private static final Hook[] hooks = new Hook[]{
-            new AntiCombatLogHook()
+            new AntiCombatLogHook(),
+            new VanishHook()
     };
     private static final Set<Hook> set = new HashSet<>();
 
     public static void init() {
         for (Hook hook : hooks) {
-            if (Bukkit.getPluginManager().isPluginEnabled(hook.getPlugin())) {
-                hook.init(TeamsPlus.getInstance());
-                set.add(hook); //disable using the set so we dont cause any NPEs/errors
+            if (!hook.getPlugin().isEmpty()) {
+                if (Bukkit.getPluginManager().isPluginEnabled(hook.getPlugin())) {
+                    hook.init(TeamsPlus.getInstance());
+                    set.add(hook); //disable using the set so we dont cause any NPEs/errors
+                }
             }
         }
         Logger.info("Hooked into %1 plugins.", set.size());
@@ -31,5 +35,14 @@ public class HookManager {
 
     public static Set<Hook> getHooks() {
         return set;
+    }
+
+    public static Hook getHook(Class<? extends Hook> clazz) {
+        for (Hook hook : set) {
+            if (hook.getClass().equals(clazz)) {
+                return hook;
+            }
+        }
+        return null;
     }
 }

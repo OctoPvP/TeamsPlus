@@ -6,6 +6,7 @@ import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.Hook;
+import net.badbird5907.teams.hooks.impl.VanishHook;
 import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.TeamsManager;
@@ -61,10 +62,11 @@ public class TeamsCommand {
             a++;
             UUID uuid = entry.getKey();
             TeamRank rank = entry.getValue();
-            if (Bukkit.getPlayer(uuid) != null) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null && !VanishHook.isVanished(player)) {
                 membersOnline.getAndIncrement();
                 sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
-            } else {
+            } else{
                 sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
             }
         }

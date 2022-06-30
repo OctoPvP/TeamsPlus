@@ -36,3 +36,4 @@ ally:
 pvp:
   pvp-team: false
   pvp-ally: false
+enable-vanish-hook: true
