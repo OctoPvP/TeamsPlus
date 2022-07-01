@@ -8,6 +8,11 @@ player-not-found: '%prefix% &cCould not find that player!'
 cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!'
 no-permission: '%prefix% &cYou do not have permission to do that!'
 canceled: '%prefix% &cCanceled!'
+chat:
+  format-team: '&7[&aTeam&7] &a%1 &7(%2) &r: %3' # %1 = Player name | %2 = Team name | %3 = Message
+  format-ally: '&7[&dAlly&7] &a%1 &7(%2) &r: %3'
+  format-global-inteam: '%1[%2] %3&r: %4' # %1 - color (green if team, blue if neutral, purple if ally, red if enemy) | %2 - team name | %3 player | %4 - message
+  format-global-noteam: '%1%2: %4' # %1 - color (green if themself, blue if neutral, purple if ally, red if enemy) | %2 - name | %3 - message
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
   player-leave: '&3%1&b has left the team!'
@@ -18,8 +23,8 @@ team:
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'
-    footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
     entry: '&7 - &a%1'
+    footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
     invalid: '&cInvalid entry number! min: %1 max: %2'
 team-info:
   online-member-entry: '&a%1'

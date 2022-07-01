@@ -17,13 +17,9 @@ sql:
 invite-seconds: 30
 
 chat:
-  custom-chat: true
+  enable: true
   ping-player-on-mention: true
-  custom:
-    format-global-inteam: '%1[%2] %3&r: %4' # %1 - color (green if team, blue if neutral, purple if ally, red if enemy) | %2 - team name | %3 player | %4 - message
-    format-global-noteam: '%1%2: %4' # %1 - color (green if themself, blue if neutral, purple if ally, red if enemy) | %2 - name | %3 - message
-    format-team: '&7[&aTeam&7] &a%1%r: %2'
-    format-ally: '&7[&dAlly&7] &a%1%r: %2'
+
 team:
   temp-pvp: #teams can do /team temppvp to enable pvping teammates, for duels etc...
     enable: true

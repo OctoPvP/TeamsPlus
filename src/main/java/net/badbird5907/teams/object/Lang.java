@@ -21,6 +21,11 @@ public enum Lang {
 
     CANNOT_CREATE_TEAM_BLOCKED_NAME("cannot-create-blocked-name", "%prefix% &cYou cannot create a team with that name!"),
 
+    CHAT_FORMAT_TEAM("chat.format-team", "&7[&aTeam&7] &a%1%r: %2"),
+    CHAT_FORMAT_ALLY("chat.format-ally", "&7[&dAlly&7] &a%1%r: %2"),
+    CHAT_FORMAT_GLOBAL_INTEAM("format-global-inteam", "%1[%2] %3&r: %4"),
+    CHAT_FORMAT_GLOBAL_NOTEAM("format-global-noteam", "%1%2: %4"),
+
     TEAM_INFO_MESSAGE("team-info.message", new String[]{"%separator%", "&3 - &b&l%1 &r &3", "&9 * &bOwner: %2", "&9 * &bAllies: %3", "&9 * &bEnemies: %4", "&9 * &bMembers: &8[&f%5&7/&f%6&8] %9", "%separator%"}),
     TEAM_INFO_ONLINE_MEMBER_ENTRY("team-info.online-member-entry", "&a%1"),
     TEAM_INFO_OFFLINE_MEMBER_ENTRY("team-info.offline-member-entry", "&c%1"),

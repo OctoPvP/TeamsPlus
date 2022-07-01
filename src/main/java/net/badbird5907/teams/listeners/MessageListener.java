@@ -16,7 +16,7 @@ public class MessageListener implements Listener {
     public void onMessage(AsyncPlayerChatEvent event) {
         if (event.isCancelled())
             return;
-        if (TeamsPlus.getInstance().getConfig().getBoolean("chat.custom-chat")) {
+        if (TeamsPlus.getInstance().getConfig().getBoolean("chat.enable")) {
             PlayerData data = PlayerManager.getData(event.getPlayer().getUniqueId());
             if (data != null)
                 event.setCancelled(true); //for custom chat handling
