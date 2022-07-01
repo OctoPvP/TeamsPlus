@@ -55,7 +55,7 @@ public enum Lang {
 
     TEMP_PVP_ENABLED("team.temp-pvp-enable", "&6%1&a has enabled temp-pvp for &b%2&a seconds!"),
 
-    TEAM_ENEMY_TEAM("enemy.team-enemy-team", "&cYou have been enemied with the team &6%1&c!"),
+    TEAM_ENEMY_TEAM("enemy.team-enemy-team", "&cYou are now enemies with the team &6%1&c!"),
     TEAM_NEUTRAL_TEAM("neutral.team-neutral-team", "&bYou are now neutral with the team &3%1"),
 
     TEAM_PVP_DISALLOW("pvp.team-disallow", "&cYou can't damage &6%1&c because you're in the same team as them!"),
