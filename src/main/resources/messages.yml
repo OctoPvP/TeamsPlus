@@ -53,7 +53,7 @@ invite:
   no-invite: '&cYou have no invite to %1!'
 
 enemy:
-  team-enemy-team: '&cYou have been enemied with the team &6%1&c!'
+  team-enemy-team: '&cYou are now enemies with the team &6%1&c!'
 
 ally:
   ally-success: '&bYou are now allied with the team &3%1'
