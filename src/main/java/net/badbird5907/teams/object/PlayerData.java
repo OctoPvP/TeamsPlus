@@ -207,6 +207,9 @@ public class PlayerData {
 
     public void leaveTeam() {
         getPlayerTeam().playerLeave(this);
+        setCurrentChannel(ChatChannel.GLOBAL);
+        setAllyChatTeamId(null);
+        setTeamId(null);
     }
 
     public void updateAllyRequests() {

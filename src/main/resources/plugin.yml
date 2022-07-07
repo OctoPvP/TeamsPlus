@@ -6,6 +6,7 @@ softdepend:
   - AntiCombatLog
   - Vault
   - LuckPerms
+  - CoreProtect
 authors:
   - Badbird5907
 description: Teams plugin

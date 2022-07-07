@@ -20,7 +20,7 @@ public class TeamRelationsCommand {
     @Command(name = "neutral", description = "Become neutral with another team.")
     @Cooldown(10)
     public void neutralTeam(@Sender Player sender, @Sender @Required Team senderTeam, @Required Team target) {
-        if (!senderTeam.isEnemy(target) && !senderTeam.isEnemy(target)) {
+        if (!senderTeam.isEnemy(target) && !senderTeam.isAlly(target)) {
             sender.sendMessage(Lang.TEAM_ALREADY_NEUTRAL.toString(target.getName()));
             return;
         }

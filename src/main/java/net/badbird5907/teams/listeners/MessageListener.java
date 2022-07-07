@@ -1,6 +1,9 @@
 package net.badbird5907.teams.listeners;
 
 import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.hooks.Hook;
+import net.badbird5907.teams.hooks.impl.CoreProtectHook;
+import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.MessageManager;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.TeamsManager;
@@ -8,6 +11,7 @@ import net.badbird5907.teams.object.ChatChannel;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
+import net.coreprotect.CoreProtect;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,42 +31,29 @@ public class MessageListener implements Listener {
         switch (data.getCurrentChannel()) {
             case ALLY -> {
                 if (data.getAllyChatTeamId() == null) {
-                    handleGlobal(data, event);
+                    data.setCurrentChannel(ChatChannel.GLOBAL);
+                    MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
                     return;
                 }
                 event.setCancelled(true);
-                Team targetTeam = TeamsManager.getInstance().getTeamById(data.getAllyChatTeamId());
-                if (targetTeam == null) {
-                    data.setAllyChatTeamId(null);
-                    data.setCurrentChannel(ChatChannel.GLOBAL);
-                    return;
-                }
-                targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(event.getPlayer().getDisplayName(), senderTeam.getName(), event.getMessage()));
+                MessageManager.handleAlly(data, event.getPlayer(), senderTeam, event.getMessage());
                 return;
             }
             case TEAM -> {
                 if (senderTeam == null) {
-                    handleGlobal(data, event);
+                    data.setCurrentChannel(ChatChannel.GLOBAL);
+                    MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
                     return;
                 }
                 event.setCancelled(true);
-                senderTeam.broadcast(Lang.CHAT_FORMAT_TEAM.toString(event.getPlayer().getDisplayName(), event.getMessage()));
+                MessageManager.handleTeam(event.getPlayer(),event.getMessage(), senderTeam);
                 return;
             }
             case GLOBAL -> {
-                handleGlobal(data, event);
+                MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
             }
         }
     }
 
-    private void handleGlobal(PlayerData data, AsyncPlayerChatEvent event) {
-        if (TeamsPlus.getInstance().getConfig().getBoolean("chat.enable")) {
-            if (data != null)
-                event.setCancelled(true); //for custom chat handling
-            else return;
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.sendMessage(MessageManager.formatGlobal(event.getMessage(), event.getPlayer(), onlinePlayer));
-            }//TODO team/ally chat
-        }
-    }
+
 }

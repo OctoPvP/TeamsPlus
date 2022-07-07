@@ -4,6 +4,7 @@ import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.Hook;
 import net.badbird5907.teams.hooks.impl.AntiCombatLogHook;
+import net.badbird5907.teams.hooks.impl.CoreProtectHook;
 import net.badbird5907.teams.hooks.impl.VanishHook;
 import net.badbird5907.teams.hooks.impl.VaultHook;
 import org.bukkit.Bukkit;
@@ -15,7 +16,8 @@ public class HookManager {
     private static final Hook[] hooks = new Hook[]{
             new AntiCombatLogHook(),
             new VanishHook(),
-            new VaultHook()
+            new VaultHook(),
+            new CoreProtectHook()
     };
     private static final Set<Hook> set = new HashSet<>();
 

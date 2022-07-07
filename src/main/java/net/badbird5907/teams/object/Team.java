@@ -10,6 +10,12 @@ import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.util.UUIDUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -177,8 +183,23 @@ public class Team {
         });
     }
 
+    public void broadcastToRanks(Component message, TeamRank rank, TeamRank... ranks) {
+        List<TeamRank> list = new ArrayList<>();
+        list.add(rank);
+        list.addAll(Arrays.asList(ranks));
+        members.forEach((uuid, teamRank) -> {
+            if (list.contains(teamRank) && Bukkit.getPlayer(uuid) != null) {
+                Bukkit.getPlayer(uuid).sendMessage(message);
+            }
+        });
+    }
+
     public void requestToAlly(Team otherTeam) {
-        broadcastToRanks(Lang.TEAM_ALLY_TEAM_ASK.toString(otherTeam.getName()), TeamRank.OWNER, TeamRank.ADMIN);
+        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_ALLY_TEAM_ASK.toString(otherTeam.getName()))
+                        .clickEvent(ClickEvent.runCommand("/team ally " + otherTeam.getName()))
+                                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                                        Lang.TEAM_ALLY_TEAM_ASK_HOVER.toString(otherTeam.getName()))));
+        broadcastToRanks(message, TeamRank.OWNER, TeamRank.ADMIN);
         long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
         allyRequests.put(otherTeam.getTeamId(), timestamp);
     }

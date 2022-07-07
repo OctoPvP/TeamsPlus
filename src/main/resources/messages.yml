@@ -20,7 +20,7 @@ chat:
     cannot-ally-chat-self: '&aYou cannot ally chat with your own team!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
-  player-leave: '&3%1&b has left the team!'
+  player-leave: '&6%1&c has left the team!'
   leave: '&aYou have left the team!'
   cannot-leave-own-team: '&cYou cannot leave your own team!'
   disband: '&cYour team ''%1'' has been disbanded!'
@@ -64,7 +64,9 @@ enemy:
 
 ally:
   ally-success: '&aYou are now allied with the team &6%1'
-  team-ally-team-ask: '&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!'
+  team-ally-team-ask:
+    message: '&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!'
+    hover: '&aClick to accept!'
   sent-request: '&aSent a request to &6%1&a to ally with your team!'
   ally-request-deny-timeout: '&c%1 took too long to answer your ally request!'
   already-sent-request: '&cYou already sent %1 an ally request!'

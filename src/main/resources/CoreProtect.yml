@@ -1,0 +1,2 @@
+enable-hook: true
+modify-chat-logs: true # If enabled, default coreprotect chat logs will be modified, where the message info includes the channel the player is in.

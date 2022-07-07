@@ -78,7 +78,7 @@ public enum Lang {
 
     TEAM_JOINED("invite.joined", "&a%1 has joined the team!"),
 
-    PLAYER_LEAVE_TEAM("team.player-leave", "&3%1&b has left the team!"),
+    PLAYER_LEAVE_TEAM("team.player-leave", "&6%1&c has left the team!"),
 
     LEFT_TEAM("team.leave", "&aYou have left the team!"),
 
@@ -102,7 +102,9 @@ public enum Lang {
 
     ALLY_SUCCESS("ally.ally-success", "&aYou are now allied with &6%1"),
 
-    TEAM_ALLY_TEAM_ASK("ally.team-ally-team-ask", "&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!"),
+    TEAM_ALLY_TEAM_ASK("ally.team-ally-team-ask.message", "&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!"),
+
+    TEAM_ALLY_TEAM_ASK_HOVER("ally.team-ally-team-ask.hover", "&aClick to accept!"),
 
     ALLY_REQUEST_DENY_TIMEOUT("ally.ally-request-deny-timeout", "&c%1 took too long to answer your ally request!"),
 
