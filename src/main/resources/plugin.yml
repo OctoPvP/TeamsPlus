@@ -5,7 +5,9 @@ api-version: 1.17
 softdepend:
   - AntiCombatLog
   - Vault
-authors: [ Badbird5907 ]
+  - LuckPerms
+authors:
+  - Badbird5907
 description: Teams plugin
 permissions:
   teamsplus:

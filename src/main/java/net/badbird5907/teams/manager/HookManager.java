@@ -23,6 +23,7 @@ public class HookManager {
         for (Hook hook : hooks) {
             if (!hook.getPlugin().isEmpty()) {
                 if (Bukkit.getPluginManager().isPluginEnabled(hook.getPlugin())) {
+                    Logger.info("Hooking into " + hook.getPlugin());
                     hook.init(TeamsPlus.getInstance());
                     set.add(hook); //disable using the set so we dont cause any NPEs/errors
                 }
@@ -32,7 +33,7 @@ public class HookManager {
     }
 
     public static void disable() {
-        set.forEach(hook -> hook.disable(TeamsPlus.getInstance())); //should have used a method refrence but i'm too lazy
+        set.forEach(hook -> hook.disable(TeamsPlus.getInstance()));
     }
 
     public static Set<Hook> getHooks() {

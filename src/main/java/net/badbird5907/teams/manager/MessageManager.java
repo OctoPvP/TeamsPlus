@@ -24,16 +24,16 @@ public class MessageManager {
         String message;
         if (senderData.isInTeam()) {
             String color = CC.AQUA;
-            if (player == receiver)
+            if (player.getUniqueId().equals(receiver.getUniqueId())) {
                 color = CC.GREEN;
-            if (senderData.isEnemy(receiver)) {
+            } if (senderData.isEnemy(receiver)) {
                 color = CC.RED;
             } else if (senderData.isAlly(receiver))
                 color = CC.PURPLE;
             message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), formattedName, rawMessage);
         } else {
             String color = CC.GREEN;
-            if (player == receiver)
+            if (player.getUniqueId().equals(receiver.getUniqueId()))
                 color = CC.GREEN;
             if (senderData.isEnemy(receiver)) {
                 color = CC.RED;
