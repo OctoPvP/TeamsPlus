@@ -1,4 +1,4 @@
-package net.badbird5907.teams.commands.impl.managment;
+package net.badbird5907.teams.commands.impl.staff;
 
 import net.badbird5907.teams.menu.ConfirmMenu;
 import net.badbird5907.teams.object.Lang;

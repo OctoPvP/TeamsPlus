@@ -24,7 +24,7 @@ public enum Lang {
     PLAYER_NOT_FOUND("player-not-found", "%prefix% &cCould not find that player!"),
 
 
-    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that!"),
+    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that! Ask a team leader to promote you! (/team promote %1)"),
 
     CANNOT_INVITE_SELF("team.cannot-invite-self", "&cYou cannot invite yourself!"),
 
@@ -82,7 +82,7 @@ public enum Lang {
 
     LEFT_TEAM("team.leave", "&aYou have left the team!"),
 
-    TEAM_NAME_TOO_LONG("team.name-too-long", "&cTeam name too long! Max: &6: %1"),
+    TEAM_NAME_TOO_LONG("team.name-too-long", "&cTeam name too long! Max:&6 %1"),
 
     CANNOT_LEAVE_OWN_TEAM("team.cannot-leave-own-team", "&cYou cannot leave your own team!"),
 
@@ -139,7 +139,14 @@ public enum Lang {
 
     CHAT_SWITCH_TO_ALLY("chat.switch.ally", "&aSwitched to ally chat with &6%1&a!"),
 
-    CANNOT_ALLY_CHAT_SELF("chat.cannot-ally-chat-self", "&aYou cannot ally chat with your own team!");
+    CANNOT_ALLY_CHAT_SELF("chat.cannot-ally-chat-self", "&aYou cannot ally chat with your own team!"),
+
+    CANNOT_KICK_SAME_RANK_OR_HIGHER("team.cannot-kick-same-rank-or-higher", "&cYou cannot kick a player of the same or higher rank of you!"),
+
+    KICKED_FROM_TEAM("team.kicked-from-team", "&cYou have been kicked from the team for &6%1&c!"),
+
+    PLAYER_KICKED("team.player-kicked", "&c%1 has been kicked from the team for &6%2&c by &6%2&c!"),
+    ;
     @Getter
     private final String configPath;
     private final String finalMessage;

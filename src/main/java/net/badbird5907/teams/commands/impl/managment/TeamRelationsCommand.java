@@ -1,8 +1,10 @@
 package net.badbird5907.teams.commands.impl.managment;
 
+import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
+import net.badbird5907.teams.object.TeamRank;
 import net.badbird5907.teams.util.UUIDUtil;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
@@ -13,12 +15,14 @@ import org.bukkit.entity.Player;
 public class TeamRelationsCommand {
     @Command(name = "enemy", description = "Enemy another team.")
     @Cooldown(10)
+    @TeamPermission(TeamRank.ADMIN)
     public void enemyTeam(@Sender Player sender, @Sender @Required Team senderTeam, @Required Team target) {
         senderTeam.enemyTeam(target, true);
     }
 
     @Command(name = "neutral", description = "Become neutral with another team.")
     @Cooldown(10)
+    @TeamPermission(TeamRank.ADMIN)
     public void neutralTeam(@Sender Player sender, @Sender @Required Team senderTeam, @Required Team target) {
         if (!senderTeam.isEnemy(target) && !senderTeam.isAlly(target)) {
             sender.sendMessage(Lang.TEAM_ALREADY_NEUTRAL.toString(target.getName()));
@@ -30,6 +34,7 @@ public class TeamRelationsCommand {
     @Command(name = "ally", description = "Ally a team")
     @PlayerOnly
     @Cooldown(10)
+    @TeamPermission(TeamRank.ADMIN)
     public void ally(@Sender PlayerData sender, Team team) {
         Team selfTeam = sender.getPlayerTeam();
         if (selfTeam == null) {

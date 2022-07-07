@@ -11,10 +11,8 @@ import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.util.UUIDUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -130,8 +128,9 @@ public class Team {
     }
 
     public void join(PlayerData data) {
-        members.put(data.getUuid(), TeamRank.MEMBER);
+        members.put(data.getUuid(), TeamRank.RECRUIT);
         data.setTeamId(getTeamId());
+        data.setAllyChatTeamId(null);
         broadcast(Lang.TEAM_JOINED.toString(data.getName()));
         save();
         data.save();
@@ -147,6 +146,7 @@ public class Team {
     public void neutralTeam(Team team, boolean... broadcast) {
         UUID uuid = team.getTeamId();
         alliedTeams.remove(uuid);
+        enemiedTeams.remove(uuid);
         team.getEnemiedTeams().remove(teamId);
         team.getAlliedTeams().remove(teamId);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
@@ -162,14 +162,16 @@ public class Team {
         }
     }
 
-    public void playerLeave(PlayerData data) {
+    public void leave(PlayerData data) {
         if (owner.equals(data.getUuid())) {
             data.sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.toString());
             return;
         }
         members.remove(data.getUuid());
+        data.setTeamId(null);
         data.sendMessage(Lang.LEFT_TEAM.toString());
         broadcast(Lang.PLAYER_LEAVE_TEAM.toString(data.getName()));
+        save();
     }
 
     public void broadcastToRanks(String message, TeamRank rank, TeamRank... ranks) {
@@ -260,5 +262,31 @@ public class Team {
             iterator2.remove();
         }
         TeamsManager.getInstance().removeTeam(this); // We'll let java gc handle this
+    }
+
+    public boolean isAtLeast(Player player, TeamRank rank) {
+        return isAtLeast(player.getUniqueId(), rank);
+    }
+
+    public boolean isAtLeast(UUID uuid, TeamRank rank) {
+        int requiredPermissionLevel = rank.getPermissionLevel();
+        int playerPermissionLevel = members.get(uuid).getPermissionLevel();
+        return playerPermissionLevel >= requiredPermissionLevel;
+    }
+
+    public TeamRank getRank(UUID uuid) {
+        return members.get(uuid);
+    }
+
+    public void kick(PlayerData target, PlayerData sender, String reason) {
+        members.remove(target.getUuid());
+        target.setTeamId(null);
+        target.setCurrentChannel(ChatChannel.GLOBAL);
+        target.setAllyChatTeamId(null);
+        target.sendMessage(Lang.KICKED_FROM_TEAM.toString(reason), true);
+        target.save();
+
+        broadcast(Lang.PLAYER_KICKED.toString(reason, sender.getName()), true);
+        save();
     }
 }

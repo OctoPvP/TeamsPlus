@@ -1,4 +1,4 @@
-package net.badbird5907.teams.commands.impl.managment;
+package net.badbird5907.teams.commands.impl;
 
 import net.badbird5907.teams.manager.MessageManager;
 import net.badbird5907.teams.object.ChatChannel;

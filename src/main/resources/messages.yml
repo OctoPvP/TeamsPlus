@@ -6,7 +6,7 @@ must-be-in-team: '%prefix% &cYou must be in a team to do that!'
 already-in-team: '%prefix% &cYou are already in a team!'
 player-not-found: '%prefix% &cCould not find that player!'
 cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!'
-no-permission: '%prefix% &cYou do not have permission to do that!'
+no-permission: '%prefix% &cYou do not have permission to do that! Ask a team leader to promote you! (/team promote %1)'
 canceled: '%prefix% &cCanceled!'
 chat:
   format-team: '&7[&aTeam&7] &a%1 &r: %2' # %1 = Player name | %2 = Message
@@ -28,7 +28,9 @@ team:
   player-not-in-team: '&cThis player is not in a team!'
   not-allied-with-team: '&cYou are not allied with that team!'
   cannot-invite-self: '&cYou cannot invite yourself!'
-  name-too-long: '&cTeam name too long! Max: &6: %1'
+  name-too-long: '&cTeam name too long! Max:&6 %1'
+  kicked-from-team: '&cYou have been kicked from the team for &6%1&c!'
+  player-kicked: '&c%1 has been kicked from the team for &6%2&c by &6%2&c!'
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'

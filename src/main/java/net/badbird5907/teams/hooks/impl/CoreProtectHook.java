@@ -43,7 +43,6 @@ public class CoreProtectHook extends Hook {
         if (Config.getGlobal().PLAYER_MESSAGES && coreProtectConfig.getBoolean("modify-chat-logs")) {
             // Unregister the CoreProtect chat listener, so we can use our own chat listener.
             for (RegisteredListener registeredListener : HandlerList.getRegisteredListeners(CoreProtect.getInstance())) {
-                Logger.debug("RegisteredListener: " + registeredListener.getListener().getClass().getName());
                 if (registeredListener.getListener().getClass().equals(PaperChatListener.class) || registeredListener.getListener().getClass().equals(PlayerChatListener.class)) {
                     HandlerList.unregisterAll(registeredListener.getListener());
                     enabled = true;

@@ -206,10 +206,11 @@ public class PlayerData {
     }
 
     public void leaveTeam() {
-        getPlayerTeam().playerLeave(this);
+        getPlayerTeam().leave(this);
         setCurrentChannel(ChatChannel.GLOBAL);
         setAllyChatTeamId(null);
         setTeamId(null);
+        save();
     }
 
     public void updateAllyRequests() {

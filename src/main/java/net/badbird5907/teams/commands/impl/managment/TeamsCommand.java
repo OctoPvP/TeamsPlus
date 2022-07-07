@@ -7,6 +7,7 @@ import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.commands.CommandManager;
+import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.hooks.Hook;
 import net.badbird5907.teams.hooks.impl.VanishHook;
 import net.badbird5907.teams.manager.HookManager;
@@ -97,33 +98,10 @@ public class TeamsCommand {
 
     }
 
-    @Command(name = "invite", description = "Invite a player to your team", usage = "<player>")
-    @Cooldown(1)
-    @PlayerOnly
-    public void invite(@Sender Player sender, PlayerData targetData) {
-        Team senderTeam = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(sender.getUniqueId());
-        if (senderTeam == null) {
-            sender.sendMessage(Lang.MUST_BE_IN_TEAM.toString());
-            return;
-        }
-        if (targetData == null) {
-            sender.sendMessage(Lang.PLAYER_NOT_FOUND.toString());
-            return;
-        }
-        if (targetData.getUuid().equals(sender.getUniqueId())) {
-            sender.sendMessage(Lang.CANNOT_INVITE_SELF.toString());
-            return;
-        }
-        if (targetData.getPendingInvites().containsKey(senderTeam.getTeamId())) {
-            sender.sendMessage(Lang.INVITE_ALREADY_SENT.toString(targetData.getName()));
-        } else {
-            targetData.invite(senderTeam, sender.getName());
-        }
-    }
-
     @Command(name = "rename", description = "Rename your team")
     @PlayerOnly
     @Cooldown(30)
+    @TeamPermission(TeamRank.ADMIN)
     public void rename(@Sender Player sender, @Sender Team team, String name) {
         int max = TeamsPlus.getInstance().getConfig().getInt("max-name-length", 16);
         if (max < name.length()) {
@@ -254,12 +232,13 @@ public class TeamsCommand {
     }
 
     @Command(name = "disband", aliases = "delete", description = "Disband a team")
+    @TeamPermission(TeamRank.OWNER)
     public void disband(@Sender Player player, @Sender Team team) {
         new ConfirmMenu("disband your team", (response) -> {
             if (response) {
                 team.disband();
-                player.closeInventory();
             } else player.sendMessage(Lang.CANCELED.toString());
+            player.closeInventory();
         }).open(player);
     }
 
