@@ -123,8 +123,17 @@ public class TeamsCommand {
 
     @Command(name = "rename", description = "Rename your team")
     @PlayerOnly
-    @Cooldown(10)
+    @Cooldown(30)
     public void rename(@Sender Player sender, @Sender Team team, String name) {
+        int max = TeamsPlus.getInstance().getConfig().getInt("max-name-length", 16);
+        if (max < name.length()) {
+            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.toString(max));
+            return;
+        }
+        if (TeamsPlus.getInstance().getTeamsManager().getTeamByName(name) != null) {
+            sender.sendMessage(Lang.TEAM_ALREADY_EXISTS.toString());
+            return;
+        }
         if (TeamsPlus.getInstance().getConfig().getStringList("team.blocked-names").contains(name.toLowerCase())) {
             sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.toString());
             return;
@@ -190,6 +199,11 @@ public class TeamsCommand {
         PlayerData playerData = PlayerManager.getPlayers().get(sender.getUniqueId());
         if (playerData.getPlayerTeam() != null) {
             sender.sendMessage(Lang.ALREADY_IN_TEAM.toString());
+            return;
+        }
+        int max = TeamsPlus.getInstance().getConfig().getInt("max-name-length", 16);
+        if (max < name.length()) {
+            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.toString(max));
             return;
         }
         if (TeamsPlus.getApi().getTeamsManager().getTeamByName(name) != null) {

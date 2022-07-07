@@ -32,7 +32,9 @@ public class MessageListener implements Listener {
             case ALLY -> {
                 if (data.getAllyChatTeamId() == null) {
                     data.setCurrentChannel(ChatChannel.GLOBAL);
-                    MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
+                    if (MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage())) {
+                        event.setCancelled(true);
+                    }
                     return;
                 }
                 event.setCancelled(true);
@@ -42,7 +44,9 @@ public class MessageListener implements Listener {
             case TEAM -> {
                 if (senderTeam == null) {
                     data.setCurrentChannel(ChatChannel.GLOBAL);
-                    MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
+                    if (MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage())) {
+                        event.setCancelled(true);
+                    }
                     return;
                 }
                 event.setCancelled(true);
@@ -50,7 +54,9 @@ public class MessageListener implements Listener {
                 return;
             }
             case GLOBAL -> {
-                MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage());
+                if (MessageManager.handleGlobal(data, event.getPlayer(), event.getMessage())) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

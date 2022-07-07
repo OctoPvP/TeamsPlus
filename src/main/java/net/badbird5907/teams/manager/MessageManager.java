@@ -23,7 +23,8 @@ public class MessageManager {
             data.setCurrentChannel(ChatChannel.GLOBAL);
             return;
         }
-        targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(MessageManager.getDisplayName(player), senderTeam.getName(), message));
+        targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(MessageManager.getDisplayName(player), targetTeam.getName(), senderTeam.getName(), message));
+        senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(MessageManager.getDisplayName(player), senderTeam.getName(), targetTeam.getName(), message));
 
         CoreProtectHook hook = null;
         Hook h = HookManager.getHook(CoreProtectHook.class);

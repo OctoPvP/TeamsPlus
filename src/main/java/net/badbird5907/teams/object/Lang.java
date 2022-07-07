@@ -30,13 +30,13 @@ public enum Lang {
 
     CANNOT_CREATE_TEAM_BLOCKED_NAME("cannot-create-blocked-name", "%prefix% &cYou cannot create a team with that name!"),
 
-    CHAT_FORMAT_TEAM("chat.format-team", "&7[&aTeam&7] &a%1%r: %2"),
+    CHAT_FORMAT_TEAM("chat.format-team", "&7[&aTeam&7] &a%1 &r: %2"),
 
-    CHAT_FORMAT_ALLY("chat.format-ally", "&7[&dAlly&7] &a%1%r: %2"),
+    CHAT_FORMAT_ALLY("chat.format-ally", "&7[&dAlly&7] &a%1 &7(%2 -> %3) &r: %4"),
 
-    CHAT_FORMAT_GLOBAL_INTEAM("chat.format-global-inteam", "%1[%2] %3&r&7:&f %4"),
+    CHAT_FORMAT_GLOBAL_INTEAM("chat.format-global.inteam", "%1[%2] %3&r&7:&f %4"),
 
-    CHAT_FORMAT_GLOBAL_NOTEAM("chat.format-global-noteam", "%1%2&7:&f %3"),
+    CHAT_FORMAT_GLOBAL_NOTEAM("chat.format-global.noteam", "%1%2&7:&f %3"),
 
     TEAM_INFO_MESSAGE("team-info.message", new String[]{
             "%separator%",
@@ -64,7 +64,7 @@ public enum Lang {
 
     TEAM_INFO_MEMBERS_LIST("team-info.members-list", "&8[&f%1&7/&f%2&8] %3"),
 
-    TEAM_RENAME("team.rename", "&3%1&b has renamed the team to &3%2"),
+    TEAM_RENAME("team.rename", "&6%1&a has renamed the team to &6%2"),
 
     INVITE("invite.player", "&6%1&b has invited you to join the team &6%2&b do &a/team join %2&b to join!"),
 
@@ -81,6 +81,8 @@ public enum Lang {
     PLAYER_LEAVE_TEAM("team.player-leave", "&6%1&c has left the team!"),
 
     LEFT_TEAM("team.leave", "&aYou have left the team!"),
+
+    TEAM_NAME_TOO_LONG("team.name-too-long", "&cTeam name too long! Max: &6: %1"),
 
     CANNOT_LEAVE_OWN_TEAM("team.cannot-leave-own-team", "&cYou cannot leave your own team!"),
 
