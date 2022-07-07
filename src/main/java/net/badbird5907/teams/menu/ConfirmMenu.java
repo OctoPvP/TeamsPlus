@@ -11,7 +11,6 @@ import net.badbird5907.blib.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -22,16 +21,6 @@ import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 public class ConfirmMenu extends Menu {
-    private final String action;
-
-    private final Consumer<Boolean> callback;
-
-    @Getter
-    @Setter
-    private boolean permanent = false;
-
-    private boolean done = false;
-
     private static final int[] PLACEHOLDERS;
 
     static {
@@ -42,6 +31,13 @@ public class ConfirmMenu extends Menu {
         });
         PLACEHOLDERS = a.stream().mapToInt(i -> i).toArray();
     }
+
+    private final String action;
+    private final Consumer<Boolean> callback;
+    @Getter
+    @Setter
+    private boolean permanent = false;
+    private boolean done = false;
 
     @Override
     public List<Button> getButtons(Player player) {
@@ -73,6 +69,7 @@ public class ConfirmMenu extends Menu {
             return PLACEHOLDERS;
         }
     }
+
     private class YesButton extends Button {
         @Override
         public ItemStack getItem(Player player) {
@@ -95,6 +92,7 @@ public class ConfirmMenu extends Menu {
             callback.accept(true);
         }
     }
+
     private class NoButton extends Button {
         @Override
         public ItemStack getItem(Player player) {

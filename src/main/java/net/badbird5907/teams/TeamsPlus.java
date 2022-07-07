@@ -13,7 +13,6 @@ import net.badbird5907.teams.listeners.CombatListener;
 import net.badbird5907.teams.listeners.MessageListener;
 import net.badbird5907.teams.listeners.SessionListener;
 import net.badbird5907.teams.manager.HookManager;
-import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.runnable.DataUpdateRunnable;
@@ -91,6 +90,16 @@ public final class TeamsPlus extends JavaPlugin {
 
         new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
+
+        /*
+        CommandManager.getCommander().getCommandMap().forEach((k,v)-> {
+            BukkitCommandWrapper wrapper = (BukkitCommandWrapper) v.getPlatformCommandObject();
+            System.out.println(wrapper.getName() + ":");
+            for (String alias : wrapper.getAliases()) {
+                System.out.println(" - " + alias);
+            }
+        });
+         */
     }
 
     @Override

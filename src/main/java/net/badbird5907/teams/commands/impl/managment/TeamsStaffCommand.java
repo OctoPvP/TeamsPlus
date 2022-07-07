@@ -17,11 +17,11 @@ public class TeamsStaffCommand {
     public void disband(@Sender CommandSender sender, Team target) {
         if (sender instanceof Player player) {
             if (target != null && player.hasPermission("teamsplus.staff.disband")) {
-                new ConfirmMenu("disband this team", (bool)-> {
+                new ConfirmMenu("disband this team", (bool) -> {
                     player.closeInventory();
                     if (bool) {
                         target.disband();
-                        player.sendMessage(Lang.STAFF_DISBAND_TEAM.toString(player.getName()));
+                        player.sendMessage(Lang.STAFF_DISBAND_TEAM.toString(target.getName()));
                     } else {
                         player.sendMessage(Lang.CANCELED.toString());
                     }
@@ -29,7 +29,7 @@ public class TeamsStaffCommand {
             }
         } else {
             target.disband();
-            sender.sendMessage(Lang.STAFF_DISBAND_TEAM.toString("Console"));
+            sender.sendMessage(Lang.STAFF_DISBAND_TEAM.toString(target.getName()));
         }
     }
 }

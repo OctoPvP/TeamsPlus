@@ -2,7 +2,9 @@ name: TeamsPlus
 version: ${version}
 main: net.badbird5907.teams.TeamsPlus
 api-version: 1.17
-softdepend: [ AntiCombatLog ]
+softdepend:
+  - AntiCombatLog
+  - Vault
 authors: [ Badbird5907 ]
 description: Teams plugin
 permissions:

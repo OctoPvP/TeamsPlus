@@ -31,6 +31,8 @@ public class PlayerData {
      */
     private Map<UUID, Integer> pendingInvites = new HashMap<>();
 
+    private UUID allyChatTeamId = null;
+
     public PlayerData(UUID uuid) {
         this.uuid = uuid;
         //this.name = Bukkit.getOfflinePlayer(uuid).getName();
@@ -73,14 +75,21 @@ public class PlayerData {
     }
 
     public void update() {
-        pendingInvites.forEach((teamid, timeleft) -> {
-            pendingInvites.remove(teamid, timeleft);
-            if (timeleft == 0) {
-                Bukkit.getPlayer(uuid).sendMessage(Lang.INVITE_EXPIRED.toString(TeamsPlus.getInstance().getTeamsManager().getTeamById(teamid).getName()));
+        Iterator<Map.Entry<UUID, Integer>> iterator = pendingInvites.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Integer> entry = iterator.next();
+            iterator.remove();
+            if (entry.getValue() == 0) {
+                Team team = TeamsPlus.getInstance().getTeamsManager().getTeamById(entry.getKey());
+                if (team == null) return;
+                Bukkit.getPlayer(uuid).sendMessage(
+                        Lang.INVITE_EXPIRED.toString(
+                                team.getName()
+                        ));
                 return;
             }
-            pendingInvites.put(teamid, timeleft - 1);
-        });
+            pendingInvites.put(entry.getKey(), entry.getValue() - 1);
+        }
         updateAllyRequests();
     }
 

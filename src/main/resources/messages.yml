@@ -1,4 +1,4 @@
-prefix: '&7[&aTeams+&7]&r'
+prefix: '&7[&bTeams+&7]&r'
 created-team: '%prefix% &aSuccessfully created team &6%1'
 team-already-exists: '%prefix% &cThat team already exists!'
 team-does-not-exist: '%prefix% &cThat team does not exist!'
@@ -9,10 +9,15 @@ cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!
 no-permission: '%prefix% &cYou do not have permission to do that!'
 canceled: '%prefix% &cCanceled!'
 chat:
-  format-team: '&7[&aTeam&7] &a%1 &7(%2) &r: %3' # %1 = Player name | %2 = Team name | %3 = Message
-  format-ally: '&7[&dAlly&7] &a%1 &7(%2) &r: %3'
-  format-global-inteam: '%1[%2] %3&r: %4' # %1 - color (green if team, blue if neutral, purple if ally, red if enemy) | %2 - team name | %3 player | %4 - message
-  format-global-noteam: '%1%2: %4' # %1 - color (green if themself, blue if neutral, purple if ally, red if enemy) | %2 - name | %3 - message
+  format-team: '&7[&aTeam&7] &a%1 &r: %2' # %1 = Player name | %2 = Message
+  format-ally: '&7[&dAlly&7] &a%1 &7(%2) &r: %3' # %1 = Player name | %2 = Team name | %3 = Message
+  format-global-inteam: '%1[%2] %3&r&7:&f %4' # %1 - color (green if team, blue if neutral, purple if ally, red if enemy) | %2 - team name | %3 player | %4 - message
+  format-global-noteam: '%1%2&7:&f %3' # %1 - color (green if themself, blue if neutral, purple if ally, red if enemy) | %2 - name | %3 - message
+  switch:
+    team: '&aSwitched to team chat!'
+    ally: '&aSwitched to ally chat!'
+    global: '&aSwitched to global chat!'
+    cannot-ally-chat-self: '&aYou cannot ally chat with your own team!'
 team:
   temp-pvp-enable: '&6%1&a has enabled temp-pvp for &b%2&a seconds!'
   player-leave: '&3%1&b has left the team!'
@@ -20,6 +25,8 @@ team:
   cannot-leave-own-team: '&cYou cannot leave your own team!'
   disband: '&cYour team ''%1'' has been disbanded!'
   player-not-in-team: '&cThis player is not in a team!'
+  not-allied-with-team: '&cYou are not allied with that team!'
+  cannot-invite-self: '&cYou cannot invite yourself!'
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'
@@ -31,7 +38,7 @@ team-info:
   offline-member-entry: '&c%1'
   member-entry-separator: '&7, '
   allies-team-entry: '&b%1'
-  enemied-team-entry: ' &b%1 '
+  enemies-team-entry: '&c%1 '
   enemies-list: '&8[&a%1&8] %2'
   allies-list: '&8[&a%1&8] %2'
   members-list: '&8[&f%1&7/&f%2&8] %3'
@@ -56,15 +63,17 @@ enemy:
   team-enemy-team: '&cYou are now enemies with the team &6%1&c!'
 
 ally:
-  ally-success: '&bYou are now allied with the team &3%1'
-  team-ally-team-ask: '&6%1&b would like to ally with your team. Do &a/team ally %1&b to accept!'
+  ally-success: '&aYou are now allied with the team &6%1'
+  team-ally-team-ask: '&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!'
   sent-request: '&aSent a request to &6%1&a to ally with your team!'
   ally-request-deny-timeout: '&c%1 took too long to answer your ally request!'
   already-sent-request: '&cYou already sent %1 an ally request!'
   cannot-ally-self: '&cYou already sent %1 an ally request!'
+  already-allies: '&cYou are already allied with &6%1&c!'
 
 neutral:
-  team-neutral-team: '&bYou are now neutral with the team &3%1'
+  team-neutral-team: '&aYou are now neutral with the team &6%1'
+  already-neutral: '&cYou are already neutral with &6%1&c!'
 
 pvp:
   team-disallow: '&cYou can''t damage &6%1&c because you''re in the same team as them!'

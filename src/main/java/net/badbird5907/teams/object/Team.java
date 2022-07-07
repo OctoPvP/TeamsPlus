@@ -3,7 +3,6 @@ package net.badbird5907.teams.object;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.command.Sender;
-import net.badbird5907.blib.objects.maps.pair.HashPairMap;
 import net.badbird5907.blib.objects.tuple.Pair;
 import net.badbird5907.blib.util.StoredLocation;
 import net.badbird5907.teams.TeamsPlus;
@@ -22,13 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Team {
     private final UUID teamId = UUID.randomUUID();
     private String name;
-    private Map<UUID, TeamRank> members = new HashMap<>();
+    private Map<UUID, TeamRank> members = new ConcurrentHashMap<>();
     private UUID owner;
     private TeamSettings settings = new TeamSettings();
-    private HashPairMap<UUID, EnemyLevel, String> enemiedTeams = new HashPairMap<>();
-    private Map<UUID, String> alliedTeams = new HashMap<>();
+    private Map<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
+    private Map<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
-    private Map<String, StoredLocation> waypoints = new HashMap<>();
+    private Map<String, StoredLocation> waypoints = new ConcurrentHashMap<>();
     private transient Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
     /**
@@ -111,14 +110,25 @@ public class Team {
         return data.isInTeam() && UUIDUtil.contains(enemiedTeams, data.getPlayerTeam().getTeamId());
     }
 
+    public boolean isEnemy(Team team) {
+        return UUIDUtil.contains(enemiedTeams, team.getTeamId());
+    }
+
     public boolean isAlly(PlayerData data) {
         return data.getPlayerTeam() != null && UUIDUtil.contains(data.getPlayerTeam().getAlliedTeams(), this.teamId);
         //return alliedPlayers.contains(data.getUuid()) || (data.isInTeam() && alliedPlayers.contains(data.getPlayerTeam().getTeamId()));
     }
 
+    public boolean isAlly(Team otherTeam) {
+        return UUIDUtil.contains(alliedTeams, otherTeam.getTeamId());
+    }
+
     public void join(PlayerData data) {
         members.put(data.getUuid(), TeamRank.MEMBER);
+        data.setTeamId(getTeamId());
         broadcast(Lang.TEAM_JOINED.toString(data.getName()));
+        save();
+        data.save();
     }
 
     public void neutralTeam(UUID uuid) {
@@ -130,9 +140,9 @@ public class Team {
 
     public void neutralTeam(Team team, boolean... broadcast) {
         UUID uuid = team.getTeamId();
-        UUIDUtil.remove(alliedTeams, uuid);
-        UUIDUtil.remove(team.getEnemiedTeams(), teamId);
-        UUIDUtil.remove(team.getAlliedTeams(), teamId);
+        alliedTeams.remove(uuid);
+        team.getEnemiedTeams().remove(teamId);
+        team.getAlliedTeams().remove(teamId);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
             team.broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(this.name));
             broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(name));
@@ -186,11 +196,22 @@ public class Team {
     }
 
     public void allyTeam(Team otherTeam, boolean... broadcast) {
+        neutralTeam(otherTeam, false);
         alliedTeams.put(otherTeam.getTeamId(), otherTeam.getName());
         otherTeam.alliedTeams.put(this.teamId, this.name);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
             broadcast(Lang.ALLY_SUCCESS.toString(otherTeam.getName()));
             otherTeam.broadcast(Lang.ALLY_SUCCESS.toString(this.name));
+        }
+    }
+
+    public void enemyTeam(Team otherTeam, boolean... broadcast) {
+        neutralTeam(otherTeam, false);
+        enemiedTeams.put(otherTeam.getTeamId(), otherTeam.getName());
+        otherTeam.enemiedTeams.put(this.teamId, this.name);
+        if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
+            broadcast(Lang.TEAM_ENEMY_TEAM.toString(otherTeam.getName()));
+            otherTeam.broadcast(Lang.TEAM_ENEMY_TEAM.toString(this.name));
         }
     }
 
@@ -205,6 +226,18 @@ public class Team {
             return true;
         });
         owner = null;
+        Iterator<Map.Entry<UUID, String>> iterator1 = enemiedTeams.entrySet().iterator();
+        while (iterator1.hasNext()) {
+            Team team = TeamsManager.getInstance().getTeamById(iterator1.next().getKey());
+            if (team != null) team.getEnemiedTeams().remove(teamId);
+            iterator1.remove();
+        }
+        Iterator<Map.Entry<UUID, String>> iterator2 = alliedTeams.entrySet().iterator();
+        while (iterator2.hasNext()) {
+            Team team = TeamsManager.getInstance().getTeamById(iterator2.next().getKey());
+            if (team != null) team.getAlliedTeams().remove(teamId);
+            iterator2.remove();
+        }
         TeamsManager.getInstance().removeTeam(this); // We'll let java gc handle this
     }
 }

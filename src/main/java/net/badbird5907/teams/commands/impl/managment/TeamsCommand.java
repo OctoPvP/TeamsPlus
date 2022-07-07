@@ -1,10 +1,12 @@
 package net.badbird5907.teams.commands.impl.managment;
 
+import com.google.common.collect.Lists;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.PlayerUtil;
 import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.commands.CommandManager;
 import net.badbird5907.teams.hooks.Hook;
 import net.badbird5907.teams.hooks.impl.VanishHook;
 import net.badbird5907.teams.manager.HookManager;
@@ -16,17 +18,17 @@ import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.object.TeamRank;
 import net.badbird5907.teams.util.Permissions;
-import net.badbird5907.teams.util.UUIDUtil;
+import net.octopvp.commander.annotation.Optional;
 import net.octopvp.commander.annotation.*;
+import net.octopvp.commander.bukkit.BukkitCommandSender;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
+import net.octopvp.commander.sender.CoreCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Command(name = "teams", aliases = {"teamsplus", "team"}, description = "Main TeamsPlus command")
@@ -42,7 +44,7 @@ public class TeamsCommand {
         String enemies;
         if (targetTeam.getSettings().isShowEnemies()) {
             StringBuilder sb = new StringBuilder();
-            targetTeam.getEnemiedTeams().forEach((uuid, level, name) -> sb.append(Lang.TEAM_INFO_ENEMIED_TEAM_ENTRY.toString(name)));
+            targetTeam.getEnemiedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ENEMIES_TEAM_ENTRY.toString(name)));
             enemies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ENEMIES_LIST.toString((targetTeam.getEnemiedTeams().size()), sb.toString()));
         } else {
             enemies = CC.GREEN + targetTeam.getEnemiedTeams().size();
@@ -66,7 +68,7 @@ public class TeamsCommand {
             if (player != null && !VanishHook.isVanished(player)) {
                 membersOnline.getAndIncrement();
                 sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
-            } else{
+            } else {
                 sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
             }
         }
@@ -75,17 +77,31 @@ public class TeamsCommand {
         sender.sendMessage(CC.translate(message));
     }
 
+    @Command(name = "reload", description = "Reload the configuration files")
+    @Permission(Permissions.RELOAD)
+    public void reload(@Sender Player sender) {
+        sender.sendMessage(CC.GREEN + "Reloading configuration files...");
+        long start = System.currentTimeMillis();
+        TeamsPlus.getInstance().reloadConfig();
+        TeamsPlus.reloadLang();
+        for (Hook hook : HookManager.getHooks()) {
+            hook.reload();
+        }
+        sender.sendMessage(CC.GREEN + "Configuration files reloaded in " + CC.GOLD + (System.currentTimeMillis() - start) + CC.GREEN + "ms");
+    }
+
     @Command(name = "plugininfo", description = "TeamsPlus Info")
     public void plugininfo(@Sender CommandSender sender) {
         sender.sendMessage(CC.GREEN + "TeamsPlus V." + TeamsPlus.getInstance().getDescription().getVersion());
         sender.sendMessage(CC.AQUA + "For help, do /teamsplus help");
+
     }
 
     @Command(name = "invite", description = "Invite a player to your team", usage = "<player>")
     @Cooldown(1)
     @PlayerOnly
     public void invite(@Sender Player sender, PlayerData targetData) {
-        Team senderTeam = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(sender.getPlayer().getUniqueId());
+        Team senderTeam = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(sender.getUniqueId());
         if (senderTeam == null) {
             sender.sendMessage(Lang.MUST_BE_IN_TEAM.toString());
             return;
@@ -94,35 +110,15 @@ public class TeamsCommand {
             sender.sendMessage(Lang.PLAYER_NOT_FOUND.toString());
             return;
         }
+        if (targetData.getUuid().equals(sender.getUniqueId())) {
+            sender.sendMessage(Lang.CANNOT_INVITE_SELF.toString());
+            return;
+        }
         if (targetData.getPendingInvites().containsKey(senderTeam.getTeamId())) {
             sender.sendMessage(Lang.INVITE_ALREADY_SENT.toString(targetData.getName()));
         } else {
             targetData.invite(senderTeam, sender.getName());
         }
-    }
-
-    @Command(name = "ally", description = "Ally a team")
-    @PlayerOnly
-    @Cooldown(10)
-    public void ally(@Sender PlayerData sender, Team team) {
-        Team selfTeam = sender.getPlayerTeam();
-        if (selfTeam == null) {
-            sender.sendMessage(Lang.MUST_BE_IN_TEAM.toString());
-            return;
-        }
-        if (selfTeam == team) {
-            sender.sendMessage(Lang.CANNOT_ALLY_SELF.toString());
-            return;
-        }
-        if (team == null) {
-            sender.sendMessage(Lang.TEAM_DOES_NOT_EXIST.toString());
-            return;
-        }
-        if (UUIDUtil.contains(team.getAllyRequests(), selfTeam.getTeamId())) {
-            sender.sendMessage(Lang.ALREADY_SENT_ALLY_REQUEST.toString(team.getName()));
-            return;
-        }
-        selfTeam.requestToAllyAnotherTeam(team);
     }
 
     @Command(name = "rename", description = "Rename your team")
@@ -166,6 +162,29 @@ public class TeamsCommand {
         }
     }
 
+    /*
+    @Completer(name = "join", index = 0)
+    public List<String> completer(@Sender CoreCommandSender s, String input, String lastArg) {
+        BukkitCommandSender sender = (BukkitCommandSender) s;
+        if (sender.isPlayer()) {
+            PlayerData data = PlayerManager.getData(sender.getPlayer());
+            if (data != null) {
+                List<String> toReturn = new ArrayList<>();
+                data.getPendingInvites().forEach((k, v) -> {
+                    Team team = TeamsManager.getInstance().getTeamById(k);
+                    if (team != null) {
+                        toReturn.add(team.getName());
+                    }
+                });
+                return toReturn;
+            }
+        }
+        return Lists.newArrayList();
+        //return CommandManager.getCommander().getArgumentProviders().get(Team.class).provideSuggestions(input, lastArg, s);
+    }
+     */
+
+
     @Command(name = "create", description = "Create a new team")
     public void create(@Sender Player sender, String name) {
         PlayerData playerData = PlayerManager.getPlayers().get(sender.getUniqueId());
@@ -181,7 +200,7 @@ public class TeamsCommand {
             sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.toString());
             return;
         }
-        Team team = new Team(name, sender.getPlayer().getUniqueId());
+        Team team = new Team(name, sender.getUniqueId());
         playerData.setTeamId(team.getTeamId());
         Tasks.runAsync(() -> {
             team.save();
@@ -192,23 +211,11 @@ public class TeamsCommand {
         return;
     }
 
-    @Command(name = "reload", description = "Reload the configuration files")
-    @Permission(Permissions.RELOAD)
-    public void reload(@Sender Player sender) {
-        sender.sendMessage(CC.GREEN + "Reloading configuration files...");
-        long start = System.currentTimeMillis();
-        TeamsPlus.getInstance().reloadConfig();
-        TeamsPlus.reloadLang();
-        for (Hook hook : HookManager.getHooks()) {
-            hook.reload();
-        }
-        sender.sendMessage(CC.GREEN + "Configuration files reloaded in " + CC.GOLD + (System.currentTimeMillis() - start) + CC.GREEN + "ms");
-    }
 
     @Command(name = "info", aliases = "who", description = "Get information about a team, use -p to get information about a player's team")
     public void info(@Sender Player sender, @Optional String target, @Switch(value = "p", aliases = "player") boolean player) {
         if (target == null || target.isEmpty()) {
-            Team team = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(sender.getPlayer().getUniqueId());
+            Team team = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(sender.getUniqueId());
             if (team == null) {
                 sender.sendMessage(Lang.MUST_BE_IN_TEAM.toString());
                 return;

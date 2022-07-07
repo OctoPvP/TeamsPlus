@@ -55,7 +55,10 @@ public class FlatFileStorageHandler implements StorageHandler {
             datafile.getParentFile().mkdirs();
         }
         if (!datafile.exists()) {
-            return new PlayerData(player).onLoad();
+            PlayerData data = new PlayerData(player);
+            data.onLoad();
+            data.save();
+            return data;
         }
         return TeamsPlus.getGson().fromJson(FileUtils.readFileToString(datafile), PlayerData.class).onLoad();
     }

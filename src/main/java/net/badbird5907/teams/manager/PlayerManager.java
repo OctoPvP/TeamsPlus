@@ -5,6 +5,7 @@ import net.badbird5907.blib.command.Sender;
 import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.teams.object.PlayerData;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +17,15 @@ public class PlayerManager {
     private static final Map<UUID, PlayerData> players = new HashMap<>();
 
     public static void join(Player player) {
-        if (players.get(player.getUniqueId()) != null)
+        if (players.get(player.getUniqueId()) == null)
             return;
-        Tasks.runAsync(() -> {
-            PlayerData data = StorageManager.getStorageHandler().getData(player.getUniqueId());
-            players.put(player.getUniqueId(), data);
-            data.join(player);
-        });
+        PlayerData data = getData(player);
+        data.join(player);
+    }
+
+    public static void preJoin(AsyncPlayerPreLoginEvent event) {
+        PlayerData data = StorageManager.getStorageHandler().getData(event.getUniqueId());
+        players.put(event.getUniqueId(), data);
     }
 
     public static void leave(Player player) {
