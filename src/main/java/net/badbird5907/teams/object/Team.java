@@ -31,14 +31,9 @@ public class Team {
     private Map<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
     private Map<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
-    private Map<String, StoredLocation> waypoints = new ConcurrentHashMap<>();
+    private List<Waypoint> waypoints = new ArrayList<>();
     private transient Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
-    /**
-     * bool - player
-     */
-    private Pair<UUID, Boolean> currentAllyChat = new Pair<>(null, false);
-
 
     public Team(String name, UUID owner) {
         this.name = name;

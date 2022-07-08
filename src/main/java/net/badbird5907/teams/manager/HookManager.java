@@ -3,10 +3,7 @@ package net.badbird5907.teams.manager;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.Hook;
-import net.badbird5907.teams.hooks.impl.AntiCombatLogHook;
-import net.badbird5907.teams.hooks.impl.CoreProtectHook;
-import net.badbird5907.teams.hooks.impl.VanishHook;
-import net.badbird5907.teams.hooks.impl.VaultHook;
+import net.badbird5907.teams.hooks.impl.*;
 import org.bukkit.Bukkit;
 
 import java.util.HashSet;
@@ -17,7 +14,8 @@ public class HookManager {
             new AntiCombatLogHook(),
             new VanishHook(),
             new VaultHook(),
-            new CoreProtectHook()
+            new CoreProtectHook(),
+            new LunarClientHook()
     };
     private static final Set<Hook> set = new HashSet<>();
 

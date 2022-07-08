@@ -37,6 +37,24 @@ team:
     entry: '&7 - &a%1'
     footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
     invalid: '&cInvalid entry number! min: %1 max: %2'
+  waypoint:
+    item-lore:
+      - ''
+      - '&eClick to edit!'
+      - '&eShift-click to remove!'
+    filter:
+      name: '&aFilter'
+      lore:
+        - ''
+        - '&eClick to filter entries'
+    info:
+      name: '&eNote'
+      lore:
+        - ''
+        - '&eIt is recommended to use Lunar Client'
+        - '&eto view waypoints in-game!'
+        - '&aDownload @ lunarclient.com'
+
 team-info:
   online-member-entry: '&a%1'
   offline-member-entry: '&c%1'

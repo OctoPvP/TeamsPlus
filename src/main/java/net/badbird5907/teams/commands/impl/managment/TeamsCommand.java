@@ -294,4 +294,5 @@ public class TeamsCommand {
         }
         sender.sendMessage(finalPages.get(page));
     }
+
 }

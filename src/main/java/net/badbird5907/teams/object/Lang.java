@@ -148,12 +148,36 @@ public enum Lang {
     KICKED_FROM_TEAM("team.kicked-from-team", "&cYou have been kicked from the team for &6%1&c!"),
 
     PLAYER_KICKED("team.player-kicked", "&c%1 has been kicked from the team for &6%3&c by &6%2&c!"),
+
+    WAYPOINT_LORE("team.waypoint.item-lore", new String[]{
+            "",
+            "&eClick to edit!",
+            "&eShift-click to remove!"
+    }),
+
+    WAYPOINT_FILTER_NAME("team.waypoint.filter.name", "&aFilter"),
+
+    WAYPOINT_FILTER_LORE("team.waypoint.filter.lore", new String[]{
+            "",
+            "&eClick to filer entries",
+    }),
+
+    WAYPOINT_INFO_NAME("team.waypoint.info.name", "&aInfo"),
+
+    WAYPOINT_INFO_LORE("team.waypoint.info.lore", new String[]{
+            "",
+            "&eIt is recommended to use Lunar Client",
+            "&eto view waypoints in-game!",
+            "&aDownload @ lunarclient.com"
+    })
+
     ;
     @Getter
     private final String configPath;
     private final String finalMessage;
     @Getter
     private String def;
+    @Getter
     private List<String> messageList;
 
     Lang(String configPath, String def) {
