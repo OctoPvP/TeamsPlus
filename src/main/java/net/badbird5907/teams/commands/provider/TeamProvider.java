@@ -7,7 +7,7 @@ import net.badbird5907.teams.object.Team;
 import net.octopvp.commander.command.CommandContext;
 import net.octopvp.commander.command.CommandInfo;
 import net.octopvp.commander.command.ParameterInfo;
-import net.octopvp.commander.exception.CommandException;
+import net.octopvp.commander.exception.MessageException;
 import net.octopvp.commander.provider.Provider;
 import net.octopvp.commander.sender.CoreCommandSender;
 
@@ -20,7 +20,7 @@ public class TeamProvider implements Provider<Team> {
         if (CommandManager.getCommander().getPlatform().isSenderParameter(parameterInfo)) {
             Team team = TeamsManager.getInstance().getPlayerTeam(context.getCommandSender().getIdentifier());
             if (team == null && parameterInfo.isRequired()) {
-                throw new CommandException(Lang.MUST_BE_IN_TEAM.toString());
+                throw new MessageException(Lang.MUST_BE_IN_TEAM.toString());
             }
             return team;
         } else {
