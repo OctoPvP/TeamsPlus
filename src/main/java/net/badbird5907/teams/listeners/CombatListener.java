@@ -26,6 +26,9 @@ public class CombatListener implements Listener {
                         event.setCancelled(true);
                         attacker.sendMessage(Lang.TEAM_PVP_DISALLOW.toString(victim.getName()));
                     }
+                    case DISALLOW_OTHER -> {
+                        event.setCancelled(true);
+                    }
                     default -> {
                     }
                 }

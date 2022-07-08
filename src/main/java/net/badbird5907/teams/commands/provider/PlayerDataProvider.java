@@ -1,6 +1,7 @@
 package net.badbird5907.teams.commands.provider;
 
 import net.badbird5907.teams.commands.CommandManager;
+import net.badbird5907.teams.commands.annotation.AllowOffline;
 import net.badbird5907.teams.hooks.impl.VanishHook;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.object.PlayerData;
@@ -22,7 +23,12 @@ public class PlayerDataProvider implements Provider<PlayerData> {
             return PlayerManager.getData(context.getCommandSender().getIdentifier());
         } else {
             Player target = Bukkit.getPlayer(args.pop());
-            if (target == null || VanishHook.isVanished(target)) {
+            if (target == null) {
+                if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
+                    return PlayerManager.getDataLoadIfNeedTo(args.pop());
+                }
+            }
+            if (VanishHook.isVanished(target)) {
                 return null;
             }
             return PlayerManager.getData(target);

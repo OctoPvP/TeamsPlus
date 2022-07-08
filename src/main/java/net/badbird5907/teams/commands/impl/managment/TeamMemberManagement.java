@@ -1,6 +1,6 @@
 package net.badbird5907.teams.commands.impl.managment;
 
-import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.commands.annotation.AllowOffline;
 import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
@@ -12,11 +12,11 @@ import org.bukkit.entity.Player;
 
 @Command(name = "teams", aliases = {"teamsplus", "team"}, description = "Main TeamsPlus command")
 public class TeamMemberManagement {
-    @Command(name = "kick", description = "Kick a player from your team.", usage = "<player>")
+    @Command(name = "kick", description = "Kick a player from your team.")
     @Cooldown(10)
     @PlayerOnly
     @TeamPermission(TeamRank.MODERATOR)
-    public void kick(@Sender Player sender, @Sender PlayerData playerData, @Sender Team team, PlayerData targetData, @JoinStrings @Required String reason) {
+    public void kick(@Sender Player sender, @Sender PlayerData playerData, @Sender Team team, @Name("target") @AllowOffline PlayerData targetData, @JoinStrings @Required String reason) {
         if (team.isAtLeast(targetData.getUuid(), team.getRank(sender.getUniqueId()))) {
             sender.sendMessage(Lang.CANNOT_KICK_SAME_RANK_OR_HIGHER.toString());
             return;

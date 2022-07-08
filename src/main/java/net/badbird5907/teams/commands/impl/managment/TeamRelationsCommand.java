@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 @Command(name = "teams", aliases = {"teamsplus", "team"})
 @SecondaryParent
 public class TeamRelationsCommand {
+
     @Command(name = "enemy", description = "Enemy another team.")
     @Cooldown(10)
     @TeamPermission(TeamRank.ADMIN)

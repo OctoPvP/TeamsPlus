@@ -113,6 +113,11 @@ public class MongoStorageHandler implements StorageHandler {
         else teamsCollection.insertOne(Document.parse(json));
     }
 
+    @Override
+    public void removeTeam(Team team) {
+        teamsCollection.deleteOne(Filters.eq("teamId", team.getTeamId().toString()));
+    }
+
     public boolean doesTeamDocumentExist(UUID teamId) {
         return teamsCollection.find(Filters.eq("teamId", teamId.toString())).first() != null;
     }

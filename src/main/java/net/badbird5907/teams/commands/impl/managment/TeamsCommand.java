@@ -14,6 +14,7 @@ import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.menu.ConfirmMenu;
+import net.badbird5907.teams.menu.TestMenu;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
@@ -95,7 +96,7 @@ public class TeamsCommand {
     public void plugininfo(@Sender CommandSender sender) {
         sender.sendMessage(CC.GREEN + "TeamsPlus V." + TeamsPlus.getInstance().getDescription().getVersion());
         sender.sendMessage(CC.AQUA + "For help, do /teamsplus help");
-
+        new TestMenu().open((Player) sender);
     }
 
     @Command(name = "rename", description = "Rename your team")

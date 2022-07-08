@@ -43,4 +43,9 @@ public class SQLStorageHandler implements StorageHandler { //TODO
     public void saveTeam(Team team) {
 
     }
+
+    @Override
+    public void removeTeam(Team team) {
+
+    }
 }

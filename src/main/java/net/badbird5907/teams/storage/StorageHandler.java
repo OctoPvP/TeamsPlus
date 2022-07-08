@@ -25,4 +25,6 @@ public interface StorageHandler {
     void saveData(PlayerData playerData);
 
     void saveTeam(Team team);
+
+    void removeTeam(Team team);
 }

@@ -2,11 +2,22 @@ package net.badbird5907.teams.object;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.badbird5907.anticombatlog.AntiCombatLog;
+import net.badbird5907.anticombatlog.manager.NPCManager;
+import net.badbird5907.anticombatlog.object.CombatNPCTrait;
 import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.hooks.impl.AntiCombatLogHook;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.util.UUIDUtil;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -45,7 +56,26 @@ public class PlayerData {
 
 
     public PvPCheckResult canDamage(Player victim) {
-        if (isInSameTeamAs(victim.getUniqueId())) { //same team
+        UUID uuid = null;
+        if (victim.hasMetadata("NPC")) {
+            /*
+            AntiCombatLogHook inst = AntiCombatLogHook.getInstance();
+            if (inst != null) {
+                NPC npc = CitizensAPI.getNPCRegistry().getNPC(victim);
+                CombatNPCTrait trait = npc.getTrait(CombatNPCTrait.class);
+                UUID traitUUID = trait.getUuid();
+                if (traitUUID != null) {
+                    uuid = traitUUID;
+                } else return PvPCheckResult.DISALLOW_OTHER;
+            } else return PvPCheckResult.DISALLOW_OTHER;
+             */
+            return PvPCheckResult.ALLOWED; // Above would load data every time, would cause lag
+            //return PvPCheckResult.DISALLOW_OTHER;
+        }
+        if (uuid == null) {
+            uuid = victim.getUniqueId();
+        }
+        if (isInSameTeamAs(uuid)) { //same team
             Team team = TeamsManager.getInstance().getTeamById(this.teamId);
             if (!TeamsPlus.getInstance().getConfig().getBoolean("pvp.pvp-team")) { //team pvp is disabled
                 if (team.getTempPvPSeconds() > 0 && TeamsPlus.getInstance().getConfig().getBoolean("team.temp-pvp.enable"))
@@ -54,7 +84,7 @@ public class PlayerData {
                 return PvPCheckResult.DISALLOW_TEAM; //disallow pvp as theyre in the same team and team pvp is off
             }
         } else {
-            if (isAlly(victim)) {
+            if (isAlly(uuid)) {
                 return PvPCheckResult.DISALLOW_ALLY; //disallow pvp as ally
             }
         }
@@ -101,14 +131,30 @@ public class PlayerData {
     public void invite(Team team, String sender) {
         pendingInvites.put(team.getTeamId(), TeamsPlus.getInstance().getConfig().getInt("invite-seconds"));
         team.broadcast(Lang.INVITE_TEAM_MESSAGE.toString(sender, this.name));
-        sendMessage(Lang.INVITE.toString(sender, team.getName()));
+        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.INVITE.toString(sender, team.getName()))
+                .clickEvent(ClickEvent.runCommand("/team join " + team.getName()))
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        Lang.INVITE_HOVER.toString(team.getName()))));
+
+        sendMessage(message);
     }
 
+    public void sendMessage(Component component, boolean... offline) {
+        if (Bukkit.getPlayer(uuid) != null) {
+            Bukkit.getPlayer(uuid).sendMessage(component);
+        } else {
+            if (offline != null && offline.length >= 1 && offline[0]) {
+                pendingMessages.add(TeamsPlus.getInstance().getMiniMessage().serialize(component));
+            }
+        }
+    }
     public void sendMessage(String s, boolean... offline) {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).sendMessage(s);
         } else {
             if (offline != null && offline.length >= 1 && offline[0]) {
+                s = s.replace("<", "\\<")
+                        .replace(">", "\\>"); // makeshift escape for < and >, because we use minimessage
                 pendingMessages.add(s);
             }
         }
@@ -119,9 +165,20 @@ public class PlayerData {
             if (currentChannel == ChatChannel.TEAM)
                 currentChannel = ChatChannel.GLOBAL;
         }
-        for (String pendingMessage : pendingMessages) {
-            player.sendMessage(pendingMessage); //TODO use Queue
-            pendingMessages.remove(pendingMessage);
+
+        Iterator<String> iterator = pendingMessages.iterator();
+        while (iterator.hasNext()) {
+            Component component = TeamsPlus.getInstance().getMiniMessage().deserialize(iterator.next())
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("\\<")
+                            .replacement("<")
+                            .build())
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("\\>")
+                            .replacement(">")
+                            .build());
+            player.sendMessage(component); //TODO use Queue
+            iterator.remove();
         }
     }
 
@@ -153,8 +210,8 @@ public class PlayerData {
          */
     }
 
-    public boolean isAlly(Player player) {
-        PlayerData targetData = PlayerManager.getData(player);
+    public boolean isAlly(UUID uuid) {
+        PlayerData targetData = PlayerManager.getDataLoadIfNeedTo(uuid);
         Team targetTeam = targetData.getPlayerTeam();
         Team playerTeam = getPlayerTeam();
 
@@ -162,6 +219,9 @@ public class PlayerData {
             return false;
         }
         return targetTeam.isAlly(this) || playerTeam.isAlly(targetData);
+    }
+    public boolean isAlly(Player player) {
+        return isAlly(player.getUniqueId());
         /*
         //this data enemy, target enemy player, target enemy team,
         PlayerData targetData = PlayerManager.getData(player);

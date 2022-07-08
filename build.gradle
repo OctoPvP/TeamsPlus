@@ -18,15 +18,19 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-    maven {
-        name = 'lunarclient-public'
-        url = 'https://maven.moonsworth.com/repository/lunarclient-public/'
-    }
+    //maven {
+     //   name = 'lunarclient-public'
+     //   url = 'https://maven.moonsworth.com/repository/lunarclient-public/'
+    //}
     maven {
         name = 'playpro-repo'
         url = 'https://maven.playpro.com'
     }
     maven { url 'https://jitpack.io' }
+    maven {
+        name = 'everything'
+        url = 'https://repo.citizensnpcs.co/'
+    }
 }
 
 dependencies {
@@ -38,13 +42,15 @@ dependencies {
 
     implementation 'org.mongodb:mongodb-driver-sync:4.2.2'
 
-    compileOnly 'net.badbird5907:AntiCombatLog:2.1.1'
+    compileOnly 'net.badbird5907:AntiCombatLog:2.2.6'
 
     compileOnly files('./run/plugins/bukkitapi.jar')
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 
     compileOnly 'net.coreprotect:coreprotect:21.0'
+
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT'
 }
 
 def targetJavaVersion = 17

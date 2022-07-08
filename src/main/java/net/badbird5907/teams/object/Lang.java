@@ -68,6 +68,8 @@ public enum Lang {
 
     INVITE("invite.player", "&6%1&b has invited you to join the team &6%2&b do &a/team join %2&b to join!"),
 
+    INVITE_HOVER("invite.hover", "&aClick to join &6%1"),
+
     INVITE_TEAM_MESSAGE("invite.team", "&aYour invite to &6%1&a has expired."),
 
     INVITE_EXPIRED("invite.expired", "&aYour invite to &6%1&a has expired."),
@@ -145,7 +147,7 @@ public enum Lang {
 
     KICKED_FROM_TEAM("team.kicked-from-team", "&cYou have been kicked from the team for &6%1&c!"),
 
-    PLAYER_KICKED("team.player-kicked", "&c%1 has been kicked from the team for &6%2&c by &6%2&c!"),
+    PLAYER_KICKED("team.player-kicked", "&c%1 has been kicked from the team for &6%3&c by &6%2&c!"),
     ;
     @Getter
     private final String configPath;

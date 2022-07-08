@@ -1,5 +1,6 @@
 package net.badbird5907.teams.hooks.impl;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.anticombatlog.api.events.CombatTagEvent;
 import net.badbird5907.teams.TeamsPlus;
@@ -15,18 +16,24 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class AntiCombatLogHook extends Hook implements Listener {
+    @Getter
+    private static AntiCombatLogHook instance;
+
     private static YamlConfiguration antiCombatLogConfig;
 
     public AntiCombatLogHook() {
         super("AntiCombatLog");
     }
 
+
     @SneakyThrows
     @Override
     public void init(TeamsPlus plugin) {
+        instance = new AntiCombatLogHook();
         reload();
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
+
     }
 
     @SneakyThrows

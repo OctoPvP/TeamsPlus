@@ -1,6 +1,7 @@
 package net.badbird5907.teams.manager;
 
 import lombok.Getter;
+import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.storage.StorageHandler;
@@ -54,7 +55,14 @@ public class TeamsManager {
     }
 
     public void removeTeam(Team team) {
+        for (Team team1 : teams) {
+            Logger.debug("1 - " + team1.getName());
+        }
         teams.remove(team);
-        saveTeams(StorageManager.getStorageHandler());
+        StorageManager.getStorageHandler().removeTeam(team);
+        for (Team team1 : teams) {
+            Logger.debug("2 - " + team1.getName());
+        }
+        //saveTeams(StorageManager.getStorageHandler());
     }
 }

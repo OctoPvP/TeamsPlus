@@ -241,13 +241,17 @@ public class Team {
     public void disband() {
         String message = Lang.TEAM_DISBANDED.toString(this.name);
         members.entrySet().removeIf((entry) -> {
-            PlayerData playerData = PlayerManager.getData(entry.getKey());
+            PlayerData playerData = PlayerManager.getDataLoadIfNeedTo(entry.getKey());
             if (playerData != null) {
                 playerData.sendMessage(message, true);
                 playerData.setTeamId(null);
+                playerData.save();
             }
             return true;
         });
+        PlayerData data = PlayerManager.getDataLoadIfNeedTo(owner);
+        data.setTeamId(null);
+        data.save();
         owner = null;
         Iterator<Map.Entry<UUID, String>> iterator1 = enemiedTeams.entrySet().iterator();
         while (iterator1.hasNext()) {
@@ -262,6 +266,7 @@ public class Team {
             iterator2.remove();
         }
         TeamsManager.getInstance().removeTeam(this); // We'll let java gc handle this
+        //save();
     }
 
     public boolean isAtLeast(Player player, TeamRank rank) {
@@ -286,7 +291,7 @@ public class Team {
         target.sendMessage(Lang.KICKED_FROM_TEAM.toString(reason), true);
         target.save();
 
-        broadcast(Lang.PLAYER_KICKED.toString(reason, sender.getName()), true);
+        broadcast(Lang.PLAYER_KICKED.toString(target.getName(), sender.getName(), reason), true);
         save();
     }
 }

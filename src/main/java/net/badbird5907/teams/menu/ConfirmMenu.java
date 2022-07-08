@@ -8,9 +8,11 @@ import net.badbird5907.blib.menu.buttons.PlaceholderButton;
 import net.badbird5907.blib.menu.menu.Menu;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.ItemBuilder;
+import net.badbird5907.blib.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -41,12 +43,12 @@ public class ConfirmMenu extends Menu {
 
     @Override
     public List<Button> getButtons(Player player) {
-        return Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 new YesButton(),
                 new NoButton(),
                 new InfoButton(),
                 new Placeholders()
-        );
+        ));
     }
 
     @Override
@@ -84,8 +86,10 @@ public class ConfirmMenu extends Menu {
         }
 
         @Override
-        public void onClick(Player player, int slot, ClickType clickType) {
+        public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
+            Logger.info("Yes button clicked");
             if (done) {
+                Logger.debug("Done");
                 return;
             }
             done = true;
@@ -107,7 +111,8 @@ public class ConfirmMenu extends Menu {
         }
 
         @Override
-        public void onClick(Player player, int slot, ClickType clickType) {
+        public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
+            Logger.info("No button clicked");
             if (done) return;
             done = true;
             callback.accept(false);

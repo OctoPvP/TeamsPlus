@@ -106,4 +106,18 @@ public class FlatFileStorageHandler implements StorageHandler {
         ps.print(TeamsPlus.getGson().toJson(team));
         ps.close();
     }
+
+    @Override
+    public void removeTeam(Team team) {
+        try {
+            File teamFile = new File(TeamsPlus.getInstance().getDataFolder() + "/teams/" + team.getTeamId() + ".json");
+            Logger.debug("[1] Removing team " + team.getTeamId());
+            if (teamFile.exists()) {
+                Logger.debug("Removing team " + team.getTeamId());
+                Logger.debug("Success: %1", teamFile.delete());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

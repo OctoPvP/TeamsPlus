@@ -30,7 +30,7 @@ team:
   cannot-invite-self: '&cYou cannot invite yourself!'
   name-too-long: '&cTeam name too long! Max:&6 %1'
   kicked-from-team: '&cYou have been kicked from the team for &6%1&c!'
-  player-kicked: '&c%1 has been kicked from the team for &6%2&c by &6%2&c!'
+  player-kicked: '&c%1 has been kicked from the team for &6%3&c by &6%2&c!'
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'
@@ -62,6 +62,7 @@ invite:
   already-sent: '&cYou already have sent %1 a invite!'
   joined: '&a%1 has joined the team!'
   no-invite: '&cYou have no invite to %1!'
+  hover: '&aClick to join &6%1'
 
 enemy:
   team-enemy-team: '&cYou are now enemies with the team &6%1&c!'

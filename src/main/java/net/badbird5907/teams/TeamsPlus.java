@@ -16,6 +16,7 @@ import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.runnable.DataUpdateRunnable;
 import net.badbird5907.teams.util.Metrics;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -47,6 +48,9 @@ public final class TeamsPlus extends JavaPlugin {
     @Getter
     private TeamsManager teamsManager;
 
+    @Getter
+    private MiniMessage miniMessage;
+
     public static void reloadLang() {
         langFile = new YamlConfiguration();
         try {
@@ -65,6 +69,7 @@ public final class TeamsPlus extends JavaPlugin {
         Logger.info("Starting TeamsPlus v." + getDescription().getVersion());
         new Metrics(this, 12438);
         setupConfig();
+        miniMessage = MiniMessage.builder().build();
         //bLib.getCommandFramework().registerCommandsInPackage("net.badbird5907.teams.commands");
         CommandManager.init();
         Listener[] listeners = {new CombatListener(), new MessageListener(), new SessionListener()};
