@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class CombatListener implements Listener {
     @EventHandler
@@ -33,6 +34,15 @@ public class CombatListener implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        if (event.getEntity().getKiller() != null) {
+            PlayerData attackerData = PlayerManager.getData(event.getEntity().getKiller().getUniqueId());
+            if (attackerData != null)
+                attackerData.onKill(event.getEntity());
         }
     }
 }

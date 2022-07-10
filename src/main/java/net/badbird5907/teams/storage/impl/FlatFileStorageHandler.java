@@ -60,15 +60,20 @@ public class FlatFileStorageHandler implements StorageHandler {
             data.save();
             return data;
         }
-        return TeamsPlus.getGson().fromJson(FileUtils.readFileToString(datafile), PlayerData.class).onLoad();
+        return
+                TeamsPlus.getGson().fromJson(
+                        FileUtils.readFileToString(
+                                datafile),
+                        PlayerData.class)
+                        .onLoad();
     }
 
     @Override
     public PlayerData getData(String name) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(name);
-        if (op == null || !op.hasPlayedBefore())
-            return null;
         UUID uuid = op.getUniqueId();
+        File datafile = new File(TeamsPlus.getInstance().getDataFolder() + "/players/" + uuid + ".json");
+        if (!datafile.exists()) return null;
         return getData(uuid);
     }
 

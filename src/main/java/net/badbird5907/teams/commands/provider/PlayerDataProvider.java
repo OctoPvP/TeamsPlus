@@ -1,5 +1,6 @@
 package net.badbird5907.teams.commands.provider;
 
+import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.commands.CommandManager;
 import net.badbird5907.teams.commands.annotation.AllowOffline;
 import net.badbird5907.teams.hooks.impl.VanishHook;
@@ -19,26 +20,41 @@ import java.util.List;
 public class PlayerDataProvider implements Provider<PlayerData> {
     @Override
     public PlayerData provide(CommandContext context, CommandInfo commandInfo, ParameterInfo parameterInfo, Deque<String> args) {
-        if (parameterInfo.getCommander().getPlatform().isSenderParameter(parameterInfo)) {
-            return PlayerManager.getData(context.getCommandSender().getIdentifier());
-        } else {
-            Player target = Bukkit.getPlayer(args.pop());
-            if (target == null) {
-                if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
-                    return PlayerManager.getDataLoadIfNeedTo(args.pop());
+        try {
+            if (parameterInfo.getCommander().getPlatform().isSenderParameter(parameterInfo)) {
+                return PlayerManager.getData(context.getCommandSender().getIdentifier());
+            } else {
+                String s = args.pop();
+                Player target = Bukkit.getPlayer(s);
+                if (target == null) {
+                    if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
+                        return PlayerManager.getDataLoadIfNeedTo(s);
+                    }
                 }
+                if (VanishHook.isVanished(target)) {
+                    return null;
+                }
+                return PlayerManager.getData(target);
             }
-            if (VanishHook.isVanished(target)) {
-                return null;
-            }
-            return PlayerManager.getData(target);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public PlayerData provideDefault(CommandContext context, CommandInfo commandInfo, ParameterInfo parameterInfo, Deque<String> args) {
+        Player target = Bukkit.getPlayer(args.pop());
+        if (target == null) {
+            if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
+                return PlayerManager.getDataLoadIfNeedTo(args.pop());
+            }
+        }
+        return Provider.super.provideDefault(context, commandInfo, parameterInfo, args);
     }
 
     @Override
     public List<String> provideSuggestions(String input, String lastArg, CoreCommandSender sender) {
         return CommandManager.getCommander().getArgumentProviders().get(Player.class).provideSuggestions(input, lastArg, sender);
     }
-
-
 }

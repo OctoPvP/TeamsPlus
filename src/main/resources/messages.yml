@@ -178,6 +178,17 @@ neutral:
 pvp:
   team-disallow: '&cYou can''t damage &6%1&c because you''re in the same team as them!'
   ally-disallow: '&cYou can''t damage &6%1&c because you''re allied with them!'
+
+player-info:
+  not-in-team: '&cNone'
+  message:
+    - '&7&m-------------------------------------'
+    - '&bName: %1' # %1 - Player display name
+    - '&bTeam: %2' # %2 - Player team name
+    - '&bTeam Rank: %3' # %3 - Player team rank
+    - '&bKills: &e%4'
+    - '&7&m-------------------------------------'
+
+
 staff:
   disbanded-team: '&aSuccessfully disbanded %1.'
-

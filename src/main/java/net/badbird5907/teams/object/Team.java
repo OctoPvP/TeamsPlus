@@ -19,21 +19,22 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
 public class Team {
     private final UUID teamId = UUID.randomUUID();
     private String name;
-    private Map<UUID, TeamRank> members = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, TeamRank> members = new ConcurrentHashMap<>();
     private UUID owner;
 
     private TeamSettings settings = new TeamSettings();
-    private Map<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
-    private Map<UUID, String> alliedTeams = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
-    private List<Waypoint> waypoints = new ArrayList<>();
-    private transient Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
+    private CopyOnWriteArrayList<Waypoint> waypoints = new CopyOnWriteArrayList<>();
+    private transient ConcurrentHashMap<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
 
     public Team(String name, UUID owner) {

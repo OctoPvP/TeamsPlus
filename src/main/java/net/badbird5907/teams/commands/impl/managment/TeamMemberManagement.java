@@ -9,6 +9,8 @@ import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.object.TeamRank;
+import net.badbird5907.teams.util.Utils;
+import net.kyori.adventure.text.Component;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
 import org.bukkit.entity.Player;
@@ -43,7 +45,7 @@ public class TeamMemberManagement {
     @PlayerOnly
     @Cooldown(1)
     @TeamPermission(TeamRank.ADMIN)
-    public void promote(@Sender Player sender, @Sender PlayerData senderData, @Sender @Required Team team, @AllowOffline PlayerData target) {
+    public void promote(@Sender Player sender, @Sender PlayerData senderData, @Sender @Required Team team, @AllowOffline @Required PlayerData target) {
         if (sender.getUniqueId().equals(target.getUuid())) {
             sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_SELF.toString());
             return;
@@ -55,7 +57,7 @@ public class TeamMemberManagement {
     @PlayerOnly
     @Cooldown(1)
     @TeamPermission(TeamRank.ADMIN)
-    public void demote(@Sender Player sender, @Sender PlayerData senderData, @Sender @Required Team team, @AllowOffline PlayerData target) {
+    public void demote(@Sender Player sender, @Sender PlayerData senderData, @Sender @Required Team team, @AllowOffline @Required PlayerData target) {
         if (sender.getUniqueId().equals(target.getUuid())) {
             sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_SELF.toString());
             return;
@@ -63,7 +65,19 @@ public class TeamMemberManagement {
         team.demote(target, senderData);
     }
 
-    //TODO: demote
+    @Command(name = "pinfo", aliases = "playerinfo", description = "View player's team info")
+    @PlayerOnly
+    public void pInfo(@Sender Player sender, @AllowOffline PlayerData target) {
+        Team team = target.getPlayerTeam();
+        boolean inTeam = team != null;
+        Component component = Lang.PLAYER_INFO.getComponent(
+                sender.displayName(),
+                (inTeam ? team.getName() : Lang.PLAYER_NOT_IN_TEAM.toString()),
+                (inTeam ? Utils.enumToString(team.getRank(target.getUuid())) : Lang.PLAYER_NOT_IN_TEAM.toString()),
+                (target.getKills())
+        );
+        sender.sendMessage(component);
+    }
 
     @Command(name = "kick", description = "Kick a player from your team.")
     @Cooldown(10)

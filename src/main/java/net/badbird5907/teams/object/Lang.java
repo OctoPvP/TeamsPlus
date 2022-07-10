@@ -4,6 +4,10 @@ import lombok.Getter;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -284,6 +288,17 @@ public enum Lang {
     TEAM_DEMOTE_BROADCAST("team.demote.broadcast", "&6%1&a has demoted &6%2&a to %3."),
 
     TEAM_CANNOT_DEMOTE_LOWER("team.demote.failed.cannot-demote-lower", "&cYou cannot demote that player any lower than recruit!"),
+
+    PLAYER_INFO("player-info.message", new String[]{
+            "&7&m-------------------------------------",
+            "&bName: %1",
+            "&bTeam: %2",
+            "&bTeam Rank: %3",
+            "&bKills: &e%4",
+            "&7&m-------------------------------------"
+    }),
+
+    PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone")
     ;
     @Getter
     private final String configPath;
@@ -331,5 +346,24 @@ public enum Lang {
     public String toString() {
         return CC.translate(finalMessage.replace("%prefix%", PREFIX.getRaw() //stack overflow error
         ).replace("%separator%", CC.SEPARATOR));
+    }
+
+    public Component getComponent(Object... placeholders) {
+        Component component = LegacyComponentSerializer.legacyAmpersand().deserialize(toString());
+        for (int i = 0; i < placeholders.length; i++) {
+            TextReplacementConfig.Builder b =  TextReplacementConfig.builder()
+                    .matchLiteral(("%" + (i + 1)));
+            Object o = placeholders[i];
+            if (o instanceof String str) {
+                b.replacement(LegacyComponentSerializer.legacyAmpersand().deserialize(str));
+            }
+            if (o instanceof ComponentLike cl) {
+                b.replacement(cl);
+            }
+            component = component.replaceText(
+                    b.build()
+            );
+        }
+        return component;
     }
 }

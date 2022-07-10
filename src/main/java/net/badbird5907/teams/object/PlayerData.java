@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
@@ -24,18 +25,20 @@ public class PlayerData {
     private String name;
     private UUID teamId = null; //no team by default
 
-    private List<String> pendingMessages = new ArrayList<>();
+    private CopyOnWriteArrayList<String> pendingMessages = new CopyOnWriteArrayList<>();
 
     private ChatChannel currentChannel = ChatChannel.GLOBAL;
 
-    private Map<UUID, Long> allyRequests = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Long> allyRequests = new ConcurrentHashMap<>();
 
     /**
      * teamid | seconds
      */
-    private Map<UUID, Integer> pendingInvites = new HashMap<>();
+    private ConcurrentHashMap<UUID, Integer> pendingInvites = new ConcurrentHashMap<>();
 
     private UUID allyChatTeamId = null;
+
+    private int kills = 0;
 
     public PlayerData(UUID uuid) {
         this.uuid = uuid;
@@ -151,6 +154,8 @@ public class PlayerData {
             if (offline != null && offline.length >= 1 && offline[0]) {
                 s = s.replace("<", "\\<")
                         .replace(">", "\\>"); // makeshift escape for < and >, because we use minimessage
+
+                s = TeamsPlus.getInstance().getMiniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(s));
                 pendingMessages.add(s);
                 save();
             }
@@ -163,9 +168,8 @@ public class PlayerData {
                 currentChannel = ChatChannel.GLOBAL;
         }
 
-        Iterator<String> iterator = pendingMessages.iterator();
-        while (iterator.hasNext()) {
-            Component component = TeamsPlus.getInstance().getMiniMessage().deserialize(iterator.next())
+        for (String s : pendingMessages) {
+            Component component = TeamsPlus.getInstance().getMiniMessage().deserialize(s)
                     .replaceText(TextReplacementConfig.builder()
                             .matchLiteral("\\<")
                             .replacement("<")
@@ -175,8 +179,9 @@ public class PlayerData {
                             .replacement(">")
                             .build());
             player.sendMessage(component); //TODO use Queue
-            iterator.remove();
         }
+        pendingMessages = new CopyOnWriteArrayList<>();
+        save();
     }
 
     public Team getPlayerTeam() {
@@ -288,5 +293,9 @@ public class PlayerData {
                 }
             }
         }
+    }
+
+    public void onKill(Player player) {
+        kills += 1;
     }
 }

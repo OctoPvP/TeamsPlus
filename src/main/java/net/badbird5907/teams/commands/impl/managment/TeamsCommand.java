@@ -55,8 +55,8 @@ public class TeamsCommand {
                         .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
             }
             allies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            Lang.TEAM_INFO_ALLIES_LIST.toString()
-                    )
+                    Lang.TEAM_INFO_ALLIES_LIST.getRaw()
+            )
                     .replaceText(TextReplacementConfig.builder()
                             .matchLiteral("%1")
                             .replacement(targetTeam.getAlliedTeams().size() + "").build())
@@ -79,8 +79,8 @@ public class TeamsCommand {
                         .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
             }
             enemies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            Lang.TEAM_INFO_ENEMIES_LIST.toString()
-                    )
+                    Lang.TEAM_INFO_ENEMIES_LIST.getRaw()
+            )
                     .replaceText(TextReplacementConfig.builder()
                             .matchLiteral("%1")
                             .replacement(targetTeam.getEnemiedTeams().size() + "").build())
@@ -122,7 +122,8 @@ public class TeamsCommand {
                                 ));
             }
         }
-        members = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBERS_LIST.toString())
+        members = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBERS_LIST
+                        .getRaw())
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("%1")
                         .replacement(membersOnline.toString()).build())
@@ -256,7 +257,6 @@ public class TeamsCommand {
         TeamsManager.getInstance().getTeams().add(team);
         playerData.save();
         sender.sendMessage(Lang.CREATED_TEAM.toString(team.getName()));
-        return;
     }
 
 
