@@ -173,6 +173,20 @@ public enum Lang {
             "&aDownload @ lunarclient.com"
     }),
 
+    TOGGLE_LUNAR_NAME("waypoint.toggle-lunar.name", "&aToggle Lunar Waypoint Permanently"),
+
+    TOGGLE_LUNAR_LORE_ENABLED("waypoint.toggle-lunar.lore.enabled", new String[]{
+            "",
+            "&eClick to disable lunar integration for this waypoint.",
+            "&7This will only affect you."
+    }),
+
+    TOGGLE_LUNAR_LORE_DISABLED("waypoint.toggle-lunar.lore.disabled", new String[]{
+            "",
+            "&eClick to enable lunar integration for this waypoint!",
+            "&7This will only affect you."
+    }),
+
     WAYPOINT_CREATED("waypoint.created", "&6%1&a created a waypoint &6'%2'&a! View it with &e/teamwaypoint list&a!"),
 
     WAYPOINT_SEARCH_MESSAGE("waypoint.search-message", "&aPlease enter a search term!"),

@@ -52,4 +52,9 @@ waypoint:
     - NETHERITE_PICKAXE
     - NETHERITE_SWORD
     - NETHERITE_AXE
+    - CRAFTING_TABLE
+    - ANVIL
+    - ENCHANTING_TABLE
+    - BOOKSHELF
+    - ENDER_EYE
   default-icon: NAME_TAG

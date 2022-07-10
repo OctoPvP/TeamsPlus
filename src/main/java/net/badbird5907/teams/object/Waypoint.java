@@ -5,8 +5,11 @@ import lombok.Setter;
 import net.badbird5907.blib.util.StoredLocation;
 import net.badbird5907.teams.TeamsPlus;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,4 +25,6 @@ public class Waypoint {
     private Material icon = TeamsPlus.getInstance().getWaypointManager().getDefaultIcon();
 
     private ChatColor color = ChatColor.AQUA;
+
+    private Set<UUID> disabledPlayers = new HashSet<>();
 }

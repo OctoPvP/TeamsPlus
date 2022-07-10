@@ -8,13 +8,13 @@ import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.ItemBuilder;
 import net.badbird5907.blib.util.QuestionConversation;
 import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.hooks.impl.LunarClientHook;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.object.Waypoint;
 import net.badbird5907.teams.util.ColorMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
@@ -39,6 +39,7 @@ public class EditWaypointMenu extends Menu {
         buttons.add(new IconButton());
         buttons.add(new DeleteButton());
         buttons.add(new ColorButton(waypoint.getColor()));
+        if (LunarClientHook.isOnLunarClient(player)) buttons.add(new ToggleLunarButton());
         buttons.add(new PlaceholderButton());
         return buttons;
     }
@@ -89,6 +90,7 @@ public class EditWaypointMenu extends Menu {
             player.closeInventory();
             TeamsPlus.getInstance().getConversationFactory().withFirstPrompt(
                             new QuestionConversation(Lang.WAYPOINT_EDIT_NAME_MESSAGE.toString(), (TypeCallback<Prompt, String>) s -> {
+                                TeamsPlus.getInstance().getWaypointManager().removeWaypoint(player, waypoint);
                                 waypoint.setName(s);
                                 team.save();
                                 open(player);
@@ -145,6 +147,30 @@ public class EditWaypointMenu extends Menu {
             team.removeWaypoint(waypoint);
             player.sendMessage(Lang.WAYPOINT_DELETED.toString());
             new ListWaypointsMenu(team, player.getUniqueId()).open(player);
+        }
+    }
+
+    @RequiredArgsConstructor
+    private class ToggleLunarButton extends Button {
+        private final boolean toggled = false;
+
+        @Override
+        public ItemStack getItem(Player player) {
+            return new ItemBuilder(Material.LEVER)
+                    .name(Lang.TOGGLE_LUNAR_NAME.toString())
+                    .lore((toggled ? Lang.TOGGLE_LUNAR_LORE_ENABLED.getMessageList() : Lang.TOGGLE_LUNAR_LORE_DISABLED.getMessageList()))
+                    .build();
+        }
+
+        @Override
+        public int getSlot() {
+            return 0;
+        }
+
+        @Override
+        public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
+            if (toggled) waypoint.getDisabledPlayers().remove(player.getUniqueId());
+            else waypoint.getDisabledPlayers().add(player.getUniqueId());
         }
     }
 

@@ -39,7 +39,7 @@ team:
     invalid: '&cInvalid entry number! min: %1 max: %2'
 
 waypoint:
-  created: '&6%1&a created a waypoint &6'%2'&a! View it with &e/teamwaypoint list&a!'
+  created: '&6%1&a created a waypoint &6''%2''&a! View it with &e/teamwaypoint list&a!'
   search-message: '&aPlease enter a search term!'
   exists: '&cWaypoint already exists!'
   item-lore:

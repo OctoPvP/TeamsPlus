@@ -94,6 +94,8 @@ public class MessageManager {
         }
         return message;
     }
+
+    @SuppressWarnings("Deprecation")
     public static String getDisplayName(Player player) {
         String formattedName = player.getDisplayName();
         VaultHook vaultHook = (VaultHook) HookManager.getHook(VaultHook.class);

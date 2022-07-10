@@ -105,7 +105,6 @@ public class SelectColorMenu extends Menu {
         @Override
         public ItemStack getItem(Player player) {
             Material mat = ColorMapper.dyeFromChatColor(color);
-            if (mat == null) throw new RuntimeException("null bruh");
             return new ItemBuilder(mat)
                     .name(Lang.WAYPOINT_COLOR_SELECT_NAME.toString(color, Utils.enumToString(color)))
                     .lore((selected ? Lang.WAYPOINT_COLOR_SELECT_LORE_SELECTED.getMessageList() :

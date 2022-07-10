@@ -63,4 +63,8 @@ public class WaypointManager implements Listener {
             LunarClientHook.sendWaypoint(player, waypoint);
         }
     }
+
+    public void removeWaypoint(Player player, Waypoint waypoint) {
+        LunarClientHook.removeWaypoint(player, waypoint);
+    }
 }
