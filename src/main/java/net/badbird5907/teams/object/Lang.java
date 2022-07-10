@@ -41,7 +41,7 @@ public enum Lang {
 
     TEAM_INFO_MESSAGE("team-info.message", new String[]{
             "%separator%",
-            "&3 - &b&l%1 &r &3",
+            "&b - &b&l%1 &r &3",
             "&9 * &bOwner: %2",
             "&9 * &bAllies: %3",
             "&9 * &bEnemies: %4",
@@ -101,9 +101,13 @@ public enum Lang {
 
     TEAM_ENEMY_TEAM("enemy.team-enemy-team", "&cYou are now enemies with the team &6%1&c!"),
 
+    CANNOT_ENEMY_SELF("enemy.cannot-enemy-self", "&cYou cannot enemy yourself!"),
+
     TEAM_NEUTRAL_TEAM("neutral.team-neutral-team", "&aYou are now neutral with the team &6%1"),
 
     TEAM_ALREADY_NEUTRAL("neutral.already-neutral", "&cYou are already neutral with &6%1&c!"),
+
+    CANNOT_NEUTRAL_SELF("neutral.cannot-neutral-self", "&cYou cannot neutral yourself!"),
 
     TEAM_PVP_DISALLOW("pvp.team-disallow", "&cYou can't damage &6%1&c because you're in the same team as them!"),
 

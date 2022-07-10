@@ -135,7 +135,7 @@ team-info:
   members-list: '&8[&f%1&7/&f%2&8] %3'
   message:
     - '%separator%'
-    - '&3 - &b&l%1'
+    - '&b - &b&l%1'
     - '&9 * &bOwner: %2'
     - '&9 * &bAllies: %3'
     - '&9 * &bEnemies: %4'
@@ -156,6 +156,7 @@ invite:
 
 enemy:
   team-enemy-team: '&cYou are now enemies with the team &6%1&c!'
+  cannot-enemy-self: '&cYou cannot enemy yourself!'
 
 ally:
   ally-success: '&aYou are now allied with the team &6%1'
@@ -165,7 +166,7 @@ ally:
   sent-request: '&aSent a request to &6%1&a to ally with your team!'
   ally-request-deny-timeout: '&c%1 took too long to answer your ally request!'
   already-sent-request: '&cYou already sent %1 an ally request!'
-  cannot-ally-self: '&cYou already sent %1 an ally request!'
+  cannot-ally-self: '&cYou cannot ally your own team!'
   already-allies: '&cYou are already allied with &6%1&c!'
   max: '&cYou can''t ally with &6%1&c because you''ve reached the max allies limit! (%2/%3)'
   max-target: '&c%1 has reached the max allies limit!'
@@ -173,7 +174,7 @@ ally:
 neutral:
   team-neutral-team: '&aYou are now neutral with the team &6%1'
   already-neutral: '&cYou are already neutral with &6%1&c!'
-
+  cannot-neutral-self: '&cYou cannot neutral yourself!'
 pvp:
   team-disallow: '&cYou can''t damage &6%1&c because you''re in the same team as them!'
   ally-disallow: '&cYou can''t damage &6%1&c because you''re allied with them!'

@@ -19,6 +19,10 @@ public class TeamRelationsCommand {
     @Cooldown(10)
     @TeamPermission(TeamRank.ADMIN)
     public void enemyTeam(@Sender Player sender, @Sender @Required Team senderTeam, @Required Team target) {
+        if (senderTeam.getTeamId().equals(target.getTeamId())) {
+            sender.sendMessage(Lang.CANNOT_ENEMY_SELF.toString());
+            return;
+        }
         senderTeam.enemyTeam(target, true);
     }
 
@@ -26,6 +30,10 @@ public class TeamRelationsCommand {
     @Cooldown(10)
     @TeamPermission(TeamRank.ADMIN)
     public void neutralTeam(@Sender Player sender, @Sender @Required Team senderTeam, @Required Team target) {
+        if (senderTeam.getTeamId().equals(target.getTeamId())) {
+            sender.sendMessage(Lang.CANNOT_NEUTRAL_SELF.toString());
+            return;
+        }
         if (!senderTeam.isEnemy(target) && !senderTeam.isAlly(target)) {
             sender.sendMessage(Lang.TEAM_ALREADY_NEUTRAL.toString(target.getName()));
             return;
