@@ -90,7 +90,7 @@ public class EditWaypointMenu extends Menu {
             player.closeInventory();
             TeamsPlus.getInstance().getConversationFactory().withFirstPrompt(
                             new QuestionConversation(Lang.WAYPOINT_EDIT_NAME_MESSAGE.toString(), (TypeCallback<Prompt, String>) s -> {
-                                TeamsPlus.getInstance().getWaypointManager().removeWaypoint(player, waypoint);
+                                TeamsPlus.getInstance().getWaypointManager().removeWaypoint(waypoint);
                                 waypoint.setName(s);
                                 team.save();
                                 open(player);

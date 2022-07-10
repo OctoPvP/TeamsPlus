@@ -64,7 +64,12 @@ public class WaypointManager implements Listener {
         }
     }
 
-    public void removeWaypoint(Player player, Waypoint waypoint) {
-        LunarClientHook.removeWaypoint(player, waypoint);
+    public void removeWaypoint(Waypoint waypoint) { // Hides waypoint visually from all players
+        waypoint.getTeam().getMembers().forEach((k, v)-> {
+            Player player = Bukkit.getPlayer(k);
+            if (player != null) {
+                LunarClientHook.removeWaypoint(player, waypoint);
+            }
+        });
     }
 }

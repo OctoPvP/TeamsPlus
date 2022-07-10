@@ -92,7 +92,17 @@ waypoint:
         - ''
         - '&eClick to select!'
     set: '&aColor set to %1%2&a!'
-
+  toggle-lunar:
+    name: '&aToggle Lunar Waypoint Permanently'
+    lore:
+      enabled:
+        - ''
+        - '&eClick to disable lunar integration for this waypoint.'
+        - '&7This will only affect you.'
+      disabled:
+        - ''
+        - '&eClick to enable lunar integration for this waypoint!'
+        - '&7This will only affect you.'
 
 team-info:
   online-member-entry: '&a%1'

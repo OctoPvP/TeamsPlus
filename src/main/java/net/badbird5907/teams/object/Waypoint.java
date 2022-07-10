@@ -14,8 +14,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Waypoint {
-    public Waypoint(String name) {
+    public Waypoint(String name, UUID owner) {
         this.name = name;
+        this.teamId = owner;
+    }
+
+    public Waypoint(String name, Team team) {
+        this(name, team.getTeamId());
     }
     private String name;
     private String world;
@@ -27,4 +32,9 @@ public class Waypoint {
     private ChatColor color = ChatColor.AQUA;
 
     private Set<UUID> disabledPlayers = new HashSet<>();
+    private UUID teamId;
+
+    public Team getTeam() {
+        return TeamsPlus.getInstance().getTeamsManager().getTeamById(teamId);
+    }
 }
