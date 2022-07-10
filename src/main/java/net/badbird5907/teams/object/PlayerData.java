@@ -2,17 +2,10 @@ package net.badbird5907.teams.object;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.badbird5907.anticombatlog.AntiCombatLog;
-import net.badbird5907.anticombatlog.manager.NPCManager;
-import net.badbird5907.anticombatlog.object.CombatNPCTrait;
 import net.badbird5907.teams.TeamsPlus;
-import net.badbird5907.teams.hooks.impl.AntiCombatLogHook;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
-import net.badbird5907.teams.util.UUIDUtil;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -77,7 +70,7 @@ public class PlayerData {
         }
         if (isInSameTeamAs(uuid)) { //same team
             Team team = TeamsManager.getInstance().getTeamById(this.teamId);
-            if (!TeamsPlus.getInstance().getConfig().getBoolean("pvp.pvp-team")) { //team pvp is disabled
+            if (TeamsPlus.getInstance().getConfig().getBoolean("pvp.pvp-team", false)) { //team pvp is disabled
                 if (team.getTempPvPSeconds() > 0 && TeamsPlus.getInstance().getConfig().getBoolean("team.temp-pvp.enable"))
                     return PvPCheckResult.ALLOWED;
             } else {
@@ -85,7 +78,9 @@ public class PlayerData {
             }
         } else {
             if (isAlly(uuid)) {
-                return PvPCheckResult.DISALLOW_ALLY; //disallow pvp as ally
+                if (!TeamsPlus.getInstance().getConfig().getBoolean("pvp.pvp-ally", false)) { // Ally PVP is disabled
+                    return PvPCheckResult.DISALLOW_ALLY; //disallow pvp as ally
+                }
             }
         }
         return PvPCheckResult.ALLOWED;
@@ -94,10 +89,10 @@ public class PlayerData {
     public boolean isInSameTeamAs(UUID player) {
         if (!isInTeam())
             return false;
-        PlayerData data = PlayerManager.getDataLoadIfNeedTo(player);
-        if (!data.isInTeam())
+        Team team = getPlayerTeam();
+        if (team == null)
             return false;
-        return UUIDUtil.equals(data.getTeamId(), this.teamId);
+        return team.getMembers().containsKey(player);
     }
 
     public boolean isInTeam() {
@@ -148,6 +143,7 @@ public class PlayerData {
             }
         }
     }
+
     public void sendMessage(String s, boolean... offline) {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).sendMessage(s);
@@ -221,6 +217,7 @@ public class PlayerData {
         }
         return targetTeam.isAlly(this) || playerTeam.isAlly(targetData);
     }
+
     public boolean isAlly(Player player) {
         return isAlly(player.getUniqueId());
         /*

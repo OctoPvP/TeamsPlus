@@ -35,7 +35,8 @@ public class TeamMemberManagement {
             if (b) {
                 team.transferOwnership(targetData, senderData);
             } else sender.sendMessage(Lang.CANCELED.toString());
-        });
+            sender.closeInventory();
+        }).open(sender);
     }
 
     @Command(name = "promote", description = "Promote a member's rank")
@@ -49,6 +50,20 @@ public class TeamMemberManagement {
         }
         team.promote(target, senderData);
     }
+
+    @Command(name = "demote", description = "Demote a member's rank")
+    @PlayerOnly
+    @Cooldown(1)
+    @TeamPermission(TeamRank.ADMIN)
+    public void demote(@Sender Player sender, @Sender PlayerData senderData, @Sender @Required Team team, @AllowOffline PlayerData target) {
+        if (sender.getUniqueId().equals(target.getUuid())) {
+            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_SELF.toString());
+            return;
+        }
+        team.demote(target, senderData);
+    }
+
+    //TODO: demote
 
     @Command(name = "kick", description = "Kick a player from your team.")
     @Cooldown(10)
@@ -98,7 +113,7 @@ public class TeamMemberManagement {
             return;
         }
         int maxSize = teamsPlus.getConfig().getInt("team.max-size", -1);
-        if (targetTeam.getMembers().size() >= maxSize) {
+        if (maxSize > 0 && targetTeam.getMembers().size() >= maxSize) {
             sender.sendMessage(Lang.TEAM_MAX_RECEIVER.toString(targetTeam.getMembers().size(), maxSize));
             return;
         }

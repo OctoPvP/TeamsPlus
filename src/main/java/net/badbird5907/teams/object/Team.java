@@ -312,12 +312,18 @@ public class Team {
 
     public void transferOwnership(PlayerData target, PlayerData ownerData) {
         owner = target.getUuid();
+        members.put(target.getUuid(), TeamRank.OWNER);
+        members.put(ownerData.getUuid(), TeamRank.ADMIN);
         broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(ownerData.getName(), target.getName()), true);
         save();
     }
 
     public void promote(PlayerData target, PlayerData sender) {
         TeamRank currentRank = members.get(target.getUuid());
+        if (currentRank == null) {
+            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_NOT_IN_SAME_TEAM.toString(target.getName()));
+            return;
+        }
         TeamRank nextRank = TeamRank.getRank(currentRank.getPermissionLevel() + 1);
         if (nextRank.getPermissionLevel() >= getRank(sender.getUuid()).getPermissionLevel()) {
             sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER.toString());
@@ -325,5 +331,24 @@ public class Team {
         }
         members.put(target.getUuid(), nextRank);
         broadcast(Lang.TEAM_PROMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+    }
+
+    public void demote(PlayerData target, PlayerData sender) {
+        TeamRank currentRank = members.get(target.getUuid());
+        if (currentRank == null) {
+            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_NOT_IN_SAME_TEAM.toString(target.getName()));
+            return;
+        }
+        if (currentRank == TeamRank.RECRUIT) {
+            sender.sendMessage(Lang.TEAM_CANNOT_DEMOTE_LOWER.toString());
+            return;
+        }
+        TeamRank nextRank = TeamRank.getRank(currentRank.getPermissionLevel() - 1);
+        if (nextRank.getPermissionLevel() >= getRank(sender.getUuid()).getPermissionLevel()) {
+            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_HIGHER.toString());
+            return;
+        }
+        members.put(target.getUuid(), nextRank);
+        broadcast(Lang.TEAM_DEMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
     }
 }

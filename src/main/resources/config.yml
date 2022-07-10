@@ -28,6 +28,8 @@ team:
     - player # messes with the /team info command
     - self #
   max-name-length: 16
+  max-allies: -1
+  max-size: -1
 ally:
   request-timeout: 300 # 5 minutes
 pvp:

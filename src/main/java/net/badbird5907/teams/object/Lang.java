@@ -270,6 +270,16 @@ public enum Lang {
     TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER("team.promote.failed.cannot-promote-higher", "&cYou cannot promote a player to a rank equivalent or higher than you!"),
 
     TEAM_PROMOTE_BROADCAST("team.promote.broadcast", "&6%1&a has promoted &6%2&a to %3!"),
+
+    TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_SELF("team.demote.failed.cannot-demote-self", "&cYou cannot demote yourself!"),
+
+    TEAM_DEMOTE_FAILED_NOT_IN_SAME_TEAM("team.demote.failed.not-in-team", "&c%1 isn't in your team!"),
+
+    TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_HIGHER("team.demote.failed.cannot-demote-higher", "&cYou cannot demote a player to a rank equivalent or higher than you!"),
+
+    TEAM_DEMOTE_BROADCAST("team.demote.broadcast", "&6%1&a has demoted &6%2&a to %3."),
+
+    TEAM_CANNOT_DEMOTE_LOWER("team.demote.failed.cannot-demote-lower", "&cYou cannot demote that player any lower than recruit!"),
     ;
     @Getter
     private final String configPath;

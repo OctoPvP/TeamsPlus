@@ -42,6 +42,13 @@ team:
       not-in-team: '&c%1 isn''t in your team!'
       cannot-promote-higher: '&cYou cannot promote a player to a rank equivalent or higher than you!'
     broadcast: '&6%1&a has promoted &6%2&a to %3!'
+  demote:
+    failed:
+      cannot-demote-self: '&cYou cannot demote yourself!'
+      not-in-team: '&c%1 isn''t in your team!'
+      cannot-demote-higher: '&cYou cannot demote a player to a rank equivalent or higher than you!'
+      cannot-demote-lower: '&cYou cannot demote that player any lower than recruit!'
+    broadcast: '&6%1&a has demoted &6%2&a to %3.'
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'

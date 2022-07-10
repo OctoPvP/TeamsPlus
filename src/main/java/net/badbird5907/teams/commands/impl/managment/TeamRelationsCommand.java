@@ -60,15 +60,17 @@ public class TeamRelationsCommand {
             return;
         }
         int maxAllies = TeamsPlus.getInstance().getConfig().getInt("team.max-allies", -1);
-        int s = selfTeam.getAlliedTeams().size();
-        if (maxAllies != -1 && s >= maxAllies) {
-            sender.sendMessage(Lang.MAX_ALLIES_REACHED.toString(team.getName(), s, maxAllies));
-            return;
-        }
-        int a = team.getAlliedTeams().size();
-        if (maxAllies != 1 && a >= maxAllies) {
-            sender.sendMessage(Lang.MAX_ALLIES_REACHED_TARGET.toString(team.getName(), a, maxAllies));
-            return;
+        if (maxAllies > 0) {
+            int s = selfTeam.getAlliedTeams().size();
+            if (s >= maxAllies) {
+                sender.sendMessage(Lang.MAX_ALLIES_REACHED.toString(team.getName(), s, maxAllies));
+                return;
+            }
+            int a = team.getAlliedTeams().size();
+            if (a >= maxAllies) {
+                sender.sendMessage(Lang.MAX_ALLIES_REACHED_TARGET.toString(team.getName(), a, maxAllies));
+                return;
+            }
         }
         selfTeam.requestToAllyAnotherTeam(team);
     }

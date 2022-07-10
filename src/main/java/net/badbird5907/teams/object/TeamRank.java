@@ -20,8 +20,7 @@ public enum TeamRank {
             case 3 -> MODERATOR;
             case 2 -> TRUSTED;
             case 1 -> MEMBER;
-            case 0 -> RECRUIT;
-            default -> MEMBER;
+            default -> RECRUIT;
         };
     }
 
