@@ -156,6 +156,7 @@ public class PlayerData {
                 s = s.replace("<", "\\<")
                         .replace(">", "\\>"); // makeshift escape for < and >, because we use minimessage
                 pendingMessages.add(s);
+                save();
             }
         }
     }

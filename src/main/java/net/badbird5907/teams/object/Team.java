@@ -1,17 +1,15 @@
 package net.badbird5907.teams.object;
 
-import com.lunarclient.bukkitapi.LunarClientAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.command.Sender;
-import net.badbird5907.blib.objects.tuple.Pair;
-import net.badbird5907.blib.util.StoredLocation;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.impl.LunarClientHook;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
 import net.badbird5907.teams.util.UUIDUtil;
+import net.badbird5907.teams.util.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -195,9 +193,9 @@ public class Team {
 
     public void requestToAlly(Team otherTeam) {
         Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_ALLY_TEAM_ASK.toString(otherTeam.getName()))
-                        .clickEvent(ClickEvent.runCommand("/team ally " + otherTeam.getName()))
-                                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                                        Lang.TEAM_ALLY_TEAM_ASK_HOVER.toString(otherTeam.getName()))));
+                .clickEvent(ClickEvent.runCommand("/team ally " + otherTeam.getName()))
+                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        Lang.TEAM_ALLY_TEAM_ASK_HOVER.toString(otherTeam.getName()))));
         broadcastToRanks(message, TeamRank.OWNER, TeamRank.ADMIN);
         long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
         allyRequests.put(otherTeam.getTeamId(), timestamp);
@@ -293,7 +291,7 @@ public class Team {
     }
 
     public void updateWaypoints() {
-        members.forEach((k,v)-> {
+        members.forEach((k, v) -> {
             Player player = Bukkit.getPlayer(k);
             if (player != null) {
                 TeamsPlus.getInstance().getWaypointManager().updatePlayerWaypoints(player);
@@ -304,11 +302,28 @@ public class Team {
     public void removeWaypoint(Waypoint waypoint) {
         waypoints.remove(waypoint);
         save();
-        members.forEach((k,v)-> {
+        members.forEach((k, v) -> {
             Player player = Bukkit.getPlayer(k);
             if (player != null) {
                 LunarClientHook.removeWaypoint(player, waypoint);
             }
         });
+    }
+
+    public void transferOwnership(PlayerData target, PlayerData ownerData) {
+        owner = target.getUuid();
+        broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(ownerData.getName(), target.getName()), true);
+        save();
+    }
+
+    public void promote(PlayerData target, PlayerData sender) {
+        TeamRank currentRank = members.get(target.getUuid());
+        TeamRank nextRank = TeamRank.getRank(currentRank.getPermissionLevel() + 1);
+        if (nextRank.getPermissionLevel() >= getRank(sender.getUuid()).getPermissionLevel()) {
+            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER.toString());
+            return;
+        }
+        members.put(target.getUuid(), nextRank);
+        broadcast(Lang.TEAM_PROMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
     }
 }

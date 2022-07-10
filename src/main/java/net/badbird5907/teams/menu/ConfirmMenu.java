@@ -2,13 +2,11 @@ package net.badbird5907.teams.menu;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.buttons.PlaceholderButton;
 import net.badbird5907.blib.menu.menu.Menu;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.ItemBuilder;
-import net.badbird5907.blib.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -37,7 +35,6 @@ public class ConfirmMenu extends Menu {
     private final String action;
     private final Consumer<Boolean> callback;
     @Getter
-    @Setter
     private boolean permanent = false;
     private boolean done = false;
 
@@ -87,9 +84,7 @@ public class ConfirmMenu extends Menu {
 
         @Override
         public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
-            Logger.info("Yes button clicked");
             if (done) {
-                Logger.debug("Done");
                 return;
             }
             done = true;
@@ -112,7 +107,6 @@ public class ConfirmMenu extends Menu {
 
         @Override
         public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
-            Logger.info("No button clicked");
             if (done) return;
             done = true;
             callback.accept(false);
@@ -137,4 +131,8 @@ public class ConfirmMenu extends Menu {
         }
     }
 
+    public ConfirmMenu setPermanent(boolean permanent) {
+        this.permanent = permanent;
+        return this;
+    }
 }

@@ -1,5 +1,6 @@
 package net.badbird5907.teams.commands.impl.managment;
 
+import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
@@ -56,6 +57,17 @@ public class TeamRelationsCommand {
         }
         if (selfTeam.isAlly(team)) {
             sender.sendMessage(Lang.ALREADY_ALLIES.toString(team.getName()));
+            return;
+        }
+        int maxAllies = TeamsPlus.getInstance().getConfig().getInt("team.max-allies", -1);
+        int s = selfTeam.getAlliedTeams().size();
+        if (maxAllies != -1 && s >= maxAllies) {
+            sender.sendMessage(Lang.MAX_ALLIES_REACHED.toString(team.getName(), s, maxAllies));
+            return;
+        }
+        int a = team.getAlliedTeams().size();
+        if (maxAllies != 1 && a >= maxAllies) {
+            sender.sendMessage(Lang.MAX_ALLIES_REACHED_TARGET.toString(team.getName(), a, maxAllies));
             return;
         }
         selfTeam.requestToAllyAnotherTeam(team);

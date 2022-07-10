@@ -54,6 +54,10 @@ public class PlayerManager {
         return entry.map(Map.Entry::getValue).orElse(null);
     }
 
+    // We should implement a cache for these methods
+    // Will need to take into account that the player may be on the server, which means they should be in cache all the time
+    // And the data should be saved when it is removed from the cache
+    // Will help lower the load on the database/storage handler
     public static PlayerData getDataLoadIfNeedTo(String player) {
         PlayerData playerData = getData(player);
         if (playerData != null)

@@ -25,7 +25,7 @@ public enum Lang {
     PLAYER_NOT_FOUND("player-not-found", "%prefix% &cCould not find that player!"),
 
 
-    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that! Ask a team leader to promote you! (/team promote %1)"),
+    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that! Ask a team admin/leader to promote you! (/team promote %1)"),
 
     CANNOT_INVITE_SELF("team.cannot-invite-self", "&cYou cannot invite yourself!"),
 
@@ -81,6 +81,10 @@ public enum Lang {
 
     TEAM_JOINED("invite.joined", "&a%1 has joined the team!"),
 
+    TEAM_MAX_SENDER("invite.team-max.sender", "&cYour team is full! (%1/%2)"),
+
+    TEAM_MAX_RECEIVER("invite.team-max.receiver", "&cThat team is full!"),
+
     PLAYER_LEAVE_TEAM("team.player-leave", "&6%1&c has left the team!"),
 
     LEFT_TEAM("team.leave", "&aYou have left the team!"),
@@ -107,6 +111,10 @@ public enum Lang {
 
     ALLY_SUCCESS("ally.ally-success", "&aYou are now allied with &6%1"),
 
+    MAX_ALLIES_REACHED("ally.max", "&cYou can't ally with &6%1&c because you've reached the max allies limit! (%2/%3)"),
+
+    MAX_ALLIES_REACHED_TARGET("ally.max-target", "&c%1 has reached the max allies limit!"),
+
     TEAM_ALLY_TEAM_ASK("ally.team-ally-team-ask.message", "&6%1&b would like to ally with your team. Do &a/teams ally %1&b to accept!"),
 
     TEAM_ALLY_TEAM_ASK_HOVER("ally.team-ally-team-ask.hover", "&aClick to accept!"),
@@ -114,6 +122,7 @@ public enum Lang {
     ALLY_REQUEST_DENY_TIMEOUT("ally.ally-request-deny-timeout", "&c%1 took too long to answer your ally request!"),
 
     CANNOT_ALLY_SELF("ally.cannot-ally-self", "&cYou cannot ally your own team!"),
+
     ALREADY_SENT_ALLY_REQUEST("ally.already-sent-request", "&cYou already sent %1 an ally request!"),
 
     ALLY_SENT_REQUEST("ally.sent-request", "&aSent a request to &6%1&a to ally with your team!"),
@@ -247,6 +256,20 @@ public enum Lang {
     WAYPOINT_COLOR_SET_BROADCAST("waypoint.edit.color-select.broadcast", "&6%1&a set the color for the waypoint '&6%2&a' to %3%4&a!"),
 
     WAYPOINT_NAME_EDITED("waypoint.edit-name.broadcast", "&6%1&a renamed the waypoint '&6%2&a' to '&6%3&a'."),
+
+    TEAM_TRANSFER_FAILED_TARGET_NOT_IN_TEAM("team.transfer.failed.not-in-team", "&c%1 isn''t in your team!"),
+
+    TEAM_TRANSFER_FAILED_CANNOT_TRANSFER_TO_SELF("team.transfer.failed.cannot-transfer-to-self", "&cYou cannot transfer ownership to yourself!"),
+
+    TEAM_TRANSFER_BROADCAST("team.transfer.broadcast", "&6%1&a has transferred ownership of this team to &6%2&a!"),
+
+    TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_SELF("team.promote.failed.cannot-promote-self", "&cYou cannot promote yourself!"),
+
+    TEAM_PROMOTE_FAILED_NOT_IN_SAME_TEAM("team.promote.failed.not-in-team", "&c%1 isn't in your team!"),
+
+    TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER("team.promote.failed.cannot-promote-higher", "&cYou cannot promote a player to a rank equivalent or higher than you!"),
+
+    TEAM_PROMOTE_BROADCAST("team.promote.broadcast", "&6%1&a has promoted &6%2&a to %3!"),
     ;
     @Getter
     private final String configPath;

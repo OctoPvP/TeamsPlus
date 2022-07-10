@@ -13,6 +13,18 @@ public enum TeamRank {
         this.permissionLevel = level;
     }
 
+    public static TeamRank getRank(int level) {
+        return switch (level) {
+            case 5 -> OWNER;
+            case 4 -> ADMIN;
+            case 3 -> MODERATOR;
+            case 2 -> TRUSTED;
+            case 1 -> MEMBER;
+            case 0 -> RECRUIT;
+            default -> MEMBER;
+        };
+    }
+
     public int getPermissionLevel() {
         return this.permissionLevel;
     }

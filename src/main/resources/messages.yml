@@ -31,6 +31,17 @@ team:
   name-too-long: '&cTeam name too long! Max:&6 %1'
   kicked-from-team: '&cYou have been kicked from the team for &6%1&c!'
   player-kicked: '&c%1 has been kicked from the team for &6%3&c by &6%2&c!'
+  transfer:
+    failed:
+      not-in-team: '&c%1 isn''t in your team!'
+      cannot-transfer-to-self: '&cYou cannot transfer ownership to yourself!'
+    broadcast: '&6%1&a has transferred ownership of this team to &6%2&a!'
+  promote:
+    failed:
+      cannot-promote-self: '&cYou cannot promote yourself!'
+      not-in-team: '&c%1 isn''t in your team!'
+      cannot-promote-higher: '&cYou cannot promote a player to a rank equivalent or higher than you!'
+    broadcast: '&6%1&a has promoted &6%2&a to %3!'
   list:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'
@@ -132,6 +143,9 @@ invite:
   joined: '&a%1 has joined the team!'
   no-invite: '&cYou have no invite to %1!'
   hover: '&aClick to join &6%1'
+  team-max:
+    sender: '&cYour team is full! (%1/%2)'
+    receiver: '&cThat team is full!'
 
 enemy:
   team-enemy-team: '&cYou are now enemies with the team &6%1&c!'
@@ -146,6 +160,8 @@ ally:
   already-sent-request: '&cYou already sent %1 an ally request!'
   cannot-ally-self: '&cYou already sent %1 an ally request!'
   already-allies: '&cYou are already allied with &6%1&c!'
+  max: '&cYou can''t ally with &6%1&c because you''ve reached the max allies limit! (%2/%3)'
+  max-target: '&c%1 has reached the max allies limit!'
 
 neutral:
   team-neutral-team: '&aYou are now neutral with the team &6%1'

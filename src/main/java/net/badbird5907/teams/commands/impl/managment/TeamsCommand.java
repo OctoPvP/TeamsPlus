@@ -1,12 +1,9 @@
 package net.badbird5907.teams.commands.impl.managment;
 
-import com.google.common.collect.Lists;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.PlayerUtil;
-import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
-import net.badbird5907.teams.commands.CommandManager;
 import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.hooks.Hook;
 import net.badbird5907.teams.hooks.impl.VanishHook;
@@ -22,9 +19,7 @@ import net.badbird5907.teams.object.TeamRank;
 import net.badbird5907.teams.util.Permissions;
 import net.octopvp.commander.annotation.Optional;
 import net.octopvp.commander.annotation.*;
-import net.octopvp.commander.bukkit.BukkitCommandSender;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
-import net.octopvp.commander.sender.CoreCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -131,25 +126,6 @@ public class TeamsCommand {
         playerData.leaveTeam();
     }
 
-    @Command(name = "join", aliases = {"accept", "jointeam"}, description = "Join a team")
-    public void join(@Sender Player sender, Team targetTeam) {
-        PlayerData data = PlayerManager.getData(sender);
-        if (data.isInTeam()) {
-            sender.sendMessage(Lang.ALREADY_IN_TEAM.toString());
-            return;
-        }
-        if (targetTeam == null) {
-            sender.sendMessage(Lang.TEAM_DOES_NOT_EXIST.toString());
-            return;
-        }
-        if (data.getPendingInvites().get(targetTeam.getTeamId()) != null) {
-            data.getPendingInvites().remove(targetTeam.getTeamId());
-            data.joinTeam(targetTeam);
-        } else {
-            sender.sendMessage(Lang.NO_INVITE.toString(targetTeam.getName()));
-        }
-    }
-
     /*
     @Completer(name = "join", index = 0)
     public List<String> completer(@Sender CoreCommandSender s, String input, String lastArg) {
@@ -238,7 +214,7 @@ public class TeamsCommand {
                 team.disband();
             } else player.sendMessage(Lang.CANCELED.toString());
             player.closeInventory();
-        }).open(player);
+        }).setPermanent(true).open(player);
     }
 
     @Command(name = "list", description = "List all teams")
