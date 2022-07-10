@@ -1,11 +1,13 @@
 package net.badbird5907.teams.object;
 
+import com.lunarclient.bukkitapi.LunarClientAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.command.Sender;
 import net.badbird5907.blib.objects.tuple.Pair;
 import net.badbird5907.blib.util.StoredLocation;
 import net.badbird5907.teams.TeamsPlus;
+import net.badbird5907.teams.hooks.impl.LunarClientHook;
 import net.badbird5907.teams.manager.PlayerManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
@@ -288,5 +290,25 @@ public class Team {
 
         broadcast(Lang.PLAYER_KICKED.toString(target.getName(), sender.getName(), reason), true);
         save();
+    }
+
+    public void updateWaypoints() {
+        members.forEach((k,v)-> {
+            Player player = Bukkit.getPlayer(k);
+            if (player != null) {
+                TeamsPlus.getInstance().getWaypointManager().updatePlayerWaypoints(player);
+            }
+        });
+    }
+
+    public void removeWaypoint(Waypoint waypoint) {
+        waypoints.remove(waypoint);
+        save();
+        members.forEach((k,v)-> {
+            Player player = Bukkit.getPlayer(k);
+            if (player != null) {
+                LunarClientHook.removeWaypoint(player, waypoint);
+            }
+        });
     }
 }

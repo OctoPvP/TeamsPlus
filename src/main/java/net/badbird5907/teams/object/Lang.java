@@ -5,6 +5,7 @@ import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -149,27 +150,89 @@ public enum Lang {
 
     PLAYER_KICKED("team.player-kicked", "&c%1 has been kicked from the team for &6%3&c by &6%2&c!"),
 
-    WAYPOINT_LORE("team.waypoint.item-lore", new String[]{
+    WAYPOINT_LORE("waypoint.item-lore", new String[]{
+            "&7X: %1 &7Y: %2 &7Z: %3",
             "",
-            "&eClick to edit!",
+            "&Click to edit!",
             "&eShift-click to remove!"
     }),
 
-    WAYPOINT_FILTER_NAME("team.waypoint.filter.name", "&aFilter"),
+    WAYPOINT_FILTER_NAME("waypoint.filter.name", "&aFilter"),
 
-    WAYPOINT_FILTER_LORE("team.waypoint.filter.lore", new String[]{
+    WAYPOINT_FILTER_LORE("waypoint.filter.lore", new String[]{
             "",
             "&eClick to filer entries",
     }),
 
-    WAYPOINT_INFO_NAME("team.waypoint.info.name", "&aInfo"),
+    WAYPOINT_INFO_NAME("waypoint.info.name", "&aInfo"),
 
-    WAYPOINT_INFO_LORE("team.waypoint.info.lore", new String[]{
+    WAYPOINT_INFO_LORE("waypoint.info.lore", new String[]{
             "",
             "&eIt is recommended to use Lunar Client",
             "&eto view waypoints in-game!",
             "&aDownload @ lunarclient.com"
-    })
+    }),
+
+    WAYPOINT_CREATED("waypoint.created", "&6%1&a created a waypoint &6'%2'&a! View it with &e/teamwaypoint list&a!"),
+
+    WAYPOINT_SEARCH_MESSAGE("waypoint.search-message", "&aPlease enter a search term!"),
+
+    WAYPOINT_EDIT_NAME("waypoint.edit.edit-name.name", "&aEdit Name"),
+
+    WAYPOINT_EDIT_LORE("waypoint.edit.edit-name.lore", new String[]{
+            "",
+            "&eClick to edit!"
+    }),
+
+    WAYPOINT_EDIT_NAME_MESSAGE("waypoint.edit.edit-name.message", "&aPlease enter a new name for the waypoint!"),
+
+    WAYPOINT_EDIT_ICON_NAME("waypoint.edit.icon.name", "&aIcon: &e%1"),
+
+    WAYPOINT_EDIT_ICON_LORE("waypoint.edit.icon.lore", new String[]{
+            "",
+            "&eClick to edit!"
+    }),
+
+    WAYPOINT_SELECT_ICON_LORE("waypoint.edit.icon-select.lore", new String[]{
+            "",
+            "&eClick to select!"
+    }),
+
+    WAYPOINT_SELECT_ICON_MESSAGE("waypoint.edit.icon-select.message", "&aSelected icon: &e%1&a!"),
+
+    WAYPOINT_DELETE_BUTTON_NAME("waypoint.delete-button.name", "&cDelete"),
+
+    WAYPOINT_DELETE_BUTTON_LORE("waypoint.delete-button.lore", new String[]{
+            "",
+            "&eClick to delete."
+    }),
+
+    WAYPOINT_DELETED("waypoint.deleted", "&aWaypoint deleted!"),
+
+    WAYPOINT_EXISTS("waypoint.exists", "&cWaypoint already exists!"),
+
+    WAYPOINT_COLOR_NAME("waypoint.edit.color.name", "&aColor"),
+
+    WAYPOINT_COLOR_LORE("waypoint.edit.color.lore", new String[]{
+            "",
+            "&eClick to select color!"
+    }),
+
+    WAYPOINT_COLOR_SELECT_NAME("waypoint.color-select.name", "%1%2"),
+
+    WAYPOINT_COLOR_SELECT_LORE_SELECTED("waypoint.color-select.lore.selected", new String[]{
+            "",
+            "&aAlready selected!"
+    }),
+
+    WAYPOINT_COLOR_SELECT_LORE_UNSELECTED("waypoint.color-select.lore.unselected", new String[]{
+            "",
+            "&eClick to select!"
+    }),
+
+    WAYPOINT_COLOR_SET("waypoint.color-select.set", "&aColor set to %1%2&a!"),
+
+
 
     ;
     @Getter
@@ -177,7 +240,7 @@ public enum Lang {
     private final String finalMessage;
     @Getter
     private String def;
-    @Getter
+
     private List<String> messageList;
 
     Lang(String configPath, String def) {
@@ -196,6 +259,14 @@ public enum Lang {
             sb.append(s).append("\n");
         }
         finalMessage = sb.toString();
+    }
+
+    public List<String> getMessageList(Object... placeholders) {
+        List<String> list = new ArrayList<>();
+        for (String s : messageList) {
+            list.add(StringUtils.replacePlaceholders(s.replace("%prefix%", PREFIX.getRaw()).replace("%separator%", CC.SEPARATOR), placeholders));
+        }
+        return list;
     }
 
     public String toString(Object... placeholders) {

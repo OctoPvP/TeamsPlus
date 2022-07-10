@@ -37,23 +37,62 @@ team:
     entry: '&7 - &a%1'
     footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
     invalid: '&cInvalid entry number! min: %1 max: %2'
-  waypoint:
-    item-lore:
+
+waypoint:
+  created: '&6%1&a created a waypoint &6'%2'&a! View it with &e/teamwaypoint list&a!'
+  search-message: '&aPlease enter a search term!'
+  exists: '&cWaypoint already exists!'
+  item-lore:
+    - '&7X: %1 &7Y: %2 &7Z: %3'
+    - ''
+    - '&eClick to edit!'
+    - '&eShift-click to remove!'
+  filter:
+    name: '&aFilter'
+    lore:
       - ''
-      - '&eClick to edit!'
-      - '&eShift-click to remove!'
-    filter:
-      name: '&aFilter'
+      - '&eClick to filter entries'
+  info:
+    name: '&eNote'
+    lore:
+      - ''
+      - '&eIt is recommended to use Lunar Client'
+      - '&eto view waypoints in-game!'
+      - '&aDownload @ lunarclient.com'
+  edit:
+    edit-name:
+      message: '&aPlease enter a new name for the waypoint!'
+      name: '&aEdit Name'
       lore:
         - ''
-        - '&eClick to filter entries'
-    info:
-      name: '&eNote'
+        - '&eClick to edit!'
+    icon-select:
       lore:
         - ''
-        - '&eIt is recommended to use Lunar Client'
-        - '&eto view waypoints in-game!'
-        - '&aDownload @ lunarclient.com'
+        - '&eClick to select!'
+      message: '&aSelected icon: &e%1&a!'
+    color-select:
+      name: '&aColor'
+      lore:
+        - ''
+        - '&eClick to select color!'
+  delete-button:
+    name: '&cDelete'
+    lore:
+      - ''
+      - '&eClick to delete.'
+  deleted: '&aWaypoint deleted!'
+  color-select:
+    name: '%1%2'
+    lore:
+      selected:
+        - ''
+        - '&aAlready selected!'
+      unselected:
+        - ''
+        - '&eClick to select!'
+    set: '&aColor set to %1%2&a!'
+
 
 team-info:
   online-member-entry: '&a%1'

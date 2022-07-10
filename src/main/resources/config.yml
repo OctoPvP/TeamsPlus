@@ -34,3 +34,22 @@ pvp:
   pvp-team: false
   pvp-ally: false
 enable-vanish-hook: true
+waypoint:
+  allowed-icons:
+    - NAME_TAG
+    - REDSTONE
+    - STRING
+    - SADDLE
+    - SALMON
+    - OAK_LOG
+    - OBSIDIAN
+    - BEACON
+    - COOKED_BEEF
+    - NETHERRACK
+    - HOPPER
+    - GOLDEN_SWORD
+    - GOLD_NUGGET
+    - NETHERITE_PICKAXE
+    - NETHERITE_SWORD
+    - NETHERITE_AXE
+  default-icon: NAME_TAG

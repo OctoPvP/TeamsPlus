@@ -195,11 +195,9 @@ public class TeamsCommand {
         }
         Team team = new Team(name, sender.getUniqueId());
         playerData.setTeamId(team.getTeamId());
-        Tasks.runAsync(() -> {
-            team.save();
-            TeamsManager.getInstance().getTeams().add(team);
-            playerData.save();
-        });
+        team.save();
+        TeamsManager.getInstance().getTeams().add(team);
+        playerData.save();
         sender.sendMessage(Lang.CREATED_TEAM.toString(team.getName()));
         return;
     }

@@ -14,11 +14,13 @@ import net.badbird5907.teams.listeners.SessionListener;
 import net.badbird5907.teams.manager.HookManager;
 import net.badbird5907.teams.manager.StorageManager;
 import net.badbird5907.teams.manager.TeamsManager;
+import net.badbird5907.teams.manager.WaypointManager;
 import net.badbird5907.teams.runnable.DataUpdateRunnable;
 import net.badbird5907.teams.util.Metrics;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,10 +46,13 @@ public final class TeamsPlus extends JavaPlugin {
     @Getter
     private static boolean disabling = false;
     @Getter
+    private final ConversationFactory conversationFactory = new ConversationFactory(this);
+    @Getter
     private StorageManager storageManager;
     @Getter
     private TeamsManager teamsManager;
-
+    @Getter
+    private WaypointManager waypointManager;
     @Getter
     private MiniMessage miniMessage;
 
@@ -92,6 +97,9 @@ public final class TeamsPlus extends JavaPlugin {
 
         storageManager = new StorageManager();
         teamsManager = new TeamsManager();
+        waypointManager = new WaypointManager();
+
+        waypointManager.init(this);
 
         new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
