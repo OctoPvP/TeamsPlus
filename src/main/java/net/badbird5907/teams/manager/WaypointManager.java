@@ -60,6 +60,8 @@ public class WaypointManager implements Listener {
         Team team = data.getPlayerTeam();
         if (team == null || !LunarClientHook.isOnLunarClient(player)) return;
         for (Waypoint waypoint : team.getWaypoints()) {
+            if (waypoint.getDisabledPlayers() != null && waypoint.getDisabledPlayers().contains(player.getUniqueId()))
+                continue;
             LunarClientHook.sendWaypoint(player, waypoint);
         }
     }
