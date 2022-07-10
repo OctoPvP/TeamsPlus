@@ -129,7 +129,7 @@ public class ListWaypointsMenu extends PaginatedMenu {
                 update(player);
                  */
                 team.removeWaypoint(waypoint);
-                player.sendMessage(Lang.WAYPOINT_DELETED.toString());
+                team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.toString(player.getName(), waypoint.getName()));
                 update(player);
             } else new EditWaypointMenu(waypoint, team).open(player);
         }

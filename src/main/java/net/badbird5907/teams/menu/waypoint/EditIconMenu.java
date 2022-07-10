@@ -60,7 +60,7 @@ public class EditIconMenu extends PaginatedMenu {
         public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
             waypoint.setIcon(material);
             //player.closeInventory();
-            player.sendMessage(Lang.WAYPOINT_SELECT_ICON_MESSAGE.toString(StringUtils.capitalize(material.name().toLowerCase().replace("_", " "))));
+            team.broadcast(Lang.WAYPOINT_SELECT_ICON_BROADCAST.toString(player.getName(), waypoint.getName(), StringUtils.capitalize(material.name().toLowerCase().replace("_", " "))));
             new EditWaypointMenu(waypoint, team).open(player);
         }
     }

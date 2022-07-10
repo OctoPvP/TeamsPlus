@@ -5,7 +5,6 @@ import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.buttons.PlaceholderButton;
 import net.badbird5907.blib.menu.buttons.impl.BackButton;
 import net.badbird5907.blib.menu.menu.Menu;
-import net.badbird5907.blib.menu.menu.PaginatedMenu;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.ItemBuilder;
 import net.badbird5907.teams.hooks.impl.LunarClientHook;
@@ -15,7 +14,6 @@ import net.badbird5907.teams.object.Waypoint;
 import net.badbird5907.teams.util.ColorMapper;
 import net.badbird5907.teams.util.Utils;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -123,7 +121,7 @@ public class SelectColorMenu extends Menu {
             waypoint.setColor(color);
             team.save();
             team.updateWaypoints();
-            player.sendMessage(Lang.WAYPOINT_COLOR_SET.toString(color, Utils.enumToString(color)));
+            team.broadcast(Lang.WAYPOINT_COLOR_SET_BROADCAST.toString(player.getName(), waypoint.getName(), color, Utils.enumToString(color)));
             new EditWaypointMenu(waypoint, team).open(player);
         }
     }

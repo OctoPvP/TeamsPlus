@@ -59,10 +59,11 @@ waypoint:
       - '&eIt is recommended to use Lunar Client'
       - '&eto view waypoints in-game!'
       - '&aDownload @ lunarclient.com'
-  edit:
+  edit: # the edit menu
     edit-name:
       message: '&aPlease enter a new name for the waypoint!'
       name: '&aEdit Name'
+      broadcast: '&6%1&a renamed the waypoint ''&6%2&a'' to ''&6%3&a''.'
       lore:
         - ''
         - '&eClick to edit!'
@@ -70,19 +71,20 @@ waypoint:
       lore:
         - ''
         - '&eClick to select!'
-      message: '&aSelected icon: &e%1&a!'
+      broadcast: '&6%1&a set the icon for the waypoint ''&6%2&a'' to &6%3&a!'
     color-select:
       name: '&aColor'
+      broadcast: '&6%1&a set the color for the waypoint ''&6%2&a'' to %3%4&a!'
       lore:
         - ''
         - '&eClick to select color!'
-  delete-button:
-    name: '&cDelete'
-    lore:
-      - ''
-      - '&eClick to delete.'
-  deleted: '&aWaypoint deleted!'
-  color-select:
+    delete-button:
+      name: '&cDelete'
+      broadcast: '&6%1&a deleted the waypoint ''&6%2&a''.'
+      lore:
+        - ''
+        - '&eClick to delete.'
+  color-select: # the color selector menu
     name: '%1%2'
     lore:
       selected:

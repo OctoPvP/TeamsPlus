@@ -212,16 +212,16 @@ public enum Lang {
             "&eClick to select!"
     }),
 
-    WAYPOINT_SELECT_ICON_MESSAGE("waypoint.edit.icon-select.message", "&aSelected icon: &e%1&a!"),
+    WAYPOINT_SELECT_ICON_BROADCAST("waypoint.edit.icon-select.broadcast", "&6%1&a set the icon for the waypoint '&6%2&a' to &6%3&a!"),
 
-    WAYPOINT_DELETE_BUTTON_NAME("waypoint.delete-button.name", "&cDelete"),
+    WAYPOINT_DELETE_BUTTON_NAME("waypoint.edit.delete-button.name", "&cDelete"),
 
-    WAYPOINT_DELETE_BUTTON_LORE("waypoint.delete-button.lore", new String[]{
+    WAYPOINT_DELETE_BUTTON_LORE("waypoint.edit.delete-button.lore", new String[]{
             "",
             "&eClick to delete."
     }),
 
-    WAYPOINT_DELETED("waypoint.deleted", "&aWaypoint deleted!"),
+    WAYPOINT_DELETED_BROADCAST("waypoint.edit.delete-button.broadcast", "&6%1&a deleted the waypoint '&6%2&a'."),
 
     WAYPOINT_EXISTS("waypoint.exists", "&cWaypoint already exists!"),
 
@@ -244,10 +244,9 @@ public enum Lang {
             "&eClick to select!"
     }),
 
-    WAYPOINT_COLOR_SET("waypoint.color-select.set", "&aColor set to %1%2&a!"),
+    WAYPOINT_COLOR_SET_BROADCAST("waypoint.edit.color-select.broadcast", "&6%1&a set the color for the waypoint '&6%2&a' to %3%4&a!"),
 
-
-
+    WAYPOINT_NAME_EDITED("waypoint.edit-name.broadcast", "&6%1&a renamed the waypoint '&6%2&a' to '&6%3&a'."),
     ;
     @Getter
     private final String configPath;

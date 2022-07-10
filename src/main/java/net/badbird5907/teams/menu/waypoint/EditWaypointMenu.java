@@ -91,8 +91,10 @@ public class EditWaypointMenu extends Menu {
             TeamsPlus.getInstance().getConversationFactory().withFirstPrompt(
                             new QuestionConversation(Lang.WAYPOINT_EDIT_NAME_MESSAGE.toString(), (TypeCallback<Prompt, String>) s -> {
                                 TeamsPlus.getInstance().getWaypointManager().removeWaypoint(waypoint);
+                                String prevName = waypoint.getName();
                                 waypoint.setName(s);
                                 team.save();
+                                team.broadcast(Lang.WAYPOINT_NAME_EDITED.toString(player.getName(), prevName, s));
                                 open(player);
                                 return Prompt.END_OF_CONVERSATION;
                             }))
@@ -145,7 +147,7 @@ public class EditWaypointMenu extends Menu {
             //team.getWaypoints().remove(waypoint);
             //team.save();
             team.removeWaypoint(waypoint);
-            player.sendMessage(Lang.WAYPOINT_DELETED.toString());
+            team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.toString(player.getName(), waypoint.getName()));
             new ListWaypointsMenu(team, player.getUniqueId()).open(player);
         }
     }
