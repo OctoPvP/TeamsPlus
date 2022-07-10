@@ -2,7 +2,6 @@ package net.badbird5907.teams.commands.impl.managment;
 
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.PlayerUtil;
-import net.badbird5907.blib.utils.StringUtils;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.commands.annotation.TeamPermission;
 import net.badbird5907.teams.hooks.Hook;
@@ -17,7 +16,11 @@ import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import net.badbird5907.teams.object.TeamRank;
 import net.badbird5907.teams.util.Permissions;
-import net.octopvp.commander.annotation.Optional;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
 import org.bukkit.Bukkit;
@@ -25,7 +28,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Command(name = "teams", aliases = {"teamsplus", "team"}, description = "Main TeamsPlus command")
@@ -38,40 +44,115 @@ public class TeamsCommand {
 
     public static void sendTeamInfo(CommandSender sender, Team targetTeam) {
         OfflinePlayer owner = Bukkit.getOfflinePlayer(targetTeam.getOwner());
-        String enemies;
-        if (targetTeam.getSettings().isShowEnemies()) {
-            StringBuilder sb = new StringBuilder();
-            targetTeam.getEnemiedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ENEMIES_TEAM_ENTRY.toString(name)));
-            enemies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ENEMIES_LIST.toString((targetTeam.getEnemiedTeams().size()), sb.toString()));
-        } else {
-            enemies = CC.GREEN + targetTeam.getEnemiedTeams().size();
-        }
-        String allies;
+        Component allies;
         if (targetTeam.getSettings().isShowAllies()) {
-            StringBuilder sb = new StringBuilder();
-            targetTeam.getAlliedTeams().forEach((uuid, name) -> sb.append(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString(name)));
-            allies = StringUtils.replacePlaceholders(Lang.TEAM_INFO_ALLIES_LIST.toString((targetTeam.getAlliedTeams().size()), sb.toString()));
-        } else allies = CC.GREEN + (targetTeam.getAlliedTeams().size());
-        String members;
+            Component alliesList = Component.text("");
+            for (Map.Entry<UUID, String> uuidStringEntry : targetTeam.getAlliedTeams().entrySet()) {
+                alliesList = alliesList.append(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString()))
+                        .replaceText(TextReplacementConfig.builder()
+                                .matchLiteral("%1")
+                                .replacement(uuidStringEntry.getValue()).build())
+                        .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
+            }
+            allies = LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            Lang.TEAM_INFO_ALLIES_LIST.toString()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%1")
+                            .replacement(targetTeam.getAlliedTeams().size() + "").build())
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%2")
+                            .replacement(alliesList).build());
+            //StringUtils.replacePlaceholders(.toString((targetTeam.getAlliedTeams().size()), sb.toString()))
+        } else allies = Component.text(targetTeam.getAlliedTeams().size())
+                .color(NamedTextColor.GREEN);
+
+        Component enemies;
+        if (targetTeam.getSettings().isShowEnemies()) {
+            Component enemiesList = Component.text("");
+            for (Map.Entry<UUID, String> uuidStringEntry : targetTeam.getEnemiedTeams().entrySet()) {
+                enemiesList = enemiesList.append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_ENEMIES_TEAM_ENTRY.toString()))
+                        .replaceText(TextReplacementConfig.builder()
+                                .matchLiteral("%1")
+                                .replacement(uuidStringEntry.getValue())
+                                .build())
+                        .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
+            }
+            enemies = LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            Lang.TEAM_INFO_ENEMIES_LIST.toString()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%1")
+                            .replacement(targetTeam.getEnemiedTeams().size() + "").build())
+                    .replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("%2")
+                            .replacement(enemiesList).build());
+            //                    StringUtils.replacePlaceholders(.toString((targetTeam.getEnemiedTeams().size()), sb.toString()))
+        } else {
+            enemies = Component.text(targetTeam.getEnemiedTeams().size())
+                    .color(NamedTextColor.RED);
+        }
+
+        Component members;
         int membersAll = targetTeam.getMembers().size();
         AtomicInteger membersOnline = new AtomicInteger();
-        StringBuilder sb = new StringBuilder();
+        Component component = Component.text("");
         int a = 0;
         for (Map.Entry<UUID, TeamRank> entry : targetTeam.getMembers().entrySet()) {
             a++;
             UUID uuid = entry.getKey();
             TeamRank rank = entry.getValue();
             Player player = Bukkit.getPlayer(uuid);
-            if (player != null && !VanishHook.isVanished(player)) {
+            if (player != null && !VanishHook.isVanished(player)) { //this is so messy
                 membersOnline.getAndIncrement();
-                sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
+                component = component.append((a != 1 ? LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.toString()) : Component.text()))
+                        .append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString())
+                                .replaceText(TextReplacementConfig.builder()
+                                        .matchLiteral("%1")
+                                        .replacement(PlayerUtil.getPlayerName(uuid)).build()));
             } else {
-                sb.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR : "")).append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString(PlayerUtil.getPlayerName(uuid)));
+                component = component.append((a != 1 ? LegacyComponentSerializer.legacySection().deserialize(
+                                Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.toString()
+                        ) : Component.text()))
+                        .append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString())
+                                .replaceText(
+                                        TextReplacementConfig.builder()
+                                                .matchLiteral("%1")
+                                                .replacement(PlayerUtil.getPlayerName(uuid)).build()
+                                ));
             }
         }
-        members = Lang.TEAM_INFO_MEMBERS_LIST.toString(membersOnline, membersAll, sb.toString());
-        String message = Lang.TEAM_INFO_MESSAGE.toString(targetTeam.getName(), owner.getName(), allies, enemies, members);
-        sender.sendMessage(CC.translate(message));
+        members = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBERS_LIST.toString())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%1")
+                        .replacement(membersOnline.toString()).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%2")
+                        .replacement(membersAll + "").build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%3")
+                        .replacement(component).build())
+
+        ;
+        //.toString(membersOnline, membersAll, sb.toString());
+        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MESSAGE.toString())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%1")
+                        .replacement(targetTeam.getName()).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%2")
+                        .replacement(Objects.requireNonNull(owner.getName())).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%3")
+                        .replacement(allies).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%4")
+                        .replacement(enemies).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("%5")
+                        .replacement(members).build());
+        //.toString(targetTeam.getName(), owner.getName(), allies, enemies, members);
+        sender.sendMessage(message);
     }
 
     @Command(name = "reload", description = "Reload the configuration files")
