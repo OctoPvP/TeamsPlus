@@ -72,8 +72,9 @@ public final class TeamsPlus extends JavaPlugin {
         instance = this;
         bLib.create(this);
         Logger.info("Starting TeamsPlus v." + getDescription().getVersion());
+        if (!getDataFolder().exists()) getDataFolder().mkdir();
+        saveDefaultConfig();
         new Metrics(this, 12438);
-        setupConfig();
         miniMessage = MiniMessage.builder().build();
         //bLib.getCommandFramework().registerCommandsInPackage("net.badbird5907.teams.commands");
         CommandManager.init();
@@ -126,15 +127,5 @@ public final class TeamsPlus extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-    }
-
-    private void setupConfig() {
-        File configFile = new File(getDataFolder() + "/config.yml");
-        if (!configFile.exists()) {
-            configFile.getParentFile().mkdirs();
-            saveResource("config.yml", false);
-        }
-        getConfig().options().copyDefaults(true);
-        saveConfig();
     }
 }
