@@ -1,5 +1,6 @@
 package net.badbird5907.teams.commands.impl.managment;
 
+import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.commands.annotation.AllowOffline;
 import net.badbird5907.teams.commands.annotation.TeamPermission;
@@ -69,14 +70,19 @@ public class TeamMemberManagement {
     @PlayerOnly
     public void pInfo(@Sender Player sender, @AllowOffline PlayerData target) {
         Team team = target.getPlayerTeam();
+        Logger.debug("team: " + team + " | " + target.getName());
         boolean inTeam = team != null;
-        Component component = Lang.PLAYER_INFO.getComponent(
-                sender.displayName(),
-                (inTeam ? team.getName() : Lang.PLAYER_NOT_IN_TEAM.toString()),
-                (inTeam ? Utils.enumToString(team.getRank(target.getUuid())) : Lang.PLAYER_NOT_IN_TEAM.toString()),
-                (target.getKills())
-        );
-        sender.sendMessage(component);
+        try {
+            Component component = Lang.PLAYER_INFO.getComponent(
+                    sender.displayName(),
+                    (inTeam ? team.getName() : Lang.PLAYER_NOT_IN_TEAM.toString()),
+                    (inTeam ? Utils.enumToString(team.getRank(target.getUuid())) : Lang.PLAYER_NOT_IN_TEAM.toString()),
+                    (target.getKills())
+            );
+            sender.sendMessage(component);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Command(name = "kick", description = "Kick a player from your team.")

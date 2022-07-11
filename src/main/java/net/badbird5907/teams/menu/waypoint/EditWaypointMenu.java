@@ -39,8 +39,9 @@ public class EditWaypointMenu extends Menu {
         buttons.add(new IconButton());
         buttons.add(new DeleteButton());
         buttons.add(new ColorButton(waypoint.getColor()));
-        if (LunarClientHook.isOnLunarClient(player)) buttons.add(new ToggleLunarButton());
-        buttons.add(new PlaceholderButton());
+        boolean lunar = LunarClientHook.isOnLunarClient(player);
+        if (lunar) buttons.add(new ToggleLunarButton(!waypoint.getDisabledPlayers().contains(player.getUniqueId())));
+        buttons.add(new PlaceholderButton(lunar));
         return buttons;
     }
 
@@ -154,7 +155,7 @@ public class EditWaypointMenu extends Menu {
 
     @RequiredArgsConstructor
     private class ToggleLunarButton extends Button {
-        private final boolean toggled = false;
+        private final boolean toggled;
 
         @Override
         public ItemStack getItem(Player player) {
@@ -171,15 +172,33 @@ public class EditWaypointMenu extends Menu {
 
         @Override
         public void onClick(Player player, int slot, ClickType clickType, InventoryClickEvent event) {
-            if (toggled) waypoint.getDisabledPlayers().remove(player.getUniqueId());
-            else waypoint.getDisabledPlayers().add(player.getUniqueId());
+            if (!toggled) {
+                player.sendMessage(Lang.TOGGLE_LUNAR_ON.toString());
+                waypoint.getDisabledPlayers().remove(player.getUniqueId());
+                TeamsPlus.getInstance().getWaypointManager().updatePlayerWaypoints(player);
+            } else {
+                player.sendMessage(Lang.TOGGLE_LUNAR_OFF.toString());
+                waypoint.getDisabledPlayers().add(player.getUniqueId());
+                TeamsPlus.getInstance().getWaypointManager().hideWaypointFromPlayer(player, waypoint);
+            }
+            team.save();
+            update(player);
         }
     }
 
+    @RequiredArgsConstructor
     private class PlaceholderButton extends net.badbird5907.blib.menu.buttons.PlaceholderButton {
+        private final boolean onLunar;
+
         @Override
         public int[] getSlots() {
+            if (onLunar) return genPlaceholderSpots(IntStream.range(0, 26), 26, 15, 13, 11, 0);
             return genPlaceholderSpots(IntStream.range(0, 26), 26, 15, 13, 11);
+        }
+
+        @Override
+        public int getSlot() {
+            return 2;
         }
     }
 }

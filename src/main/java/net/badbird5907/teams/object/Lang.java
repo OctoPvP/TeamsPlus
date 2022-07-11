@@ -204,6 +204,10 @@ public enum Lang {
             "&7This will only affect you."
     }),
 
+    TOGGLE_LUNAR_ON("waypoint.toggle-lunar.message.on", "&aToggled lunar integration on for this waypoint!"),
+
+    TOGGLE_LUNAR_OFF("waypoint.toggle-lunar.message.off", "&aToggled lunar integration &coff&a for this waypoint!"),
+
     WAYPOINT_CREATED("waypoint.created", "&6%1&a created a waypoint &6'%2'&a! View it with &e/teamwaypoint list&a!"),
 
     WAYPOINT_SEARCH_MESSAGE("waypoint.search-message", "&aPlease enter a search term!"),
@@ -329,7 +333,7 @@ public enum Lang {
     public List<String> getMessageList(Object... placeholders) {
         List<String> list = new ArrayList<>();
         for (String s : messageList) {
-            list.add(StringUtils.replacePlaceholders(s.replace("%prefix%", PREFIX.getRaw()).replace("%separator%", CC.SEPARATOR), placeholders));
+            list.add(StringUtils.replacePlaceholders(CC.translate(s).replace("%prefix%", PREFIX.getRaw()).replace("%separator%", CC.SEPARATOR), placeholders));
         }
         return list;
     }
@@ -348,8 +352,13 @@ public enum Lang {
         ).replace("%separator%", CC.SEPARATOR));
     }
 
+    public String toStringReplace() {
+        return finalMessage.replace("%prefix%", PREFIX.getRaw()
+        ).replace("%separator%", CC.SEPARATOR);
+    }
+
     public Component getComponent(Object... placeholders) {
-        Component component = LegacyComponentSerializer.legacyAmpersand().deserialize(toString());
+        Component component = LegacyComponentSerializer.legacyAmpersand().deserialize(toStringReplace());
         for (int i = 0; i < placeholders.length; i++) {
             TextReplacementConfig.Builder b =  TextReplacementConfig.builder()
                     .matchLiteral(("%" + (i + 1)));
@@ -359,6 +368,9 @@ public enum Lang {
             }
             if (o instanceof ComponentLike cl) {
                 b.replacement(cl);
+            }
+            if (o instanceof Number n) {
+                b.replacement(n.toString());
             }
             component = component.replaceText(
                     b.build()

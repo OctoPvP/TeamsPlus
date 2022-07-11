@@ -62,6 +62,7 @@ waypoint:
   exists: '&cWaypoint already exists!'
   item-lore:
     - '&7X: %1 &7Y: %2 &7Z: %3'
+    - '&7World: %4'
     - ''
     - '&eClick to edit!'
     - '&eShift-click to remove!'
@@ -114,6 +115,9 @@ waypoint:
     set: '&aColor set to %1%2&a!'
   toggle-lunar:
     name: '&aToggle Lunar Waypoint Permanently'
+    message:
+      on: '&aToggled lunar integration on for this waypoint!'
+      off: '&aToggled lunar integration &coff&a for this waypoint!'
     lore:
       enabled:
         - ''

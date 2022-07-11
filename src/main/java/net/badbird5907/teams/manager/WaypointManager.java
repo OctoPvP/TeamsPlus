@@ -74,4 +74,8 @@ public class WaypointManager implements Listener {
             }
         });
     }
+
+    public void hideWaypointFromPlayer(Player player, Waypoint waypoint) {
+        LunarClientHook.removeWaypoint(player, waypoint);
+    }
 }

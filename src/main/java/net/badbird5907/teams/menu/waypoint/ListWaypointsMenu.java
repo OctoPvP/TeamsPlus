@@ -7,6 +7,7 @@ import net.badbird5907.blib.objects.TypeCallback;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.util.ItemBuilder;
 import net.badbird5907.blib.util.QuestionConversation;
+import net.badbird5907.blib.util.StoredLocation;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.hooks.impl.LunarClientHook;
 import net.badbird5907.teams.object.Lang;
@@ -108,9 +109,10 @@ public class ListWaypointsMenu extends PaginatedMenu {
 
         @Override
         public ItemStack getItem(Player player) {
+            StoredLocation l = waypoint.getLocation();
             return new ItemBuilder(waypoint.getIcon())
                     .setName(CC.WHITE + waypoint.getName())
-                    .lore(Lang.WAYPOINT_LORE.getMessageList(waypoint.getLocation().getX(), waypoint.getLocation().getY(), waypoint.getLocation().getZ()).stream().map(CC::translate).collect(Collectors.toList()))
+                    .lore(Lang.WAYPOINT_LORE.getMessageList(l.getX(), l.getY(), l.getZ(), l.getWorld().getName()).stream().map(CC::translate).collect(Collectors.toList()))
                     .build();
         }
 
