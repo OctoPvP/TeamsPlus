@@ -269,6 +269,10 @@ public class PlayerData {
     }
 
     public void leaveTeam() {
+        if (getPlayerTeam().getOwner().equals(getUuid())) {
+            sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.toString());
+            return;
+        }
         getPlayerTeam().leave(this);
         setCurrentChannel(ChatChannel.GLOBAL);
         setAllyChatTeamId(null);
