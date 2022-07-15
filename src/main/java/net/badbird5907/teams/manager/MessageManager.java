@@ -14,6 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.Objects;
+
 public class MessageManager {
 
     public static void handleAlly(PlayerData data, Player player, Team senderTeam, String message) {
@@ -75,22 +77,15 @@ public class MessageManager {
         String message;
         if (senderData.isInTeam()) {
             String color = CC.AQUA;
-            if (player.getUniqueId().equals(receiver.getUniqueId())) {
+            if (receiverData.isInTeam() && senderData.getPlayerTeam().getRank(receiverData.getUuid()) != null) {
                 color = CC.GREEN;
             } if (senderData.isEnemy(receiver)) {
                 color = CC.RED;
             } else if (senderData.isAlly(receiver))
-                color = CC.PURPLE;
+                color = CC.PINK;
             message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), formattedName, rawMessage);
         } else {
-            String color = CC.GREEN;
-            if (player.getUniqueId().equals(receiver.getUniqueId()))
-                color = CC.GREEN;
-            if (senderData.isEnemy(receiver)) {
-                color = CC.RED;
-            } else if (senderData.isAlly(receiver))
-                color = CC.PURPLE;
-            message = StringUtils.replacePlaceholders(format, color, formattedName, rawMessage);
+            message = StringUtils.replacePlaceholders(format, CC.AQUA, formattedName, rawMessage);
         }
         return message;
     }
