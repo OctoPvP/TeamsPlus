@@ -301,9 +301,10 @@ public class PlayerData {
     }
 
     public void onKill(Player player) {
-        if (TeamsPlus.getInstance().getConfig().getBoolean("kill-spam-prevention.enabled") && lastKillTimestamp > 0) {
-            long minutes = TeamsPlus.getInstance().getConfig().getLong("kill-spam-prevention.cooldown");
-            if (System.currentTimeMillis() - lastKillTimestamp < minutes * 60 * 1000) {
+        if (TeamsPlus.getInstance().getConfig().getBoolean("kill-spam-prevention.enabled", true) && lastKillTimestamp > 0) {
+            long minutes = TeamsPlus.getInstance().getConfig().getLong("kill-spam-prevention.cooldown", 60);
+            //check if last kill is same as this player and its
+            if (lastKillID.equals(player.getUniqueId()) && lastKillTimestamp + (minutes * 60 * 1000) > System.currentTimeMillis()) {
                 sendMessage(Lang.KILL_SPAM_PREVENTION.toString(player.getName(), minutes));
                 return;
             }
