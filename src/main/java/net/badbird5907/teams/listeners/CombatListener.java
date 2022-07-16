@@ -16,6 +16,9 @@ public class CombatListener implements Listener {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             Player victim = (Player) event.getEntity(), attacker = (Player) event.getDamager();
             PlayerData attackerData = PlayerManager.getData(attacker.getUniqueId());
+            if (attackerData == null || PlayerManager.getData(victim.getUniqueId()) == null) {
+                return;
+            }
             PvPCheckResult checkResult = attackerData.canDamage(victim);
             if (checkResult != PvPCheckResult.ALLOWED) {
                 switch (checkResult) {
