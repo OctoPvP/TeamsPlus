@@ -36,8 +36,9 @@ public class PlayerData {
      */
     private ConcurrentHashMap<UUID, Integer> pendingInvites = new ConcurrentHashMap<>();
 
-    private UUID allyChatTeamId = null;
+    private UUID allyChatTeamId = null, lastKillID = null;
 
+    private long lastKillTimestamp = 0;
     private int kills = 0;
 
     public PlayerData(UUID uuid) {
@@ -300,6 +301,15 @@ public class PlayerData {
     }
 
     public void onKill(Player player) {
+        if (TeamsPlus.getInstance().getConfig().getBoolean("kill-spam-prevention.enabled") && lastKillTimestamp > 0) {
+            long minutes = TeamsPlus.getInstance().getConfig().getLong("kill-spam-prevention.cooldown");
+            if (System.currentTimeMillis() - lastKillTimestamp < minutes * 60 * 1000) {
+                sendMessage(Lang.KILL_SPAM_PREVENTION.toString(player.getName(), minutes));
+                return;
+            }
+        }
         kills += 1;
+        lastKillID = player.getUniqueId();
+        lastKillTimestamp = System.currentTimeMillis();
     }
 }

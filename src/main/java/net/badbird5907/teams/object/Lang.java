@@ -302,7 +302,9 @@ public enum Lang {
             "&7&m-------------------------------------"
     }),
 
-    PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone")
+    PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone"),
+
+    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats."),
     ;
     @Getter
     private final String configPath;

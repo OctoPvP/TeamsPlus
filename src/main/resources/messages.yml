@@ -192,7 +192,7 @@ player-info:
     - '&bTeam Rank: %3' # %3 - Player team rank
     - '&bKills: &e%4'
     - '&7&m-------------------------------------'
-
-
 staff:
   disbanded-team: '&aSuccessfully disbanded %1.'
+kill-spam-prevention:
+  message: '&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.'

@@ -60,3 +60,6 @@ waypoint:
     - BOOKSHELF
     - ENDER_EYE
   default-icon: NAME_TAG
+kill-spam-prevention: # Won't count a kill towards a player's stats if they've killed the same person twice
+  enable: true
+  cooldown: 60 # minutes
