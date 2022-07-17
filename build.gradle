@@ -40,7 +40,8 @@ dependencies {
 
     implementation 'net.octopvp:Commander-Bukkit:1.0-SNAPSHOT'
 
-    implementation 'org.mongodb:mongodb-driver-sync:4.2.2'
+    implementation ('org.mongodb:mongodb-driver-sync:4.2.2') {
+    }
 
     compileOnly 'net.badbird5907:AntiCombatLog:2.2.6'
 
@@ -119,6 +120,7 @@ shadowJar {
     relocate 'net.badbird5907.blib', 'net.badbird5907.teams.relocate.bLib'
     relocate 'net.octopvp.commander', 'net.badbird5907.teams.relocate.commander'
     relocate 'com.mongodb', 'net.badbird5907.teams.relocate.mongodb'
+    relocate 'org.bson', 'net.badbird5907.teams.relocate.bson'
 
     exclude '*.txt'
     exclude '*.md'

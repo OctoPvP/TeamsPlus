@@ -11,6 +11,7 @@ import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.PlayerData;
 import net.badbird5907.teams.object.Team;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -83,9 +84,9 @@ public class MessageManager {
                 color = CC.RED;
             } else if (senderData.isAlly(receiver))
                 color = CC.PINK;
-            message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), formattedName, rawMessage);
+            message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), formattedName, handleMentions(receiver, rawMessage));
         } else {
-            message = StringUtils.replacePlaceholders(format, CC.AQUA, formattedName, rawMessage);
+            message = StringUtils.replacePlaceholders(format, CC.AQUA, formattedName, handleMentions(receiver, rawMessage));
         }
         return message;
     }
@@ -98,5 +99,13 @@ public class MessageManager {
             formattedName = vaultHook.getFormattedName(player);
         }
         return formattedName;
+    }
+    public static String handleMentions(Player reciever, String message) {
+        boolean b = message.contains(reciever.getName());
+        if (b && TeamsPlus.getInstance().getConfig().getBoolean("chat.ping-player-on-mention", true)) {
+            message = message.replace(reciever.getName(), CC.YELLOW + reciever.getName() + CC.WHITE);
+            reciever.playSound(reciever.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        }
+        return message;
     }
 }

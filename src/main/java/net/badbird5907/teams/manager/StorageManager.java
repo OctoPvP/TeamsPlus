@@ -2,6 +2,7 @@ package net.badbird5907.teams.manager;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.badbird5907.blib.util.Logger;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.api.events.StorageManagerLoadEvent;
 import net.badbird5907.teams.object.StorageType;
@@ -21,7 +22,8 @@ public class StorageManager {
 
     public StorageManager() {
         instance = this;
-        StorageType type = StorageType.valueOf(TeamsPlus.getInstance().getConfig().getString("data-storage"));
+        StorageType type = StorageType.valueOf(TeamsPlus.getInstance().getConfig().getString("data-storage", "FLATFILE"));
+        Logger.info("Starting storage handler %1", type.name());
         if (type == StorageType.MONGO)
             storageHandler = new MongoStorageHandler();
         if (type == StorageType.SQL)
