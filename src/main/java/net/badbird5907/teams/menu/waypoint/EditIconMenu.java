@@ -1,10 +1,10 @@
 package net.badbird5907.teams.menu.waypoint;
 
 import lombok.RequiredArgsConstructor;
-import net.badbird5907.anticombatlog.relocate.blib.util.ItemBuilder;
 import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.menu.PaginatedMenu;
 import net.badbird5907.blib.util.CC;
+import net.badbird5907.blib.util.ItemBuilder;
 import net.badbird5907.teams.TeamsPlus;
 import net.badbird5907.teams.object.Lang;
 import net.badbird5907.teams.object.Team;
