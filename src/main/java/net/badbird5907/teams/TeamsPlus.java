@@ -127,5 +127,6 @@ public final class TeamsPlus extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
+        waypointManager.init(this);
     }
 }

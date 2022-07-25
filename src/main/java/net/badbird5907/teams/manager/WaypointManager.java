@@ -35,6 +35,7 @@ public class WaypointManager implements Listener {
 
     public void init(TeamsPlus plugin) {
         defaultIcon = Material.getMaterial(plugin.getConfig().getString("waypoint.default-icon", "NAME_TAG"));
+        allowedIcons.clear();
         for (String s : plugin.getConfig().getStringList("waypoint.allowed-icons")) {
             Material material = Material.getMaterial(s.toUpperCase());
             if (material == null) {

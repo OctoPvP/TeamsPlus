@@ -44,7 +44,10 @@ waypoint:
     - SADDLE
     - SALMON
     - OAK_LOG
+    - CROSSBOW
+    - SPRUCE_LOG
     - OBSIDIAN
+    - CRYING_OBSIDIAN
     - BEACON
     - COOKED_BEEF
     - NETHERRACK
@@ -59,6 +62,7 @@ waypoint:
     - ENCHANTING_TABLE
     - BOOKSHELF
     - ENDER_EYE
+    - SPAWNER
   default-icon: NAME_TAG
 kill-spam-prevention: # Won't count a kill towards a player's stats if they've killed the same person twice
   enabled: true
