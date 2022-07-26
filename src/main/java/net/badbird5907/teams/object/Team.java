@@ -148,7 +148,7 @@ public class Team {
         team.getAlliedTeams().remove(teamId);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
             team.broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(this.name));
-            broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(name));
+            broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(team.name));
         }
     }
 
