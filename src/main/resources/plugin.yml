@@ -1,6 +1,6 @@
 name: TeamsPlus
 version: ${version}
-main: net.badbird5907.teams.TeamsPlus
+main: dev.badbird.teams.TeamsPlus
 api-version: 1.17
 softdepend:
   - AntiCombatLog
