@@ -23,7 +23,7 @@ public class CommandManager {
 
     public static void init() {
         commander = BukkitCommander.getCommander(TeamsPlus.getInstance())
-                .registerPackage("net.badbird5907.teams.commands.impl")
+                .registerPackage("dev.badbird.teams.commands.impl")
                 .registerDependency(TeamsPlus.class, TeamsPlus.getInstance())
                 .registerProvider(PlayerData.class, new PlayerDataProvider())
                 .registerProvider(Sender.class, new SenderProvider())

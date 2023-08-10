@@ -104,10 +104,10 @@ tasks {
             include(dependency("org.mongodb:mongodb-driver-sync:4.2.2"))
         }
 
-        relocate("net.badbird5907.blib", "net.badbird5907.teams.relocate.bLib")
-        relocate("net.octopvp.commander", "net.badbird5907.teams.relocate.commander")
-        relocate("com.mongodb", "net.badbird5907.teams.relocate.mongodb")
-        relocate("org.bson", "net.badbird5907.teams.relocate.bson")
+        relocate("net.badbird5907.blib", "dev.badbird.teams.relocate.bLib")
+        relocate("net.octopvp.commander", "dev.badbird.teams.relocate.commander")
+        relocate("com.mongodb", "dev.badbird.teams.relocate.mongodb")
+        relocate("org.bson", "dev.badbird.teams.relocate.bson")
 
         exclude("*.txt")
         exclude("*.md")
