@@ -279,6 +279,11 @@ public class Team {
     public TeamRank getRank(UUID uuid) {
         return members.get(uuid);
     }
+    public void setRank(UUID uuid, TeamRank rank) {
+        if (!members.containsKey(uuid)) return;
+        members.put(uuid, rank);
+        save();
+    }
 
     public void kick(PlayerData target, PlayerData sender, String reason) {
         members.remove(target.getUuid());

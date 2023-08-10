@@ -97,9 +97,9 @@ public final class TeamsPlus extends JavaPlugin {
         Logger.info("Hooking into plugins...");
         HookManager.init();
 
+        waypointManager = new WaypointManager();
         storageManager = new StorageManager();
         teamsManager = new TeamsManager();
-        waypointManager = new WaypointManager();
 
         waypointManager.init(this);
 

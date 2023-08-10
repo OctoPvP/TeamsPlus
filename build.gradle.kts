@@ -100,7 +100,7 @@ tasks {
 
         dependencies {
             include(dependency("net.badbird5907:bLib-Bukkit:2.1.8-REL"))
-            include(dependency("net.octopvp:Commander-Bukkit:1.0-SNAPSHOT"))
+            include(dependency("net.octopvp:Commander-Bukkit:0.0.7-REL"))
             include(dependency("org.mongodb:mongodb-driver-sync:4.2.2"))
         }
 

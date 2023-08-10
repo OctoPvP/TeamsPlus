@@ -194,5 +194,8 @@ player-info:
     - '&7&m-------------------------------------'
 staff:
   disbanded-team: '&aSuccessfully disbanded %1.'
+  force-join: '&aSuccessfully force joined %1 to %2.'
+  force-leave: '&aSuccessfully removed %1 from %2.'
+  force-rename: '&aSuccessfully renamed %1 to %2.'
 kill-spam-prevention:
   message: '&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.'

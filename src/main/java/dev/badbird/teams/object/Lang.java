@@ -139,6 +139,14 @@ public enum Lang {
 
     STAFF_DISBAND_TEAM("staff.disband-team", "&aSuccessfully disbanded %1."),
 
+    STAFF_FORCE_JOIN("staff.force-join", "&aSuccessfully force joined %1 to %2."),
+
+    STAFF_FORCE_LEAVE("staff.force-leave", "&aSuccessfully removed %1 from %2."),
+
+    STAFF_FORCE_RANK("staff.force-rank", "&aSuccessfully set the rank of %1 to %2."),
+
+    STAFF_FORCE_RENAME("staff.force-rename", "&aSuccessfully renamed %1 to %2."),
+
     PLAYER_NOT_IN_TEAM("team.player-not-in-team", "&cYou are not in a team!"),
 
     CANCELED("canceled", "%prefix% &cCanceled!"),
@@ -304,8 +312,7 @@ public enum Lang {
 
     PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone"),
 
-    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats."),
-    ;
+    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.");
     @Getter
     private final String configPath;
     private final String finalMessage;
