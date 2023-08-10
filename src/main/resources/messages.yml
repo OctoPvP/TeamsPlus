@@ -132,7 +132,7 @@ team-info:
   online-member-entry: '&a%1'
   offline-member-entry: '&c%1'
   member-entry-separator: '&7, '
-  allies-team-entry: '&b%1'
+  allies-team-entry: '&b%1 '
   enemies-team-entry: '&c%1 '
   enemies-list: '&8[&a%1&8] %2'
   allies-list: '&8[&a%1&8] %2'

@@ -59,7 +59,7 @@ public enum Lang {
 
     TEAM_INFO_MEMBER_ENTRY_SEPARATOR("team-info.member-entry-separator", "&7, "),
 
-    TEAM_INFO_ALLIES_TEAM_ENTRY("team-info.allies-team-entry", "&b%1"),
+    TEAM_INFO_ALLIES_TEAM_ENTRY("team-info.allies-team-entry", "&b%1 "),
 
     TEAM_INFO_ENEMIES_TEAM_ENTRY("team-info.enemies-team-entry", "&c%1 "),
 
