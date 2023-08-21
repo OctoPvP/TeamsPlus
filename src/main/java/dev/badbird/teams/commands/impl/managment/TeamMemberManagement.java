@@ -74,7 +74,7 @@ public class TeamMemberManagement {
         boolean inTeam = team != null;
         try {
             Component component = Lang.PLAYER_INFO.getComponent(
-                    sender.displayName(),
+                    target.getName(),
                     (inTeam ? team.getName() : Lang.PLAYER_NOT_IN_TEAM.toString()),
                     (inTeam ? Utils.enumToString(team.getRank(target.getUuid())) : Lang.PLAYER_NOT_IN_TEAM.toString()),
                     (target.getKills())
