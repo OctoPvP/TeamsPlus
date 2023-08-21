@@ -5,7 +5,6 @@ import dev.badbird.teams.object.ChatChannel;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
-import net.kyori.adventure.text.Component;
 import net.octopvp.commander.annotation.*;
 import org.bukkit.entity.Player;
 

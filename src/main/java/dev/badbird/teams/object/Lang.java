@@ -46,6 +46,7 @@ public enum Lang {
     TEAM_INFO_MESSAGE("team-info.message", new String[]{
             "%separator%",
             "&b - &b&l%1 &r &3",
+            "&9 * &bDescription: &3%7",
             "&9 * &bOwner: %2",
             "&9 * &bAllies: %3",
             "&9 * &bEnemies: %4",
@@ -312,7 +313,9 @@ public enum Lang {
 
     PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone"),
 
-    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.");
+    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats."),
+    DESCRIPTION_TOO_LONG("team.description-too-long", "&cTeam description too long! Max:&6 %1 &ccharacters!"),
+    DESCRIPTION_SET("team.description-set", "&aTeam description set to: &6%1&a!");
     @Getter
     private final String configPath;
     private final String finalMessage;

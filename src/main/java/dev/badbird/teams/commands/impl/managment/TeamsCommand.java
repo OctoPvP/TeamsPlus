@@ -1,7 +1,5 @@
 package dev.badbird.teams.commands.impl.managment;
 
-import net.badbird5907.blib.util.CC;
-import net.badbird5907.blib.util.PlayerUtil;
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.commands.annotation.TeamPermission;
 import dev.badbird.teams.hooks.Hook;
@@ -16,6 +14,8 @@ import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamRank;
 import dev.badbird.teams.util.Permissions;
+import net.badbird5907.blib.util.CC;
+import net.badbird5907.blib.util.PlayerUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -55,8 +55,8 @@ public class TeamsCommand {
                         .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
             }
             allies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    Lang.TEAM_INFO_ALLIES_LIST.getRaw()
-            )
+                            Lang.TEAM_INFO_ALLIES_LIST.getRaw()
+                    )
                     .replaceText(TextReplacementConfig.builder()
                             .matchLiteral("%1")
                             .replacement(targetTeam.getAlliedTeams().size() + "").build())
@@ -79,8 +79,8 @@ public class TeamsCommand {
                         .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
             }
             enemies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    Lang.TEAM_INFO_ENEMIES_LIST.getRaw()
-            )
+                            Lang.TEAM_INFO_ENEMIES_LIST.getRaw()
+                    )
                     .replaceText(TextReplacementConfig.builder()
                             .matchLiteral("%1")
                             .replacement(targetTeam.getEnemiedTeams().size() + "").build())
@@ -350,4 +350,17 @@ public class TeamsCommand {
         sender.sendMessage(finalPages.get(page));
     }
 
+    @Command(name = "description", description = "Change your team's description")
+    @PlayerOnly
+    @Cooldown(30)
+    @TeamPermission(TeamRank.ADMIN)
+    public void description(@Sender Player sender, @Sender Team senderTeam, @Dependency TeamsPlus teamsPlus, @JoinStrings @Required String description) {
+        int max = teamsPlus.getConfig().getInt("team.description.max-length", 100);
+        if (description.length() > max) {
+            sender.sendMessage(Lang.DESCRIPTION_TOO_LONG.toString(max));
+            return;
+        }
+        senderTeam.setDescription(description);
+        sender.sendMessage(Lang.DESCRIPTION_SET.toString(description));
+    }
 }

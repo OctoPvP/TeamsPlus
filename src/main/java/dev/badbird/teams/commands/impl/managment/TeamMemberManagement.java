@@ -1,6 +1,5 @@
 package dev.badbird.teams.commands.impl.managment;
 
-import net.badbird5907.blib.util.Logger;
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.commands.annotation.AllowOffline;
 import dev.badbird.teams.commands.annotation.TeamPermission;
@@ -11,6 +10,7 @@ import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamRank;
 import dev.badbird.teams.util.Utils;
+import net.badbird5907.blib.util.Logger;
 import net.kyori.adventure.text.Component;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
@@ -34,7 +34,7 @@ public class TeamMemberManagement {
             sender.sendMessage(Lang.TEAM_TRANSFER_FAILED_CANNOT_TRANSFER_TO_SELF.toString());
             return;
         }
-        new ConfirmMenu("transfer ownership of your team", (b)-> {
+        new ConfirmMenu("transfer ownership of your team", (b) -> {
             if (b) {
                 team.transferOwnership(targetData, senderData);
             } else sender.sendMessage(Lang.CANCELED.toString());

@@ -28,6 +28,7 @@ public class Team {
     private String name;
     private ConcurrentHashMap<UUID, TeamRank> members = new ConcurrentHashMap<>();
     private UUID owner;
+    private String description = "";
 
     private TeamSettings settings = new TeamSettings();
     private ConcurrentHashMap<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
