@@ -50,7 +50,7 @@ dependencies {
     }
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
     compileOnly("net.badbird5907:AntiCombatLog:2.4.0")
-    compileOnly(files("./run/plugins/bukkitapi.jar"))
+    compileOnly("com.lunarclient:bukkitapi:1.0-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:21.0")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
