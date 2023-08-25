@@ -115,4 +115,7 @@ tasks {
         exclude("LICENSE")
         exclude("AUTHORS")
     }
+    build {
+        dependsOn(shadowJar)
+    }
 }
