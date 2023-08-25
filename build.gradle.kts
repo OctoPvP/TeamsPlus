@@ -107,7 +107,7 @@ tasks {
         relocate("net.badbird5907.blib", "dev.badbird.teams.relocate.bLib")
         relocate("net.octopvp.commander", "dev.badbird.teams.relocate.commander")
         relocate("com.mongodb", "dev.badbird.teams.relocate.mongodb")
-        relocate("org.bson", "dev.badbird.teams.relocate.bson")
+        // relocate("org.bson", "dev.badbird.teams.relocate.bson")
 
         exclude("*.txt")
         exclude("*.md")
