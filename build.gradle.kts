@@ -98,16 +98,18 @@ tasks {
         archiveClassifier.set("")
         archiveVersion.set("")
 
+        /*
         dependencies {
             include(dependency("net.badbird5907:bLib-Bukkit:2.1.8-REL"))
             include(dependency("net.octopvp:Commander-Bukkit:0.0.7-REL"))
             include(dependency("org.mongodb:mongodb-driver-sync:4.2.2"))
         }
+         */
 
         relocate("net.badbird5907.blib", "dev.badbird.teams.relocate.bLib")
         relocate("net.octopvp.commander", "dev.badbird.teams.relocate.commander")
         relocate("com.mongodb", "dev.badbird.teams.relocate.mongodb")
-        // relocate("org.bson", "dev.badbird.teams.relocate.bson")
+        relocate("org.bson", "dev.badbird.teams.relocate.mongodb.bson")
 
         exclude("*.txt")
         exclude("*.md")
