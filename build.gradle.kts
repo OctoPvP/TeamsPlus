@@ -1,5 +1,7 @@
 plugins {
     `java`
+    `maven-publish`
+    signing
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.freefair.lombok") version "6.5.1"
 }
@@ -126,4 +128,36 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+    publishing {
+        repositories {
+            maven ("https://repo.octopvp.net/repo"){
+                name = "octomc"
+                credentials(PasswordCredentials::class)
+                authentication {
+                    create<BasicAuthentication>("basic")
+                }
+            }
+        }
+        publications {
+            create<MavenPublication>("maven") {
+                from(javaComponent)
+                artifact(sourcesJar)
+                artifact(javadocJar)
+                versionMapping {
+                    usage("java-api") {
+                        fromResolutionOf("runtimeClasspath")
+                    }
+                    usage("java-runtime") {
+                        fromResolutionResult()
+                    }
+                }
+                pom {
+                    name.set("TeamsPlus")
+                    description.set("Teams Plugin")
+                    url.set("https://github.com/OctoPvP/TeamsPlus")
+                }
+            }
+        }
+    }
+    signing {}
 }
