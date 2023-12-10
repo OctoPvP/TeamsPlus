@@ -1,9 +1,10 @@
 package dev.badbird.teams.menu.waypoint;
 
 import dev.badbird.teams.hooks.impl.LunarClientHook;
+import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import lombok.RequiredArgsConstructor;
 import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.menu.Menu;
@@ -29,7 +30,7 @@ import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 public class EditWaypointMenu extends Menu {
-    private final Waypoint waypoint;
+    private final TeamWaypoint waypoint;
     private final Team team;
 
     @Override
@@ -39,7 +40,7 @@ public class EditWaypointMenu extends Menu {
         buttons.add(new IconButton());
         buttons.add(new DeleteButton());
         buttons.add(new ColorButton(waypoint.getColor()));
-        boolean lunar = LunarClientHook.isOnLunarClient(player);
+        boolean lunar = HookManager.getHook(LunarClientHook.class).map(LunarClientHook::isEnabled).orElse(false);
         if (lunar) buttons.add(new ToggleLunarButton(!waypoint.getDisabledPlayers().contains(player.getUniqueId())));
         buttons.add(new PlaceholderButton(lunar));
         return buttons;

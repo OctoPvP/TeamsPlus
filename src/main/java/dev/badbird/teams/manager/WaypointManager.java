@@ -1,14 +1,14 @@
 package dev.badbird.teams.manager;
 
+import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.Tasks;
-import dev.badbird.teams.TeamsPlus;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -59,24 +59,28 @@ public class WaypointManager implements Listener {
     public void updatePlayerWaypoints(Player player) {
         PlayerData data = PlayerManager.getData(player);
         Team team = data.getPlayerTeam();
-        if (team == null || !LunarClientHook.isOnLunarClient(player)) return;
-        for (Waypoint waypoint : team.getWaypoints()) {
-            if (waypoint.getDisabledPlayers() != null && waypoint.getDisabledPlayers().contains(player.getUniqueId()))
-                continue;
-            LunarClientHook.sendWaypoint(player, waypoint);
-        }
-    }
-
-    public void removeWaypoint(Waypoint waypoint) { // Hides waypoint visually from all players
-        waypoint.getTeam().getMembers().forEach((k, v)-> {
-            Player player = Bukkit.getPlayer(k);
-            if (player != null) {
-                LunarClientHook.removeWaypoint(player, waypoint);
+        HookManager.getHook(LunarClientHook.class).ifPresent(hook -> {
+            if (team == null || !hook.isOnLunarClient(player)) return;
+            for (TeamWaypoint waypoint : team.getWaypoints()) {
+                if (waypoint.getDisabledPlayers() != null && waypoint.getDisabledPlayers().contains(player.getUniqueId()))
+                    continue;
+                hook.sendWaypoint(player, waypoint);
             }
         });
     }
 
-    public void hideWaypointFromPlayer(Player player, Waypoint waypoint) {
-        LunarClientHook.removeWaypoint(player, waypoint);
+    public void removeWaypoint(TeamWaypoint waypoint) { // Hides waypoint visually from all players
+        HookManager.getHook(LunarClientHook.class).ifPresent(hook -> {
+            waypoint.getTeam().getMembers().forEach((k, v) -> {
+                Player player = Bukkit.getPlayer(k);
+                if (player != null) {
+                    hook.removeWaypoint(player, waypoint);
+                }
+            });
+        });
+    }
+
+    public void hideWaypointFromPlayer(Player player, TeamWaypoint waypoint) {
+        HookManager.getHook(LunarClientHook.class).ifPresent(hook -> hook.removeWaypoint(player, waypoint));
     }
 }

@@ -1,9 +1,10 @@
 package dev.badbird.teams.menu.waypoint;
 
 import dev.badbird.teams.hooks.impl.LunarClientHook;
+import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import lombok.RequiredArgsConstructor;
 import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.menu.PaginatedMenu;
@@ -41,7 +42,7 @@ public class ListWaypointsMenu extends PaginatedMenu {
     @Override
     public List<Button> getPaginatedButtons(Player player) {
         List<Button> waypoints = new ArrayList<>();
-        for (Waypoint waypoint : team.getWaypoints()) {
+        for (TeamWaypoint waypoint : team.getWaypoints()) {
             if (searchTerm != null && !searchTerm.isEmpty()) {
                 if (waypoint.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
                     waypoints.add(new WaypointButton(waypoint));
@@ -85,7 +86,8 @@ public class ListWaypointsMenu extends PaginatedMenu {
 
     @Override
     public List<Button> getToolbarButtons() {
-        if (LunarClientHook.isOnLunarClient(uuid)) return null;
+        LunarClientHook hook = HookManager.getHook(LunarClientHook.class).orElse(null);
+        if (hook != null && hook.isOnLunarClient(uuid)) return null;
         return Arrays.asList(new LunarClientButton());
     }
 
@@ -105,7 +107,7 @@ public class ListWaypointsMenu extends PaginatedMenu {
     }
     @RequiredArgsConstructor
     private class WaypointButton extends Button {
-        private final Waypoint waypoint;
+        private final TeamWaypoint waypoint;
 
         @Override
         public ItemStack getItem(Player player) {

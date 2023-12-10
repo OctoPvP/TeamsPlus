@@ -1,17 +1,24 @@
 package dev.badbird.teams.commands.impl.staff;
 
+import com.lunarclient.bukkitapi.LunarClientAPI;
+import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.menu.ConfirmMenu;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamRank;
 import dev.badbird.teams.util.Permissions;
+import lombok.SneakyThrows;
 import net.octopvp.commander.annotation.Command;
 import net.octopvp.commander.annotation.Permission;
 import net.octopvp.commander.annotation.Required;
 import net.octopvp.commander.annotation.Sender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.util.Set;
+import java.util.UUID;
 
 @Command(name = "teamsstaff", description = "Manage teams")
 @Permission(Permissions.STAFF)

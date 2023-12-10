@@ -1,9 +1,11 @@
 package dev.badbird.teams.object;
 
+import com.lunarclient.apollo.BukkitApollo;
+import com.lunarclient.apollo.module.waypoint.Waypoint;
+import dev.badbird.teams.TeamsPlus;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.util.StoredLocation;
-import dev.badbird.teams.TeamsPlus;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -13,15 +15,16 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class Waypoint {
-    public Waypoint(String name, UUID owner) {
+public class TeamWaypoint {
+    public TeamWaypoint(String name, UUID owner) {
         this.name = name;
         this.teamId = owner;
     }
 
-    public Waypoint(String name, Team team) {
+    public TeamWaypoint(String name, Team team) {
         this(name, team.getTeamId());
     }
+
     private String name;
     private String world;
 
@@ -36,5 +39,16 @@ public class Waypoint {
 
     public Team getTeam() {
         return TeamsPlus.getInstance().getTeamsManager().getTeamById(teamId);
+    }
+
+
+    public Waypoint toLCWaypoint() {
+        return Waypoint.builder()
+                .name(name)
+                .location(BukkitApollo.toApolloBlockLocation(location.getLocation()))
+                .color(color.asBungee().getColor())
+                .preventRemoval(false)
+                .hidden(false)
+                .build();
     }
 }

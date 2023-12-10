@@ -1,25 +1,34 @@
 package dev.badbird.teams.hooks.impl;
 
+import com.lunarclient.apollo.Apollo;
+import com.lunarclient.apollo.BukkitApollo;
+import com.lunarclient.apollo.module.waypoint.Waypoint;
+import com.lunarclient.apollo.module.waypoint.WaypointModule;
+import com.lunarclient.apollo.recipients.Recipients;
 import com.lunarclient.bukkitapi.LunarClientAPI;
-import com.lunarclient.bukkitapi.object.LCWaypoint;
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.hooks.Hook;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import dev.badbird.teams.util.ColorMapper;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public class LunarClientHook extends Hook {
-    private static boolean enabled = false;
-    private static Map<UUID, List<LCWaypoint>> waypointMap = new HashMap<>();
+    @Getter
+    private boolean enabled = false;
+    private Map<UUID, List<Waypoint>> waypointMap = new HashMap<>();
+    private WaypointModule waypointModule;
+
     public LunarClientHook() {
-        super("LunarClient-API");
+        super("Apollo");
     }
 
     @Override
     public void init(TeamsPlus plugin) {
         enabled = true;
+        waypointModule = Apollo.getModuleManager().getModule(WaypointModule.class);
     }
 
     @Override
@@ -27,36 +36,47 @@ public class LunarClientHook extends Hook {
 
     }
 
-    public static void sendWaypoint(Player player, Waypoint waypoint) {
-        if (!enabled) return;
-        removeWaypoint(player, waypoint);
-        LCWaypoint lcWaypoint = new LCWaypoint(waypoint.getName(), waypoint.getLocation().getLocation(), ColorMapper.fromChatColor(waypoint.getColor()).asRGB(), false, !waypoint.getDisabledPlayers().contains(player.getUniqueId()));
-        LunarClientAPI.getInstance().sendWaypoint(player, lcWaypoint);
+    public void sendWaypoint(Player player, TeamWaypoint teamWaypoint) {
+        if (!enabled || waypointModule == null) return;
+        removeWaypoint(player, teamWaypoint);
+        // Waypoint Waypoint = new Waypoint(teamWaypoint.getName(), teamWaypoint.getLocation().getLocation(), ColorMapper.fromChatColor(teamWaypoint.getColor()).asRGB(), false, !teamWaypoint.getDisabledPlayers().contains(player.getUniqueId()));
+        // LunarClientAPI.getInstance().sendWaypoint(player, Waypoint);
+        BukkitApollo.runForPlayer(player, apolloPlayer -> {
+            // TODO: bulk send waypoints to team with Recipients.of()
+            this.waypointModule.displayWaypoint(apolloPlayer, teamWaypoint.toLCWaypoint());
+        });
     }
 
-    public static void removeWaypoint(Player player, Waypoint waypoint) {
-        if (!enabled) return;
+    public void removeWaypoint(Player player, TeamWaypoint waypoint) {
+        if (!enabled || waypointModule == null) return;
         if (waypointMap.containsKey(player.getUniqueId())) {
-            List<LCWaypoint> waypoints = waypointMap.get(player.getUniqueId());
-            Iterator<LCWaypoint> iterator = waypoints.iterator();
+            List<Waypoint> waypoints = waypointMap.get(player.getUniqueId());
+            Iterator<Waypoint> iterator = waypoints.iterator();
             while (iterator.hasNext()) {
-                LCWaypoint w = iterator.next();
+                Waypoint w = iterator.next();
                 if (w.getName().equalsIgnoreCase(waypoint.getName())) {
-                    LunarClientAPI.getInstance().removeWaypoint(player, w);
+                    // LunarClientAPI.getInstance().removeWaypoint(player, w);
+                    BukkitApollo.runForPlayer(player, apolloPlayer -> {
+                        this.waypointModule.removeWaypoint(apolloPlayer, w);
+                    });
                     iterator.remove();
                 }
             }
-            //LunarClientAPI.getInstance().removeWaypoint(player, waypointMap.remove(player.getUniqueId()));
-        } else LunarClientAPI.getInstance().removeWaypoint(player, new LCWaypoint(waypoint.getName(), waypoint.getLocation().getLocation(), ColorMapper.fromChatColor(waypoint.getColor()).asRGB(), false, !waypoint.getDisabledPlayers().contains(player.getUniqueId())));
+            // LunarClientAPI.getInstance().removeWaypoint(player, waypointMap.remove(player.getUniqueId()));
+        } else {
+            // LunarClientAPI.getInstance().removeWaypoint(player, new Waypoint(waypoint.getName(), waypoint.getLocation().getLocation(), ColorMapper.fromChatColor(waypoint.getColor()).asRGB(), false, !waypoint.getDisabledPlayers().contains(player.getUniqueId())));
+            BukkitApollo.runForPlayer(player, apolloPlayer -> {
+                this.waypointModule.removeWaypoint(apolloPlayer, waypoint.toLCWaypoint());
+            });
+        }
     }
 
-    public static boolean isOnLunarClient(Player player) {
-        if (enabled) return LunarClientAPI.getInstance().isRunningLunarClient(player);
-        else return false;
+    public boolean isOnLunarClient(Player player) {
+        return isOnLunarClient(player.getUniqueId());
     }
 
-    public static boolean isOnLunarClient(UUID player) {
-        if (enabled) return LunarClientAPI.getInstance().isRunningLunarClient(player);
+    public boolean isOnLunarClient(UUID player) {
+        if (enabled) return Apollo.getPlayerManager().hasSupport(player);
         else return false;
     }
 }

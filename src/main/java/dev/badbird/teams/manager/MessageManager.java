@@ -1,15 +1,14 @@
 package dev.badbird.teams.manager;
 
-import net.badbird5907.blib.util.CC;
-import net.badbird5907.blib.utils.StringUtils;
 import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.hooks.Hook;
 import dev.badbird.teams.hooks.impl.CoreProtectHook;
 import dev.badbird.teams.hooks.impl.VaultHook;
 import dev.badbird.teams.object.ChatChannel;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
+import net.badbird5907.blib.util.CC;
+import net.badbird5907.blib.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -26,24 +25,20 @@ public class MessageManager {
         targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(MessageManager.getDisplayName(player), targetTeam.getName(), senderTeam.getName(), message));
         senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(MessageManager.getDisplayName(player), senderTeam.getName(), targetTeam.getName(), message));
 
-        CoreProtectHook hook = null;
-        Hook h = HookManager.getHook(CoreProtectHook.class);
-        if (h == null) return;
-        hook = (CoreProtectHook) h;
-        if (hook.isEnabled()) {
-            hook.logChat(player, message, ChatChannel.ALLY);
-        }
-   }
+        HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
+            if (h.isEnabled()) {
+                h.logChat(player, message, ChatChannel.ALLY);
+            }
+        });
+    }
 
     public static void handleTeam(Player player, String message, Team team) {
         team.broadcast(Lang.CHAT_FORMAT_TEAM.toString(MessageManager.getDisplayName(player), message));
-        CoreProtectHook hook = null;
-        Hook h = HookManager.getHook(CoreProtectHook.class);
-        if (h == null) return;
-        hook = (CoreProtectHook) h;
-        if (hook.isEnabled()) {
-            hook.logChat(player, message, ChatChannel.TEAM);
-        }
+        HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
+            if (h.isEnabled()) {
+                h.logChat(player, message, ChatChannel.TEAM);
+            }
+        });
     }
 
     public static boolean handleGlobal(PlayerData data, Player player, String message) {
@@ -51,16 +46,13 @@ public class MessageManager {
             if (data == null) return false;
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 onlinePlayer.sendMessage(MessageManager.formatGlobal(message, player, onlinePlayer));
-            }//TODO team/ally chat
+            } // TODO team/ally chat
         }
-
-        CoreProtectHook hook = null;
-        Hook h = HookManager.getHook(CoreProtectHook.class);
-        if (h == null) return true;
-        hook = (CoreProtectHook) h;
-        if (hook.isEnabled()) {
-            hook.logChat(player, message, ChatChannel.GLOBAL);
-        }
+        HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
+            if (h.isEnabled()) {
+                h.logChat(player, message, ChatChannel.GLOBAL);
+            }
+        });
         return true;
     }
 
@@ -68,8 +60,7 @@ public class MessageManager {
         PlayerData senderData = PlayerManager.getData(player), receiverData = PlayerManager.getData(player);
         String format = senderData.isInTeam() ?
                 Lang.CHAT_FORMAT_GLOBAL_INTEAM.toString() :
-                Lang.CHAT_FORMAT_GLOBAL_NOTEAM.toString()
-                ;
+                Lang.CHAT_FORMAT_GLOBAL_NOTEAM.toString();
         //String format = TeamsPlus.getInstance().getConfig().getString("chat.custom." + (senderData.isInTeam() ? "format-global-inteam" : "format-global-noteam"));
         String formattedName = getDisplayName(player);
         String message;
@@ -77,7 +68,8 @@ public class MessageManager {
             String color = CC.AQUA;
             if (receiverData.isInTeam() && senderData.getPlayerTeam().getRank(receiverData.getUuid()) != null) {
                 color = CC.GREEN;
-            } if (senderData.isEnemy(receiver)) {
+            }
+            if (senderData.isEnemy(receiver)) {
                 color = CC.RED;
             } else if (senderData.isAlly(receiver))
                 color = CC.PINK;
@@ -90,13 +82,9 @@ public class MessageManager {
 
     @SuppressWarnings("Deprecation")
     public static String getDisplayName(Player player) {
-        String formattedName = player.getDisplayName();
-        VaultHook vaultHook = (VaultHook) HookManager.getHook(VaultHook.class);
-        if (vaultHook != null) {
-            formattedName = vaultHook.getFormattedName(player);
-        }
-        return formattedName;
+        return HookManager.getHook(VaultHook.class).map(h -> h.getFormattedName(player)).orElse(player.getDisplayName());
     }
+
     public static String handleMentions(Player reciever, String message) {
         boolean b = message.contains(reciever.getName());
         if (b && TeamsPlus.getInstance().getConfig().getBoolean("chat.ping-player-on-mention", true)) {

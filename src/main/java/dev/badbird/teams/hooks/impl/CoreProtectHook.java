@@ -55,14 +55,14 @@ public class CoreProtectHook extends Hook {
         String prefix = "";
         if (chatChannel == ChatChannel.TEAM) {
             PlayerData data = PlayerManager.getData(player.getUniqueId());
-            prefix = "[Team] [" + data.getPlayerTeam().getName() + "] | ";
+            prefix = "[T] [" + data.getPlayerTeam().getName() + "] | ";
         } else if (chatChannel == ChatChannel.GLOBAL) {
-            prefix = "[Global] | ";
+            prefix = "[G] | ";
         } else if (chatChannel == ChatChannel.ALLY) {
             PlayerData data = PlayerManager.getData(player.getUniqueId());
             Team allyTeam = TeamsManager.getInstance().getTeamById(data.getAllyChatTeamId());
-            if (allyTeam == null) prefix = "[Ally] [Unknown] | ";
-            else prefix = "[Ally] [" + allyTeam.getName() + "] | ";
+            if (allyTeam == null) prefix = "[A] [U] | ";
+            else prefix = "[A] [" + allyTeam.getName() + "] | ";
         }
         String f = prefix + message;
         Logger.debug("Logging final message: %1", f);

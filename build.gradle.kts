@@ -39,6 +39,12 @@ repositories {
             password = findProperty("octomcPassword") as String
         }
     }
+    repositories {
+        maven {
+            name = "lunarclient"
+            url = uri("https://repo.lunarclient.dev")
+        }
+    }
 }
 
 dependencies {
@@ -50,7 +56,8 @@ dependencies {
     }
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
     compileOnly("net.badbird5907:AntiCombatLog:2.4.0")
-    compileOnly("com.lunarclient:bukkitapi:1.0-SNAPSHOT")
+    compileOnly("com.lunarclient:apollo-api:1.0.4")
+    compileOnly("com.lunarclient:apollo-extra-adventure4:1.0.4")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:21.0")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")

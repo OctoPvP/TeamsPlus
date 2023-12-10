@@ -7,6 +7,7 @@ import dev.badbird.teams.hooks.Hook;
 import org.bukkit.Bukkit;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class HookManager {
@@ -40,12 +41,12 @@ public class HookManager {
         return set;
     }
 
-    public static Hook getHook(Class<? extends Hook> clazz) {
+    public static <T extends Hook> Optional<T> getHook(Class<T> clazz) {
         for (Hook hook : set) {
             if (hook.getClass().equals(clazz)) {
-                return hook;
+                return (Optional<T>) Optional.of(hook);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

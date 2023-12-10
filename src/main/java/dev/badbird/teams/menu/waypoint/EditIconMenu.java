@@ -2,7 +2,7 @@ package dev.badbird.teams.menu.waypoint;
 
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import lombok.RequiredArgsConstructor;
 import net.badbird5907.blib.menu.buttons.Button;
 import net.badbird5907.blib.menu.menu.PaginatedMenu;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class EditIconMenu extends PaginatedMenu {
-    private final Waypoint waypoint;
+    private final TeamWaypoint waypoint;
     private final Team team;
 
     @Override

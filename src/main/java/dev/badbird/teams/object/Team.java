@@ -1,6 +1,7 @@
 package dev.badbird.teams.object;
 
 import dev.badbird.teams.hooks.impl.LunarClientHook;
+import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.manager.StorageManager;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class Team {
     private ConcurrentHashMap<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
-    private CopyOnWriteArrayList<Waypoint> waypoints = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<TeamWaypoint> waypoints = new CopyOnWriteArrayList<>();
     private transient ConcurrentHashMap<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
 
@@ -279,6 +280,7 @@ public class Team {
     public TeamRank getRank(UUID uuid) {
         return members.get(uuid);
     }
+
     public void setRank(UUID uuid, TeamRank rank) {
         if (!members.containsKey(uuid)) return;
         members.put(uuid, rank);
@@ -306,14 +308,16 @@ public class Team {
         });
     }
 
-    public void removeWaypoint(Waypoint waypoint) {
+    public void removeWaypoint(TeamWaypoint waypoint) {
         waypoints.remove(waypoint);
         save();
-        members.forEach((k, v) -> {
-            Player player = Bukkit.getPlayer(k);
-            if (player != null) {
-                LunarClientHook.removeWaypoint(player, waypoint);
-            }
+        HookManager.getHook(LunarClientHook.class).ifPresent(hook -> {
+            members.forEach((k, v) -> {
+                Player player = Bukkit.getPlayer(k);
+                if (player != null) {
+                    hook.removeWaypoint(player, waypoint);
+                }
+            });
         });
     }
 

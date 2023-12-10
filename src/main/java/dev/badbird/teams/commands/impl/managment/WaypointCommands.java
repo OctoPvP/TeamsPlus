@@ -7,7 +7,7 @@ import dev.badbird.teams.menu.waypoint.ListWaypointsMenu;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamRank;
-import dev.badbird.teams.object.Waypoint;
+import dev.badbird.teams.object.TeamWaypoint;
 import net.octopvp.commander.annotation.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class WaypointCommands {
             sender.sendMessage(Lang.WAYPOINT_EXISTS.toString());
             return;
         }
-        Waypoint w = new Waypoint(waypoint,team);
+        TeamWaypoint w = new TeamWaypoint(waypoint,team);
         w.setLocation(new StoredLocation(sender.getLocation()));
         w.setWorld(sender.getWorld().getName());
         team.getWaypoints().add(w);
@@ -37,7 +37,7 @@ public class WaypointCommands {
             sender.sendMessage(Lang.WAYPOINT_EXISTS.toString());
             return;
         }
-        Waypoint w = new Waypoint(waypoint,team);
+        TeamWaypoint w = new TeamWaypoint(waypoint,team);
         w.setLocation(new StoredLocation(new Location(sender.getWorld(),x,y,z)));
         team.getWaypoints().add(w);
         team.broadcast(Lang.WAYPOINT_CREATED.toString(sender.getName(), waypoint));

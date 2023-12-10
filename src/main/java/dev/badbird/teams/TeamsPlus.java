@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.Messenger;
 
 import java.io.File;
 import java.io.IOException;
