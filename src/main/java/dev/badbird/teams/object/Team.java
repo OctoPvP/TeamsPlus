@@ -1,6 +1,7 @@
 package dev.badbird.teams.object;
 
 import dev.badbird.teams.hooks.impl.LunarClientHook;
+import dev.badbird.teams.hooks.impl.VanishHook;
 import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.manager.StorageManager;
@@ -361,5 +362,13 @@ public class Team {
         }
         members.put(target.getUuid(), nextRank);
         broadcast(Lang.TEAM_DEMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+    }
+
+
+    public int getTotalOnline() {
+        return members.keySet().stream().filter(uuid -> {
+            Player p = Bukkit.getPlayer(uuid);
+            return p != null && p.isOnline() && !VanishHook.isVanished(p);
+        }).toList().size();
     }
 }
