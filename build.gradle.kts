@@ -100,6 +100,7 @@ tasks.getByName("runDev").dependsOn(tasks.getByName("copyPlugin"))
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
 }
+val javaComponent: SoftwareComponent = components["java"]
 tasks {
     shadowJar {
         archiveBaseName.set("TeamsPlus")
@@ -127,6 +128,16 @@ tasks {
     }
     build {
         dependsOn(shadowJar)
+    }
+    val sourcesJar by creating(Jar::class) {
+        archiveClassifier.set("sources")
+        from(sourceSets.main.get().allSource)
+    }
+
+    val javadocJar by creating(Jar::class) {
+        dependsOn.add(javadoc)
+        archiveClassifier.set("javadoc")
+        from(javadoc)
     }
     publishing {
         repositories {
