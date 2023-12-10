@@ -62,6 +62,9 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:21.0")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
+
+    compileOnly("net.octopvp:OctoCore-Core:1.0-SNAPSHOT")
+    compileOnly("net.octopvp:OctoCore-common:1.0-SNAPSHOT")
 }
 
 val targetJavaVersion = 17

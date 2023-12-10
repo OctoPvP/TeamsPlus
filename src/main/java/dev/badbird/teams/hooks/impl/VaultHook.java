@@ -4,6 +4,8 @@ import dev.badbird.teams.hooks.Hook;
 import net.badbird5907.blib.util.CC;
 import dev.badbird.teams.TeamsPlus;
 import net.milkbowl.vault.chat.Chat;
+import net.octopvp.octocore.core.manager.impl.PlayerManager;
+import net.octopvp.octocore.core.objects.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,9 +50,13 @@ public class VaultHook extends Hook implements Listener {
 
     public String getFormattedName(Player player) {
         if (vaultChat == null) {
+            if (Bukkit.getPluginManager().isPluginEnabled("OctoCore")) {
+                PlayerData data = PlayerManager.getInstance().getData(player);
+                if (data == null) return CC.translate(data.getFormattedName(true, player, true));
+            }
             return CC.translate(player.getDisplayName());
         }
-        return CC.translate(vaultChat.getPlayerPrefix(player) + " " + player.getDisplayName());
+        return CC.translate(vaultChat.getPlayerPrefix(player) + " " + player.getDisplayName() + " " + vaultChat.getPlayerSuffix(player));
     }
 
     @Override
