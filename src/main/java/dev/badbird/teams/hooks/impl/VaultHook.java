@@ -47,6 +47,9 @@ public class VaultHook extends Hook implements Listener {
     }
 
     public String getFormattedName(Player player) {
+        if (vaultChat == null) {
+            return CC.translate(player.getDisplayName());
+        }
         return CC.translate(vaultChat.getPlayerPrefix(player) + " " + player.getDisplayName());
     }
 
