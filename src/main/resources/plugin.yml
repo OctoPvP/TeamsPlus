@@ -7,7 +7,8 @@ softdepend:
   - Vault
   - LuckPerms
   - CoreProtect
-  - Apollo
+depend:
+  - Apollo-Bukkit
 authors:
   - Badbird5907
 description: Teams plugin

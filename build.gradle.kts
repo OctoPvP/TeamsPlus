@@ -49,7 +49,6 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
-    implementation("net.octopvp:agile-gui:1.2.0")
     implementation("net.badbird5907:bLib-Bukkit:2.1.8-REL")
     implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
         exclude(group = "org.reflections")

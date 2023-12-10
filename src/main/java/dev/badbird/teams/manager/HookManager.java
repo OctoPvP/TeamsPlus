@@ -24,9 +24,9 @@ public class HookManager {
         for (Hook hook : hooks) {
             if (!hook.getPlugin().isEmpty()) {
                 if (Bukkit.getPluginManager().isPluginEnabled(hook.getPlugin())) {
-                    Logger.info("Hooking into " + hook.getPlugin());
+                    Logger.info("Hooking into %1", hook.getPlugin());
                     hook.init(TeamsPlus.getInstance());
-                    set.add(hook); //disable using the set so we dont cause any NPEs/errors
+                    set.add(hook); // disable using the set so we dont cause any NPEs/errors
                 }
             }
         }

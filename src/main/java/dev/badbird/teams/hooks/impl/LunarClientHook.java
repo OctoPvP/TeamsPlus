@@ -2,15 +2,17 @@ package dev.badbird.teams.hooks.impl;
 
 import com.lunarclient.apollo.Apollo;
 import com.lunarclient.apollo.BukkitApollo;
+import com.lunarclient.apollo.event.ApolloListener;
+import com.lunarclient.apollo.event.EventBus;
+import com.lunarclient.apollo.event.Listen;
+import com.lunarclient.apollo.event.player.ApolloRegisterPlayerEvent;
 import com.lunarclient.apollo.module.waypoint.Waypoint;
 import com.lunarclient.apollo.module.waypoint.WaypointModule;
-import com.lunarclient.apollo.recipients.Recipients;
-import com.lunarclient.bukkitapi.LunarClientAPI;
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.hooks.Hook;
 import dev.badbird.teams.object.TeamWaypoint;
-import dev.badbird.teams.util.ColorMapper;
 import lombok.Getter;
+import net.badbird5907.blib.util.Logger;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -22,13 +24,19 @@ public class LunarClientHook extends Hook {
     private WaypointModule waypointModule;
 
     public LunarClientHook() {
-        super("Apollo");
+        super("Apollo-Bukkit");
     }
 
     @Override
     public void init(TeamsPlus plugin) {
         enabled = true;
         waypointModule = Apollo.getModuleManager().getModule(WaypointModule.class);
+        EventBus.getBus().register(new ApolloListener() {
+            @Listen
+            public void onApolloRegister(ApolloRegisterPlayerEvent e) {
+                ((Player) e.getPlayer()).sendMessage("You have joined using LunarClient!");
+            }
+        });
     }
 
     @Override
@@ -76,7 +84,11 @@ public class LunarClientHook extends Hook {
     }
 
     public boolean isOnLunarClient(UUID player) {
-        if (enabled) return Apollo.getPlayerManager().hasSupport(player);
-        else return false;
+        if (enabled) {
+            Logger.debug("Checking if %1 is on lunar client", player);
+            return Apollo.getPlayerManager().hasSupport(player);
+        }
+        Logger.debug("Lunar client hook is disabled, returning false");
+        return false;
     }
 }

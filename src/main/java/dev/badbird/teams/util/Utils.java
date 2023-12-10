@@ -10,6 +10,4 @@ public class Utils {
     public static String formatDouble(double d) {
         return String.format("%.2f", d);
     }
-
-    public static
 }
