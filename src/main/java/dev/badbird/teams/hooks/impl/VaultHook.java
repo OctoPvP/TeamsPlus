@@ -50,10 +50,6 @@ public class VaultHook extends Hook implements Listener {
 
     public String getFormattedName(Player player) {
         if (vaultChat == null) {
-            if (Bukkit.getPluginManager().isPluginEnabled("OctoCore")) {
-                PlayerData data = PlayerManager.getInstance().getData(player);
-                if (data == null) return CC.translate(data.getFormattedName(true, player, true));
-            }
             return CC.translate(player.getDisplayName());
         }
         return CC.translate(vaultChat.getPlayerPrefix(player) + " " + player.getDisplayName() + " " + vaultChat.getPlayerSuffix(player));

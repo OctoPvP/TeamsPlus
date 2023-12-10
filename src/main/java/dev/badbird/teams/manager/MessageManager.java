@@ -82,6 +82,10 @@ public class MessageManager {
 
     @SuppressWarnings("Deprecation")
     public static String getDisplayName(Player player) {
+        if (Bukkit.getPluginManager().isPluginEnabled("OctoCore")) {
+            net.octopvp.octocore.core.objects.PlayerData data = net.octopvp.octocore.core.manager.impl.PlayerManager.getInstance().getData(player);
+            if (data != null) return CC.translate(data.getFormattedName(true, player, true));
+        }
         return HookManager.getHook(VaultHook.class).map(h -> h.getFormattedName(player)).orElse(player.getDisplayName());
     }
 
