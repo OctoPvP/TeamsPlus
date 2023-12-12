@@ -5,6 +5,7 @@ import dev.badbird.teams.manager.HookManager;
 import net.octopvp.commander.annotation.Command;
 import net.octopvp.commander.annotation.Sender;
 import net.octopvp.commander.bukkit.annotation.DefaultSelf;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.geysermc.api.Geyser;
@@ -25,7 +26,9 @@ public class LCTest {
 
     @Command(name = "isf", description = "Check floodgate")
     public void floodgate(@Sender Player sender) {
-        sender.sendMessage("GeyserApi#isBedrockPlayer: " + Geyser.api().isBedrockPlayer(sender.getUniqueId()));
-        sender.sendMessage("FloodgateApi#isFloodgatePlayer: " + FloodgateApi.getInstance().isFloodgatePlayer(sender.getUniqueId()));
+        if (Bukkit.getPluginManager().isPluginEnabled("Geyser-Spigot"))
+            sender.sendMessage("GeyserApi#isBedrockPlayer: " + Geyser.api().isBedrockPlayer(sender.getUniqueId()));
+        if (Bukkit.getPluginManager().isPluginEnabled("floodgate"))
+            sender.sendMessage("FloodgateApi#isFloodgatePlayer: " + FloodgateApi.getInstance().isFloodgatePlayer(sender.getUniqueId()));
     }
 }
