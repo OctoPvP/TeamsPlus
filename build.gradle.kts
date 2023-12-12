@@ -21,8 +21,8 @@ repositories {
         url = uri("https://oss.sonatype.org/content/groups/public/")
     }
     //maven {
-     //   name = "lunarclient-public"
-     //   url = "https://maven.moonsworth.com/repository/lunarclient-public/"
+    //   name = "lunarclient-public"
+    //   url = "https://maven.moonsworth.com/repository/lunarclient-public/"
     //}
     maven {
         name = "playpro-repo"
@@ -46,6 +46,9 @@ repositories {
             name = "lunarclient"
             url = uri("https://repo.lunarclient.dev")
         }
+        maven {
+            url = uri("https://repo.opencollab.dev/main/")
+        }
     }
 }
 
@@ -65,6 +68,8 @@ dependencies {
 
     compileOnly("net.octopvp:OctoCore-Core:1.0-SNAPSHOT")
     compileOnly("net.octopvp:OctoCore-common:1.0-SNAPSHOT")
+    compileOnly("org.geysermc.geyser:api:2.2.0-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 }
 
 val targetJavaVersion = 17
@@ -144,7 +149,7 @@ tasks {
     }
     publishing {
         repositories {
-            maven ("https://repo.octopvp.net/repo"){
+            maven("https://repo.octopvp.net/repo") {
                 name = "octomc"
                 credentials(PasswordCredentials::class)
                 authentication {
