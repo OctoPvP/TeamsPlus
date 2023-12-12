@@ -2,7 +2,9 @@ package dev.badbird.teams.commands.impl;
 
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.manager.HookManager;
+import dev.badbird.teams.util.Permissions;
 import net.octopvp.commander.annotation.Command;
+import net.octopvp.commander.annotation.Permission;
 import net.octopvp.commander.annotation.Required;
 import net.octopvp.commander.annotation.Sender;
 import net.octopvp.commander.bukkit.annotation.DefaultSelf;
