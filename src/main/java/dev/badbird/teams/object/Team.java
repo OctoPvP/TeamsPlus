@@ -1,5 +1,7 @@
 package dev.badbird.teams.object;
 
+import com.lunarclient.apollo.BukkitApollo;
+import com.lunarclient.apollo.module.team.TeamMember;
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.hooks.impl.VanishHook;
 import dev.badbird.teams.manager.HookManager;
@@ -17,9 +19,12 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 

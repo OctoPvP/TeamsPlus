@@ -96,12 +96,12 @@ public final class TeamsPlus extends JavaPlugin {
         langFile.load(messages);
 
         Logger.info("Hooking into plugins...");
-        HookManager.init();
 
         waypointManager = new WaypointManager();
         storageManager = new StorageManager();
         teamsManager = new TeamsManager();
 
+        HookManager.init();
         waypointManager.init(this);
 
         new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
@@ -129,6 +129,7 @@ public final class TeamsPlus extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-        waypointManager.init(this);
+        if (waypointManager != null)
+            waypointManager.init(this);
     }
 }

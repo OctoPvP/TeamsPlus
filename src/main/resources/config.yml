@@ -68,3 +68,8 @@ waypoint:
 kill-spam-prevention: # Won't count a kill towards a player's stats if they've killed the same person twice
   enabled: true
   cooldown: 60 # minutes
+lunar: # Lunar Client integration
+  enable: true
+  team-display:
+    enable: true
+    color: "#00ff04"

@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.octopvp.commander.annotation.*;
 import org.bukkit.entity.Player;
 
-@Command(name = "chat", description = "Chat with your team/allies")
+@Command(name = "chat", aliases = {"ch"}, description = "Chat with your team/allies")
 public class ChatCommands {
     @Command(name = "team", aliases = {"t"}, description = "Chat with your team")
     public void teamChat(@Sender PlayerData sender, @Sender Player player, @Sender @Required Team team, @Optional @JoinStrings String message) {
@@ -40,7 +40,7 @@ public class ChatCommands {
         sender.sendMessage(Lang.CHAT_SWITCH_TO_ALLY.toString(team.getName()));
     }
 
-    @Command(name = "all", aliases = {"global", "g"}, description = "Chat with everyone")
+    @Command(name = "all", aliases = {"global", "g", "a"}, description = "Chat with everyone")
     public void globalChat(@Sender PlayerData sender, @Sender Player player, @Optional @JoinStrings String message) {
         if (message != null && !message.isEmpty()) {
             MessageManager.handleGlobal(sender, player, message);
