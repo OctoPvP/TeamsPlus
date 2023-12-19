@@ -105,10 +105,8 @@ public class LunarClientHook extends Hook {
 
     public boolean isOnLunarClient(UUID player) {
         if (enabled) {
-            Logger.debug("Checking if %1 is on lunar client", player);
             return Apollo.getPlayerManager().hasSupport(player);
         }
-        Logger.debug("Lunar client hook is disabled, returning false");
         return false;
     }
 
