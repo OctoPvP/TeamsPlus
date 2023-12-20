@@ -8,8 +8,8 @@ import dev.badbird.teams.object.Team;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DataUpdateRunnable extends BukkitRunnable {
-    private static final long SAVE_INTERVAL = 60000; // 1 minute
-    private static long lastSave = System.currentTimeMillis();
+    // private static final long SAVE_INTERVAL = 60000; // 1 minute
+    // private static long lastSave = System.currentTimeMillis();
 
     @Override
     public void run() {
@@ -17,10 +17,11 @@ public class DataUpdateRunnable extends BukkitRunnable {
         for (Team team : TeamsPlus.getInstance().getTeamsManager().getTeams()) {
             team.update();
         }
-
+        /*
         if (System.currentTimeMillis() - lastSave > SAVE_INTERVAL) {
             lastSave = System.currentTimeMillis();
             TeamsManager.getInstance().saveTeams(StorageManager.getStorageHandler());
         }
+         */
     }
 }

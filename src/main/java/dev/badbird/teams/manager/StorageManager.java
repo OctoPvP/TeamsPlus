@@ -10,6 +10,7 @@ import dev.badbird.teams.storage.StorageHandler;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.storage.impl.MongoStorageHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 
 public class StorageManager {
     @Getter
@@ -25,8 +26,6 @@ public class StorageManager {
         Logger.info("Starting storage handler %1", type.name());
         if (type == StorageType.MONGO)
             storageHandler = new MongoStorageHandler();
-        if (type == StorageType.SQL)
-            storageHandler = new SQLStorageHandler();
         //dont need to check flatfile since thats default
         currentlyInit = true;
         StorageManagerLoadEvent event = new StorageManagerLoadEvent(this, storageHandler);

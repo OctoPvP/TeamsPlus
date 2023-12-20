@@ -5,7 +5,6 @@ import dev.badbird.teams.storage.StorageHandler;
 import lombok.Getter;
 import net.badbird5907.blib.util.Logger;
 import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.util.UUIDUtil;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,7 @@ public class TeamsManager {
 
     @Nullable
     public Team getTeamById(UUID id) {
-        return teams.stream().filter(team -> UUIDUtil.equals(team.getTeamId(), id)).findFirst().orElse(null); //i like to compare the uuid using tostring because sometimes UUID == UUID returns false :shrug:
+        return teams.stream().filter(team -> team.getTeamId().toString().equals(id.toString())).findFirst().orElse(null);
     }
 
     @Nullable

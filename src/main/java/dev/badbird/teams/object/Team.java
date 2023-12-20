@@ -1,30 +1,24 @@
 package dev.badbird.teams.object;
 
-import com.lunarclient.apollo.BukkitApollo;
-import com.lunarclient.apollo.module.team.TeamMember;
+import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.hooks.impl.VanishHook;
 import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.manager.StorageManager;
+import dev.badbird.teams.manager.TeamsManager;
+import dev.badbird.teams.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import net.badbird5907.blib.command.Sender;
-import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.manager.TeamsManager;
-import dev.badbird.teams.util.UUIDUtil;
-import dev.badbird.teams.util.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -115,20 +109,19 @@ public class Team {
     }
 
     public boolean isEnemy(PlayerData data) {
-        return data.isInTeam() && UUIDUtil.contains(enemiedTeams, data.getPlayerTeam().getTeamId());
+        return data.isInTeam() && enemiedTeams.containsKey(data.getPlayerTeam().getTeamId());
     }
 
     public boolean isEnemy(Team team) {
-        return UUIDUtil.contains(enemiedTeams, team.getTeamId());
+        return enemiedTeams.containsKey(team.getTeamId());
     }
 
     public boolean isAlly(PlayerData data) {
-        return data.getPlayerTeam() != null && UUIDUtil.contains(data.getPlayerTeam().getAlliedTeams(), this.teamId);
-        //return alliedPlayers.contains(data.getUuid()) || (data.isInTeam() && alliedPlayers.contains(data.getPlayerTeam().getTeamId()));
+        return data.getPlayerTeam() != null && data.getPlayerTeam().getAlliedTeams().containsKey(this.teamId);
     }
 
     public boolean isAlly(Team otherTeam) {
-        return UUIDUtil.contains(alliedTeams, otherTeam.getTeamId());
+        return alliedTeams.containsKey(otherTeam.getTeamId());
     }
 
     public void join(PlayerData data) {
@@ -141,7 +134,7 @@ public class Team {
     }
 
     public void neutralTeam(UUID uuid) {
-        if (!UUIDUtil.contains(enemiedTeams, uuid) && !UUIDUtil.contains(alliedTeams, uuid)) return;
+        if (!enemiedTeams.containsKey(uuid) && !alliedTeams.containsKey(uuid)) return;
         //String name = PlayerUtil.getPlayerName(uuid);
         Team team = TeamsManager.getInstance().getTeamById(uuid);
         neutralTeam(team);
@@ -211,11 +204,11 @@ public class Team {
     }
 
     public void requestToAllyAnotherTeam(Team otherTeam) {
-        if (UUIDUtil.contains(allyRequests, otherTeam.getTeamId())) { //other team already sent request to this team
+        if (allyRequests.containsKey(otherTeam.getTeamId())) { //other team already sent request to this team
             neutralTeam(otherTeam, false);
             allyTeam(otherTeam, true); //ally team
-            UUIDUtil.remove(allyRequests, otherTeam.getTeamId());
-            UUIDUtil.remove(otherTeam.getAllyRequests(), teamId);
+            allyRequests.remove(otherTeam.getTeamId());
+            otherTeam.getAllyRequests().remove(teamId);
             return;
         }
         otherTeam.requestToAlly(this);

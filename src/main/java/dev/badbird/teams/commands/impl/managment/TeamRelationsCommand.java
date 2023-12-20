@@ -6,7 +6,6 @@ import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamRank;
-import dev.badbird.teams.util.UUIDUtil;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
 import org.bukkit.entity.Player;
@@ -59,7 +58,7 @@ public class TeamRelationsCommand {
             sender.sendMessage(Lang.CANNOT_ALLY_SELF.toString());
             return;
         }
-        if (UUIDUtil.contains(team.getAllyRequests(), selfTeam.getTeamId())) {
+        if (team.getAllyRequests().containsKey(selfTeam.getTeamId())) {
             sender.sendMessage(Lang.ALREADY_SENT_ALLY_REQUEST.toString(team.getName()));
             return;
         }
