@@ -5,6 +5,7 @@ import dev.badbird.teams.object.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +26,8 @@ public interface StorageHandler {
     void saveData(PlayerData playerData);
 
     void saveTeam(Team team);
+
+    void saveTeams(Collection<Team> teams);
 
     void removeTeam(Team team);
 }

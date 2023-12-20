@@ -7,8 +7,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.*;
 import dev.badbird.teams.storage.StorageHandler;
 import lombok.Getter;
 import net.badbird5907.blib.util.Logger;
@@ -20,10 +19,7 @@ import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class MongoStorageHandler implements StorageHandler {
     @Getter
@@ -111,6 +107,26 @@ public class MongoStorageHandler implements StorageHandler {
         if (doesTeamDocumentExist(team.getTeamId()))
             teamsCollection.replaceOne(Filters.eq("teamId", team.getTeamId().toString()), Document.parse(json), new ReplaceOptions().upsert(true));
         else teamsCollection.insertOne(Document.parse(json));
+    }
+
+    @Override
+    public void saveTeams(Collection<Team> teams) {
+        List<WriteModel<Document>> operations = new ArrayList<>();
+
+        for (Team team : teams) {
+            String json = TeamsPlus.getGson().toJson(team);
+            Document teamDocument = Document.parse(json);
+
+            UpdateOneModel<Document> upsert = new UpdateOneModel<>(
+                    Filters.eq("teamId", team.getTeamId().toString()),
+                    new Document("$set", teamDocument),
+                    new UpdateOptions().upsert(true)
+            );
+
+            operations.add(upsert);
+        }
+
+        teamsCollection.bulkWrite(operations);
     }
 
     @Override

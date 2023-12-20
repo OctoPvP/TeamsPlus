@@ -30,9 +30,12 @@ public class TeamsManager {
     }
 
     public void saveTeams(StorageHandler storageHandler) {
+        /*
         for (Team team : teams) {
             storageHandler.saveTeam(team);
         }
+         */
+        storageHandler.saveTeams(teams);
     }
 
     @Nullable

@@ -9,7 +9,6 @@ import dev.badbird.teams.object.StorageType;
 import dev.badbird.teams.storage.StorageHandler;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.storage.impl.MongoStorageHandler;
-import dev.badbird.teams.storage.impl.SQLStorageHandler;
 import org.bukkit.Bukkit;
 
 public class StorageManager {

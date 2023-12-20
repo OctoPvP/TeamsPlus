@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -110,6 +111,13 @@ public class FlatFileStorageHandler implements StorageHandler {
         PrintStream ps = new PrintStream(teamFile);
         ps.print(TeamsPlus.getGson().toJson(team));
         ps.close();
+    }
+
+    @Override
+    public void saveTeams(Collection<Team> teams) {
+        for (Team team : teams) {
+            saveTeam(team);
+        }
     }
 
     @Override
