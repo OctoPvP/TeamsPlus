@@ -57,14 +57,8 @@ public class TeamsManager {
     }
 
     public void removeTeam(Team team) {
-        for (Team team1 : teams) {
-            Logger.debug("1 - " + team1.getName());
-        }
         teams.remove(team);
         StorageManager.getStorageHandler().removeTeam(team);
-        for (Team team1 : teams) {
-            Logger.debug("2 - " + team1.getName());
-        }
         //saveTeams(StorageManager.getStorageHandler());
     }
 }

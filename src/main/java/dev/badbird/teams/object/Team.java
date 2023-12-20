@@ -223,6 +223,7 @@ public class Team {
             broadcast(Lang.ALLY_SUCCESS.toString(otherTeam.getName()));
             otherTeam.broadcast(Lang.ALLY_SUCCESS.toString(this.name));
         }
+        save();
     }
 
     public void enemyTeam(Team otherTeam, boolean... broadcast) {
@@ -233,6 +234,7 @@ public class Team {
             broadcast(Lang.TEAM_ENEMY_TEAM.toString(otherTeam.getName()));
             otherTeam.broadcast(Lang.TEAM_ENEMY_TEAM.toString(this.name));
         }
+        save();
     }
 
     public void disband() {
@@ -341,6 +343,7 @@ public class Team {
         }
         members.put(target.getUuid(), nextRank);
         broadcast(Lang.TEAM_PROMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+        save();
     }
 
     public void demote(PlayerData target, PlayerData sender) {
@@ -360,6 +363,7 @@ public class Team {
         }
         members.put(target.getUuid(), nextRank);
         broadcast(Lang.TEAM_DEMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+        save();
     }
 
 
