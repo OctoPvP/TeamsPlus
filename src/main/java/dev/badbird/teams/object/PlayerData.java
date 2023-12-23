@@ -169,6 +169,7 @@ public class PlayerData {
                 currentChannel = ChatChannel.GLOBAL;
         }
 
+
         for (String s : pendingMessages) {
             Component component = TeamsPlus.getInstance().getMiniMessage().deserialize(s)
                     .replaceText(TextReplacementConfig.builder()
