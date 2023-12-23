@@ -53,6 +53,8 @@ public class PlayerData {
 
 
     public PvPCheckResult canDamage(Player victim) {
+        if (victim.getUniqueId().equals(uuid))
+            return PvPCheckResult.ALLOWED;
         UUID uuid = null;
         if (victim.hasMetadata("NPC")) {
             /*
