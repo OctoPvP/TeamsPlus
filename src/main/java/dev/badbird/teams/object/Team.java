@@ -150,6 +150,8 @@ public class Team {
             team.broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(this.name));
             broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(team.name));
         }
+        save();
+        team.save();
     }
 
     public void enableTempPvP(Sender sender) {

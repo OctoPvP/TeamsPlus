@@ -28,6 +28,7 @@ public class WaypointCommands {
         team.getWaypoints().add(w);
         team.broadcast(Lang.WAYPOINT_CREATED.toString(sender.getName(), waypoint));
         team.updateWaypoints();
+        team.save();
     }
 
     @Command(name = "createpos", description = "Set a waypoint for your team.")
@@ -42,6 +43,7 @@ public class WaypointCommands {
         team.getWaypoints().add(w);
         team.broadcast(Lang.WAYPOINT_CREATED.toString(sender.getName(), waypoint));
         team.updateWaypoints();
+        team.save();
     }
 
     @Command(name = "", aliases = "list", description = "List all waypoints for your team.")
