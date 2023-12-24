@@ -22,16 +22,15 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.octopvp.commander.annotation.*;
+import net.octopvp.commander.annotation.Optional;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
+import net.octopvp.commander.sender.CoreCommandSender;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Command(name = "teams", aliases = {"teamsplus", "team"}, description = "Main TeamsPlus command")
@@ -285,6 +284,16 @@ public class TeamsCommand {
             return;
         }
         sendTeamInfo(sender, targetTeam);
+    }
+
+    @Completer(name = "info", index = 0)
+    public List<String> infoCompleter(@Sender CoreCommandSender sender, String input, String lastArg) {
+        return TeamsPlus.getInstance().getTeamsManager().getTeams().stream().map(Team::getName).toList();
+    }
+
+    @Completer(name = "info", index = 1)
+    public List<String> pInfoCompleter(@Sender CoreCommandSender sender, String input, String lastArg) {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
     }
 
     @Command(name = "disband", aliases = "delete", description = "Disband a team")
