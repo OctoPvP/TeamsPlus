@@ -42,9 +42,16 @@ public class MessageManager {
     }
 
     public static boolean handleGlobal(PlayerData data, Player player, String message) {
+        boolean octocore = Bukkit.getPluginManager().isPluginEnabled("OctoCore");
         if (TeamsPlus.getInstance().getConfig().getBoolean("chat.enable")) {
             if (data == null) return false;
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (octocore) {
+                    net.octopvp.octocore.core.objects.PlayerData data1 = net.octopvp.octocore.core.manager.impl.PlayerManager.getInstance().getData(onlinePlayer);
+                    if (data1 != null && !data1.getMessageSettings().isGlobalChat()) {
+                        continue;
+                    }
+                }
                 onlinePlayer.sendMessage(MessageManager.formatGlobal(message, player, onlinePlayer));
             } // TODO team/ally chat
         }
