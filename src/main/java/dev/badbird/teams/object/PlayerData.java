@@ -102,7 +102,16 @@ public class PlayerData {
     }
 
     public boolean isInTeam() {
-        return teamId != null;
+        // return teamId != null;
+        if (teamId != null) {
+            Team team = TeamsManager.getInstance().getTeamById(teamId);
+            if (team == null || !team.getMembers().containsKey(uuid)) {
+                teamId = null;
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public void update() {
@@ -193,6 +202,8 @@ public class PlayerData {
     }
 
     public boolean isEnemy(Player player) {
+        if (player == null)
+            return false;
         PlayerData targetData = PlayerManager.getData(player);
         Team targetTeam = targetData.getPlayerTeam();
         Team playerTeam = getPlayerTeam();
@@ -217,6 +228,8 @@ public class PlayerData {
     }
 
     public boolean isAlly(UUID uuid) {
+        if (uuid == null)
+            return false;
         PlayerData targetData = PlayerManager.getDataLoadIfNeedTo(uuid);
         Team targetTeam = targetData.getPlayerTeam();
         Team playerTeam = getPlayerTeam();
@@ -228,6 +241,8 @@ public class PlayerData {
     }
 
     public boolean isAlly(Player player) {
+        if (player == null)
+            return false;
         return isAlly(player.getUniqueId());
         /*
         //this data enemy, target enemy player, target enemy team,
