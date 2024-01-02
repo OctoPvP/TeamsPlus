@@ -36,11 +36,11 @@ public enum Lang {
     CANNOT_CREATE_TEAM_BLOCKED_NAME("cannot-create-blocked-name", "%prefix% &cYou cannot create a team with that name!"),
 
     CHAT_FORMAT_TEAM("chat.format-team", "&7[&aTeam&7] &a%1 &r: %2"),
-    CHAT_FORMAT_TEAM_LOG("chat.format-team-log", "&7[&aTeam&7] &7[&a%1&7] &a%2 &r: %3"),
+    CHAT_FORMAT_TEAM_LOG("chat.format-team-log", "&7[&aTeam&7] &7[&a%1&7] &a%2&r: %3"),
     CHAT_FORMAT_ALLY("chat.format-ally", "&7[&dAlly&7] &a%1 &7(%2 -> %3) &r: %4"),
     CHAT_FORMAT_GLOBAL_INTEAM("chat.format-global.inteam", "%1[%2] %3&r&7:&f %4"),
     CHAT_FORMAT_GLOBAL_NOTEAM("chat.format-global.noteam", "%1%2&7:&f %3"),
-    CHAT_FORMAT_GLOBAL_LOG("chat.format-global.log", "%1%2: %3"),
+    CHAT_FORMAT_GLOBAL_LOG("chat.format-global.log", "%1%2&r: %3"),
 
     TEAM_INFO_MESSAGE("team-info.message", new String[]{
             "%separator%",

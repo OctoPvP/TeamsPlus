@@ -16,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class MessageManager {
+    private static final ComponentLogger logger = ComponentLogger.logger("Chat");
 
     public static void handleAlly(PlayerData data, Player player, Team senderTeam, String message) {
         Team targetTeam = TeamsManager.getInstance().getTeamById(data.getAllyChatTeamId());
@@ -27,7 +28,7 @@ public class MessageManager {
         String displayName = getDisplayName(player);
         targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(displayName, targetTeam.getName(), senderTeam.getName(), message));
         senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(displayName, senderTeam.getName(), targetTeam.getName(), message));
-        ComponentLogger.logger().info(
+        logger.info(
                 LegacyComponentSerializer.legacySection().deserialize(
                         Lang.CHAT_FORMAT_ALLY.toString(displayName, targetTeam.getName(), senderTeam.getName(), message)
                 )
@@ -42,9 +43,9 @@ public class MessageManager {
 
     public static void handleTeam(Player player, String message, Team team) {
         team.broadcast(Lang.CHAT_FORMAT_TEAM.toString(MessageManager.getDisplayName(player), message));
-        ComponentLogger.logger().info(
+        logger.info(
                 LegacyComponentSerializer.legacySection().deserialize(
-                        Lang.CHAT_FORMAT_TEAM_LOG.toString(MessageManager.getDisplayName(player), team.getName(), message)
+                        Lang.CHAT_FORMAT_TEAM_LOG.toString(team.getName(), MessageManager.getDisplayName(player), message)
                 )
         );
         HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
@@ -70,7 +71,7 @@ public class MessageManager {
             }
         }
         String teamLog = data.isInTeam() ? "&7[&a" + data.getPlayerTeam().getName() + "&7] " : "";
-        ComponentLogger.logger().info(
+        logger.info(
                 LegacyComponentSerializer.legacySection().deserialize(
                         Lang.CHAT_FORMAT_GLOBAL_LOG.toString(teamLog, displayName, message)
                 )

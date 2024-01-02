@@ -15,7 +15,7 @@ chat:
   format-global:
     inteam: '%1[%2] %3&r&7:&f %4' # %1 - color (green if team, blue if neutral, purple if ally, red if enemy) | %2 - team name | %3 player | %4 - message
     noteam: '%1%2&7:&f %3' # %1 - color (green if themself, blue if neutral, purple if ally, red if enemy) | %2 - name | %3 - message
-    log: '%1%2: %3' # %1 - team | %2 - player | %3 - message
+    log: '%1%2&r: %3' # %1 - team | %2 - player | %3 - message
   switch:
     team: '&aSwitched to team chat!'
     ally: '&aSwitched to ally chat!'
