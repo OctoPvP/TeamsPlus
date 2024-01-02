@@ -30,7 +30,7 @@ public class MessageManager {
         senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(displayName, senderTeam.getName(), targetTeam.getName(), message));
         logger.info(
                 LegacyComponentSerializer.legacySection().deserialize(
-                        Lang.CHAT_FORMAT_ALLY.toString(displayName, targetTeam.getName(), senderTeam.getName(), message)
+                        Lang.CHAT_FORMAT_ALLY.toString(displayName, senderTeam.getName(), targetTeam.getName(), message)
                 )
         );
 
