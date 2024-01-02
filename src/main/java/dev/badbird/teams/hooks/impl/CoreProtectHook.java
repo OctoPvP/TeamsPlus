@@ -14,10 +14,12 @@ import net.coreprotect.CoreProtect;
 import net.coreprotect.config.Config;
 import net.coreprotect.listener.player.PlayerChatListener;
 import net.coreprotect.paper.listener.PaperChatListener;
+import net.octopvp.octocore.common.util.CC;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredListener;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -50,23 +52,24 @@ public class CoreProtectHook extends Hook {
     }
 
     public void logChat(Player player, String message, ChatChannel chatChannel) {
-        Logger.debug("Logging chat message to CoreProtect, enabled: %1", enabled);
+        // Logger.debug("Logging chat message to CoreProtect, enabled: %1", enabled);
         if (!enabled) return;
         String prefix = "";
         if (chatChannel == ChatChannel.TEAM) {
             PlayerData data = PlayerManager.getData(player.getUniqueId());
-            prefix = "[T] [" + data.getPlayerTeam().getName() + "] | ";
+            prefix = "[" + CC.AQUA + "T" + CC.WHITE + "] [" + CC.GREEN + data.getPlayerTeam().getName() + CC.WHITE + "]";
         } else if (chatChannel == ChatChannel.GLOBAL) {
-            prefix = "[G] | ";
+            prefix = "[" + CC.GREEN + "G" + CC.WHITE + "]";
         } else if (chatChannel == ChatChannel.ALLY) {
             PlayerData data = PlayerManager.getData(player.getUniqueId());
             Team allyTeam = TeamsManager.getInstance().getTeamById(data.getAllyChatTeamId());
-            if (allyTeam == null) prefix = "[A] [U] | ";
-            else prefix = "[A] [" + allyTeam.getName() + "] | ";
+            if (allyTeam == null) prefix = "[" + CC.PURPLE + "A" + CC.WHITE + "] [" + CC.RED + "U" + CC.WHITE + "]";
+            else prefix = "[" + CC.PURPLE + "A" + CC.WHITE + "] [" + CC.GREEN + allyTeam.getName() + CC.WHITE + "]";
         }
-        String f = prefix + message;
-        Logger.debug("Logging final message: %1", f);
-        CoreProtect.getInstance().getAPI().logChat(player, f);
+        String f = prefix + ": " + message;
+        Logger.info(f);
+        // Logger.debug("Logging final message: %1", f);
+        CoreProtect.getInstance().getAPI().logChat(player, CC.strip(f));
     }
 
     @SneakyThrows
