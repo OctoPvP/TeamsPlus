@@ -2,9 +2,9 @@ package dev.badbird.teams.commands.provider;
 
 import dev.badbird.teams.commands.CommandManager;
 import dev.badbird.teams.commands.annotation.AllowOffline;
-import dev.badbird.teams.hooks.impl.VanishHook;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.object.PlayerData;
+import net.octopvp.commander.bukkit.BukkitCommandSender;
 import net.octopvp.commander.command.CommandContext;
 import net.octopvp.commander.command.CommandInfo;
 import net.octopvp.commander.command.ParameterInfo;
@@ -20,25 +20,31 @@ import java.util.UUID;
 public class PlayerDataProvider implements Provider<PlayerData> {
     @Override
     public PlayerData provide(CommandContext context, CommandInfo commandInfo, ParameterInfo parameterInfo, Deque<String> args) {
-        try {
-            if (parameterInfo.getCommander().getPlatform().isSenderParameter(parameterInfo)) {
-                return PlayerManager.getData((UUID) context.getCommandSender().getIdentifier());
-            } else {
-                String s = args.pop();
-                Player target = Bukkit.getPlayer(s);
-                if (target == null) {
-                    if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
-                        return PlayerManager.getDataLoadIfNeedTo(s);
-                    }
+        if (parameterInfo.getCommander().getPlatform().isSenderParameter(parameterInfo)) {
+            return PlayerManager.getData((UUID) context.getCommandSender().getIdentifier());
+        } else {
+            String s = args.pop();
+            Player target = Bukkit.getPlayer(s);
+            if (target == null) {
+                if (parameterInfo.getParameter().isAnnotationPresent(AllowOffline.class)) {
+                    args.addFirst(s);
+                    return null; // return null to invoke provideDefault
                 }
-                if (VanishHook.isVanished(target)) {
+                return null;
+            }
+            BukkitCommandSender sender = (BukkitCommandSender) context.getCommandSender();
+            if (sender.getSender() instanceof Player senderPlayer) {
+                if (!senderPlayer.canSee(target)) {
+                    args.addFirst(s);
                     return null;
                 }
-                return PlayerManager.getData(target);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            PlayerData data = PlayerManager.getData(target);
+            if (data == null) {
+                args.addFirst(s);
+                return null;
+            }
+            return data;
         }
     }
 
