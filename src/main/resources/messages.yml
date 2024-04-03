@@ -28,6 +28,7 @@ team:
   cannot-leave-own-team: '&cYou cannot leave your own team!'
   disband: '&cYour team ''%1'' has been disbanded!'
   player-not-in-team: '&cThis player is not in a team!'
+  target-not-in-team: '&c%1 is not in a team!'
   not-allied-with-team: '&cYou are not allied with that team!'
   cannot-invite-self: '&cYou cannot invite yourself!'
   name-too-long: '&cTeam name too long! Max:&6 %1'
@@ -198,6 +199,11 @@ staff:
   disbanded-team: '&aSuccessfully disbanded %1.'
   force-join: '&aSuccessfully force joined %1 to %2.'
   force-leave: '&aSuccessfully removed %1 from %2.'
+  force-leave-owner: '&cYou cannot remove the owner of a team!'
   force-rename: '&aSuccessfully renamed %1 to %2.'
+  force-transfer:
+    success: '&aSuccessfully transferred ownership of %1 to %2.'
+    target-not-in-team: '&c%1 is not in that team!'
+    target-is-already-owner: '&c%1 is already the owner of that team!'
 kill-spam-prevention:
   message: '&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.'

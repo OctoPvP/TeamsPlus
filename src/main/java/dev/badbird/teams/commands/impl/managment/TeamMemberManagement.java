@@ -14,6 +14,7 @@ import dev.badbird.teams.util.Utils;
 import net.kyori.adventure.text.Component;
 import net.octopvp.commander.annotation.*;
 import net.octopvp.commander.bukkit.annotation.PlayerOnly;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
@@ -68,7 +69,7 @@ public class TeamMemberManagement {
 
     @Command(name = "pinfo", aliases = "playerinfo", description = "View player's team info")
     @PlayerOnly
-    public void pInfo(@Sender Player sender, @AllowOffline PlayerData target) {
+    public void pInfo(@Sender CommandSender sender, @AllowOffline PlayerData target) {
         Team team = target.getPlayerTeam();
         Logger.debug("team: " + team + " | " + target.getName());
         boolean inTeam = team != null;

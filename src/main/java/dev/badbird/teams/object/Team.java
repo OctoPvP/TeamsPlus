@@ -331,6 +331,12 @@ public class Team {
         broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(ownerData.getName(), target.getName()), true);
         save();
     }
+    public void transferOwnership(PlayerData target, String invoker) {
+        owner = target.getUuid();
+        members.put(target.getUuid(), TeamRank.OWNER);
+        broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(invoker, target.getName()), true);
+        save();
+    }
 
     public void promote(PlayerData target, PlayerData sender) {
         TeamRank currentRank = members.get(target.getUuid());
@@ -375,4 +381,5 @@ public class Team {
             return p != null && p.isOnline() && !VanishHook.isVanished(p);
         }).toList().size();
     }
+
 }

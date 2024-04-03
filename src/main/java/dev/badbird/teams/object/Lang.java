@@ -141,12 +141,16 @@ public enum Lang {
     STAFF_FORCE_JOIN("staff.force-join", "&aSuccessfully force joined %1 to %2."),
 
     STAFF_FORCE_LEAVE("staff.force-leave", "&aSuccessfully removed %1 from %2."),
+    STAFF_FORCE_LEAVE_OWNER("staff.force-leave-owner", "&cYou cannot remove the owner of a team!"),
 
     STAFF_FORCE_RANK("staff.force-rank", "&aSuccessfully set the rank of %1 to %2."),
 
     STAFF_FORCE_RENAME("staff.force-rename", "&aSuccessfully renamed %1 to %2."),
-
+    STAFF_FORCE_TRANSFER_SUCCESS("staff.force-transfer.success", "&aSuccessfully transferred ownership of %1 to %2."),
+    STAFF_FORCE_TRANSFER_TARGET_NOT_IN_TEAM("staff.force-transfer.target-not-in-team", "&c%1 is not in that team!"),
+    STAFF_FORCE_TRANSFER_TARGET_IS_ALREADY_OWNER("staff.force-transfer.target-is-already-owner", "&c%1 is already the owner of that team!"),
     PLAYER_NOT_IN_TEAM("team.player-not-in-team", "&cYou are not in a team!"),
+    TARGET_NOT_IN_TEAM("team.target-not-in-team", "&c%1 is not in a team!"),
 
     CANCELED("canceled", "%prefix% &cCanceled!"),
 
