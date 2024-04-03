@@ -30,6 +30,7 @@ public class PlayerDataProvider implements Provider<PlayerData> {
                     args.addFirst(s);
                     return null; // return null to invoke provideDefault
                 }
+                args.addFirst(s);
                 return null;
             }
             BukkitCommandSender sender = (BukkitCommandSender) context.getCommandSender();
