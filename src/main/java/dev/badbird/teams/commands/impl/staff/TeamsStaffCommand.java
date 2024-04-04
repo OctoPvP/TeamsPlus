@@ -1,5 +1,6 @@
 package dev.badbird.teams.commands.impl.staff;
 
+import dev.badbird.teams.commands.annotation.AllowOffline;
 import dev.badbird.teams.menu.ConfirmMenu;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
@@ -39,14 +40,14 @@ public class TeamsStaffCommand {
 
     @Command(name = "forcejoin", description = "Force a player to join a team")
     @Permission("teamsplus.staff.forcejoin")
-    public void forcejoin(@Sender CommandSender sender, @Required Team target, @Required PlayerData player) {
+    public void forcejoin(@Sender CommandSender sender, @Required Team target, @AllowOffline @Required PlayerData player) {
         target.join(player);
         sender.sendMessage(Lang.STAFF_FORCE_JOIN.toString(player.getName(), target.getName()));
     }
 
     @Command(name = "forceleave", description = "Force a player to leave a team")
     @Permission("teamsplus.staff.forceleave")
-    public void forceleave(@Sender CommandSender sender, @Required PlayerData player) {
+    public void forceleave(@Sender CommandSender sender, @Required @AllowOffline PlayerData player) {
         Team target = player.getPlayerTeam();
         if (target == null) {
             sender.sendMessage(Lang.TARGET_NOT_IN_TEAM.toString(player.getName()));
@@ -62,14 +63,14 @@ public class TeamsStaffCommand {
 
     @Command(name = "forcerank", description = "Force a player to a rank")
     @Permission("teamsplus.staff.forcerank")
-    public void forcerank(@Sender CommandSender sender, @Required Team target, @Required PlayerData player, @Required TeamRank rank) {
+    public void forcerank(@Sender CommandSender sender, @Required Team target, @Required @AllowOffline PlayerData player, @Required TeamRank rank) {
         target.setRank(player.getUuid(), rank);
         sender.sendMessage(Lang.STAFF_FORCE_RANK.toString(player.getName(), rank.name(), target.getName()));
     }
 
     @Command(name = "transfer", description = "Transfer team ownership to another player")
     @Permission("teamsplus.staff.transfer")
-    public void transfer(@Sender CommandSender sender, @Required PlayerData target, @Required Team team) {
+    public void transfer(@Sender CommandSender sender, @Required @AllowOffline PlayerData target, @Required Team team) {
         // check team valid
         Team playerTeam = target.getPlayerTeam();
         if (playerTeam == null || !playerTeam.getTeamId().equals(team.getTeamId())) {
