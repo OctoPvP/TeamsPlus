@@ -30,11 +30,6 @@ public class ClaimHandler {
         return hashChunk(chunk.getX(), chunk.getZ());
     }
 
-    public long getChunkFromBlock(int block) {
-        // shift block 4 bits to right to get our chunk
-        return block >> 4;
-    }
-
     public long hashChunk(Location location) {
         return hashChunk(location.getChunk());
     }
