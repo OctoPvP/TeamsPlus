@@ -31,7 +31,7 @@ public class ChunkBorderRenderer extends BukkitRunnable {
             return;
         }
         Chunk chunk = player.getChunk();
-        TeamsPlus.getInstance().getLogger().info("Drawing borders for " + player.getName() + " at " + chunk.getX() + ", " + chunk.getZ());
+        // TeamsPlus.getInstance().getLogger().info("Drawing borders for " + player.getName() + " at " + chunk.getX() + ", " + chunk.getZ());
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 1);
         int mY = (int) (player.getLocation().getY() - 20); // 20 blocks below the player
         int pY = (int) (player.getLocation().getY() + 20); // 20 blocks above the player
