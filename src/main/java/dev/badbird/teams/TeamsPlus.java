@@ -2,6 +2,7 @@ package dev.badbird.teams;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dev.badbird.teams.claims.ClaimHandler;
 import dev.badbird.teams.commands.CommandManager;
 import dev.badbird.teams.listeners.CombatListener;
 import dev.badbird.teams.listeners.MessageListener;
@@ -103,6 +104,8 @@ public final class TeamsPlus extends JavaPlugin {
 
         HookManager.init();
         waypointManager.init(this);
+
+        ClaimHandler.getInstance().init();
 
         new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
