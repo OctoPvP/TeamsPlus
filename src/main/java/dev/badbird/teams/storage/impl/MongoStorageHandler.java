@@ -1,5 +1,6 @@
 package dev.badbird.teams.storage.impl;
 
+import com.google.gson.Gson;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -8,14 +9,15 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
+import dev.badbird.teams.TeamsPlus;
+import dev.badbird.teams.object.PlayerData;
+import dev.badbird.teams.object.Team;
 import dev.badbird.teams.storage.StorageHandler;
 import lombok.Getter;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.PlayerUtil;
-import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.object.PlayerData;
-import dev.badbird.teams.object.Team;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.json.JsonWriterSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +31,7 @@ public class MongoStorageHandler implements StorageHandler {
     private MongoDatabase mongoDatabase = null;
     private MongoClient mongoClient;
     private MongoCollection<Document> teamsCollection, usersCollection;
+    private Gson gson = TeamsPlus.getGson();
 
     @Override
     public void init() {
@@ -65,31 +68,41 @@ public class MongoStorageHandler implements StorageHandler {
     public @NotNull Set<Team> getTeams() {
         Set<Team> set = new HashSet<>();
         for (Document document : teamsCollection.find()) {
-            set.add(TeamsPlus.getGson().fromJson(document.toJson(jsonWriterSettings), Team.class));
+            set.add(gson.fromJson(document.toJson(jsonWriterSettings), Team.class));
         }
         return set;
     }
 
     @Override
     public PlayerData getData(UUID player) {
-        if (!doesDataExist(player))
+        Document doc = usersCollection.find(Filters.eq("uuid", player.toString())).first();
+        if (doc == null)
             return new PlayerData(player).onLoad();
-        return TeamsPlus.getGson().fromJson(usersCollection.find(Filters.eq("uuid", player.toString())).first().toJson(getJsonWriterSettings()), PlayerData.class).onLoad();
+        return gson.fromJson(doc.toJson(getJsonWriterSettings()), PlayerData.class).onLoad();
     }
 
     @Override
     public PlayerData getData(String name) {
-        if (usersCollection.find(Filters.eq("name", name)).first() != null)
-            return TeamsPlus.getGson().fromJson(usersCollection.find(Filters.eq("name", name)).first().toJson(getJsonWriterSettings()), PlayerData.class).onLoad();
+        UUID uuid = PlayerUtil.getPlayerUUID(name);
+        Document doc = usersCollection.find(Filters.eq("uuid", uuid.toString())).first();
+        if (doc != null)
+            return gson.fromJson(doc.toJson(getJsonWriterSettings()), PlayerData.class).onLoad();
         else
-            return new PlayerData(PlayerUtil.getPlayerUUID(name)).onLoad();
+            return new PlayerData(uuid).onLoad();
     }
 
     @Override
     public void saveData(PlayerData playerData) {
-        if (doesDataExist(playerData.getUuid())) {
-            usersCollection.replaceOne(getProfileDocument(playerData.getUuid()), Document.parse(TeamsPlus.getGson().toJson(playerData)), new ReplaceOptions().upsert(true));
-        } else usersCollection.insertOne(Document.parse(TeamsPlus.getGson().toJson(playerData)));
+        UpdateOptions updateOptions = new UpdateOptions().upsert(true);
+        String uuid = playerData.getUuid().toString();
+        Bson filter = Filters.eq("uuid", uuid);
+        Document doc = Document.parse(gson.toJson(playerData));
+        Bson update = new Document("$set", doc);
+        usersCollection.updateOne(
+                filter,
+                update,
+                updateOptions
+        );
     }
 
     public Document getProfileDocument(UUID uuid) {
@@ -103,24 +116,29 @@ public class MongoStorageHandler implements StorageHandler {
 
     @Override
     public void saveTeam(Team team) {
-        String json = TeamsPlus.getGson().toJson(team);
-        if (doesTeamDocumentExist(team.getTeamId()))
-            teamsCollection.replaceOne(Filters.eq("teamId", team.getTeamId().toString()), Document.parse(json), new ReplaceOptions().upsert(true));
-        else teamsCollection.insertOne(Document.parse(json));
+        String json = gson.toJson(team);
+        // upsert the team
+        UpdateOptions updateOptions = new UpdateOptions().upsert(true);
+        teamsCollection.updateOne(
+                Filters.eq("teamId", team.getTeamId().toString()),
+                new Document("$set", Document.parse(json)),
+                updateOptions
+        );
     }
 
     @Override
     public void saveTeams(Collection<Team> teams) {
         List<WriteModel<Document>> operations = new ArrayList<>();
+        UpdateOptions ups = new UpdateOptions().upsert(true);
 
         for (Team team : teams) {
-            String json = TeamsPlus.getGson().toJson(team);
+            String json = gson.toJson(team);
             Document teamDocument = Document.parse(json);
 
             UpdateOneModel<Document> upsert = new UpdateOneModel<>(
                     Filters.eq("teamId", team.getTeamId().toString()),
                     new Document("$set", teamDocument),
-                    new UpdateOptions().upsert(true)
+                    ups
             );
 
             operations.add(upsert);

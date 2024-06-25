@@ -198,7 +198,9 @@ public class PlayerData {
     }
 
     public Team getPlayerTeam() {
-        return TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(uuid);
+        if (teamId == null) return null;
+        // return TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(uuid); // O(n^2) !!!
+        return TeamsPlus.getInstance().getTeamsManager().getTeamById(teamId); // O(1)
     }
 
     public boolean isEnemy(Player player) {

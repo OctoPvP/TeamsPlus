@@ -29,7 +29,7 @@ public enum Lang {
     PLAYER_NOT_FOUND("player-not-found", "%prefix% &cCould not find that player!"),
 
 
-    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that! Ask a team admin/leader to promote you! (/team promote %1)"),
+    NO_PERMISSION("no-permission", "%prefix% &cYou do not have permission to do that (%2)! Ask a team admin/leader to promote you! (/team promote %1)"),
 
     CANNOT_INVITE_SELF("team.cannot-invite-self", "&cYou cannot invite yourself!"),
 
@@ -315,7 +315,13 @@ public enum Lang {
 
     PLAYER_INFO_NOT_IN_TEAM("player-info.not-in-team", "&cNone"),
 
-    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.");
+    KILL_SPAM_PREVENTION("kill-spam-prevention.message", "&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats."),
+
+    CLAIM_SUCCESS("claim.success", "&aSuccessfully claimed this chunk!"),
+    CLAIM_ALREADY_CLAIMED("claim.already-claimed", "&cThis chunk is already claimed!"),
+    CLAIM_NOT_ENOUGH_MONEY("claim.not-enough-money", "&cYou don't have enough money to claim this chunk! &e(%1)"),
+    CLAIM_CANNOT_MODIFY("claim.cannot-modify", "&cThis chunk is claimed by &6%1&c and you cannot modify it!"),
+    ;
     @Getter
     private final String configPath;
     private final String finalMessage;

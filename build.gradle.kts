@@ -53,12 +53,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     implementation("net.badbird5907:bLib-Bukkit:2.1.11-REL")
     implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
         exclude(group = "org.reflections")
     }
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
+    implementation("net.objecthunter:exp4j:exp4j-0.4.3.BETA-1")
+
     compileOnly("net.badbird5907:AntiCombatLog:2.4.0")
     compileOnly("com.lunarclient:apollo-api:1.0.4")
     compileOnly("com.lunarclient:apollo-extra-adventure4:1.0.4")

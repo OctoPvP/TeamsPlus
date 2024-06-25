@@ -14,9 +14,7 @@ public class DataUpdateRunnable extends BukkitRunnable {
     @Override
     public void run() {
         PlayerManager.getPlayers().forEach((uuid, playerData) -> playerData.update());
-        for (Team team : TeamsPlus.getInstance().getTeamsManager().getTeams()) {
-            team.update();
-        }
+        TeamsManager.getInstance().getTeams().forEach((_unused, team) -> team.update());
         /*
         if (System.currentTimeMillis() - lastSave > SAVE_INTERVAL) {
             lastSave = System.currentTimeMillis();

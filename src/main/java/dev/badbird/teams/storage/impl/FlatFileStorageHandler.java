@@ -1,5 +1,6 @@
 package dev.badbird.teams.storage.impl;
 
+import com.google.gson.JsonObject;
 import dev.badbird.teams.storage.StorageHandler;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.util.Logger;

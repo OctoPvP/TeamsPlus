@@ -27,7 +27,10 @@ team:
     seconds: 300
   blocked-names:
     - player # messes with the /team info command
-    - self #
+    - self
+    - admin
+    - staff
+    - owner
   max-name-length: 16
   max-allies: -1
   max-size: -1
@@ -68,6 +71,11 @@ waypoint:
 kill-spam-prevention: # Won't count a kill towards a player's stats if they've killed the same person twice
   enabled: true
   cooldown: 60 # minutes
+claim:
+  enable: true
+  vault:
+    cost-formula: 'TODO'
+
 lunar: # Lunar Client integration
   enable: true
   team-display:

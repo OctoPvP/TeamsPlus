@@ -38,7 +38,7 @@ public class CommandManager {
                         Team team = playerData.getPlayerTeam();
                         if (team == null) throw new ValidateException(Lang.MUST_BE_IN_TEAM.toString());
                         if (!team.isAtLeast(playerData.getUuid(), annotation.value())) {
-                            throw new ValidateException(Lang.NO_PERMISSION.toString(playerData.getName()));
+                            throw new ValidateException(Lang.NO_PERMISSION.toString(playerData.getName(), annotation.value().name()));
                         }
                     }
                 })

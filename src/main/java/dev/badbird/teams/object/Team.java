@@ -1,6 +1,10 @@
 package dev.badbird.teams.object;
 
 import dev.badbird.teams.TeamsPlus;
+import dev.badbird.teams.claims.ChunkWrapper;
+import dev.badbird.teams.claims.ClaimHandler;
+import dev.badbird.teams.claims.ClaimInfo;
+import dev.badbird.teams.claims.ClaimResult;
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.hooks.impl.VanishHook;
 import dev.badbird.teams.manager.HookManager;
@@ -16,6 +20,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -35,6 +40,7 @@ public class Team {
     private ConcurrentHashMap<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
     private CopyOnWriteArrayList<TeamWaypoint> waypoints = new CopyOnWriteArrayList<>();
+    private transient Map<Long, ClaimInfo> claims = new HashMap<>();
     private transient ConcurrentHashMap<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
 
@@ -382,4 +388,16 @@ public class Team {
         }).toList().size();
     }
 
+    public ClaimResult claim(Player sender, Location location) {
+        long hash = ClaimHandler.getInstance().hashChunk(location);
+        if (ClaimHandler.getInstance().isClaimed(hash)) {
+            return new ClaimResult(false, Lang.CLAIM_ALREADY_CLAIMED.toString());
+        }
+        // TODO: add a claim cost
+
+        ClaimInfo claim = new ClaimInfo(new ChunkWrapper(location), teamId);
+        ClaimHandler.getInstance().addClaim(claim);
+
+        return new ClaimResult(true, Lang.CLAIM_SUCCESS.toString());
+    }
 }

@@ -253,7 +253,7 @@ public class TeamsCommand {
         Team team = new Team(name, sender.getUniqueId());
         playerData.setTeamId(team.getTeamId());
         team.save();
-        TeamsManager.getInstance().getTeams().add(team);
+        TeamsManager.getInstance().getTeams().put(team.getTeamId(), team);
         playerData.save();
         sender.sendMessage(Lang.CREATED_TEAM.toString(team.getName()));
     }
@@ -288,7 +288,7 @@ public class TeamsCommand {
 
     @Completer(name = "info", index = 0)
     public List<String> infoCompleter(@Sender CoreCommandSender sender, String input, String lastArg) {
-        return TeamsPlus.getInstance().getTeamsManager().getTeams().stream().map(Team::getName).toList();
+        return TeamsPlus.getInstance().getTeamsManager().getTeams().values().stream().map(Team::getName).toList();
     }
 
     @Completer(name = "info", index = 1)
@@ -326,7 +326,7 @@ public class TeamsCommand {
                 .append(Lang.LIST_TITLE);
         int current = 0;
         Map<Integer, String> pages = new HashMap<>();
-        for (Team team : TeamsManager.getInstance().getTeams()) {
+        for (Team team : TeamsManager.getInstance().getTeams().values()) {
             current++;
             sb.append("\n").append(Lang.LIST_ENTRY.toString(team.getName()));
             if (current % MAX_PAGE_SIZE == 0) {

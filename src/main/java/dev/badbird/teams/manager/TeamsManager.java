@@ -8,13 +8,13 @@ import dev.badbird.teams.TeamsPlus;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TeamsManager {
     @Getter
-    private Set<Team> teams = new HashSet<>(); //keep teams loaded in memory so we don't need to keep loading from data source
+    private Map<UUID, Team> teams = new ConcurrentHashMap<>(); //keep teams loaded in memory so we don't need to keep loading from data source
+    // hashmap for O(1) lookup
 
     public TeamsManager() {
         loadTeams(StorageManager.getStorageHandler());
@@ -25,7 +25,9 @@ public class TeamsManager {
     }
 
     public void loadTeams(StorageHandler storageHandler) {
-        this.teams = storageHandler.getTeams();
+        Set<Team> teamsSet = storageHandler.getTeams();
+        this.teams.clear();
+        teamsSet.forEach(team -> this.teams.put(team.getTeamId(), team));
     }
 
     public void saveTeams(StorageHandler storageHandler) {
@@ -34,7 +36,7 @@ public class TeamsManager {
             storageHandler.saveTeam(team);
         }
          */
-        storageHandler.saveTeams(teams);
+        storageHandler.saveTeams(teams.values());
     }
 
     @Nullable
@@ -43,22 +45,26 @@ public class TeamsManager {
         if (StorageManager.getStorageHandler().getClass().getName().toLowerCase().contains("sql")) //prevent sql injection attacks
             a = a.replace("'", "''"); //This is what StringEscapeUtils.escapeSql does in apache commons lang, was removed in lang3
         String finalA = a;
-        return teams.stream().filter(team -> team != null && team.getName().equalsIgnoreCase(finalA)).findFirst().orElse(null);
+        return teams.values().stream().filter(team -> team != null && team.getName().equalsIgnoreCase(finalA)).findFirst().orElse(null);
     }
 
     @Nullable
     public Team getTeamById(UUID id) {
-        return teams.stream().filter(team -> team.getTeamId().toString().equals(id.toString())).findFirst().orElse(null);
+        return teams.get(id);
     }
 
     @Nullable
     public Team getPlayerTeam(UUID player) {
-        return teams.stream().filter(team -> team.getMembers().keySet().stream().filter(id -> id.toString().equals(player.toString())).findFirst().orElse(null) != null).findFirst().orElse(null);
+        return teams.values().stream().filter(team -> team.getMembers().keySet().stream().filter(id -> id.toString().equals(player.toString())).findFirst().orElse(null) != null).findFirst().orElse(null);
     }
 
     public void removeTeam(Team team) {
         teams.remove(team);
         StorageManager.getStorageHandler().removeTeam(team);
         //saveTeams(StorageManager.getStorageHandler());
+    }
+
+    public String getTeamName(UUID owningTeam) {
+        return teams.get(owningTeam).getName();
     }
 }

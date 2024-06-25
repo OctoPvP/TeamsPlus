@@ -3,6 +3,7 @@ package dev.badbird.teams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.badbird.teams.claims.ClaimHandler;
+import dev.badbird.teams.claims.ClaimInfo;
 import dev.badbird.teams.commands.CommandManager;
 import dev.badbird.teams.listeners.CombatListener;
 import dev.badbird.teams.listeners.MessageListener;
@@ -11,9 +12,11 @@ import dev.badbird.teams.manager.HookManager;
 import dev.badbird.teams.manager.StorageManager;
 import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.manager.WaypointManager;
+import dev.badbird.teams.object.Team;
 import dev.badbird.teams.runnable.DataUpdateRunnable;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.util.Metrics;
+import dev.badbird.teams.util.TeamGsonAdapter;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.bLib;
@@ -25,7 +28,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.Messenger;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +36,12 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+@Getter
 public final class TeamsPlus extends JavaPlugin {
     @Getter
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Team.class, new TeamGsonAdapter()).create();
+    @Getter
+    private static final Gson cleanGson = new GsonBuilder().setPrettyPrinting().create();
     @Getter
     private static TeamsPlus instance;
     @Getter
@@ -50,13 +55,9 @@ public final class TeamsPlus extends JavaPlugin {
     private static boolean disabling = false;
     @Getter
     private final ConversationFactory conversationFactory = new ConversationFactory(this);
-    @Getter
     private StorageManager storageManager;
-    @Getter
     private TeamsManager teamsManager;
-    @Getter
     private WaypointManager waypointManager;
-    @Getter
     private MiniMessage miniMessage;
 
     public static void reloadLang() {
@@ -109,7 +110,7 @@ public final class TeamsPlus extends JavaPlugin {
 
         new DataUpdateRunnable().runTaskTimerAsynchronously(this, 20, 20);
         Logger.info("Successfully started TeamsPlus in (%1 ms.)", (System.currentTimeMillis() - start));
-
+        Logger.info("Loaded " + teamsManager.getTeams().size() + " teams and " + ClaimHandler.getInstance().getClaimCount() + " claim chunks.");
         /*
         CommandManager.getCommander().getCommandMap().forEach((k,v)-> {
             BukkitCommandWrapper wrapper = (BukkitCommandWrapper) v.getPlatformCommandObject();

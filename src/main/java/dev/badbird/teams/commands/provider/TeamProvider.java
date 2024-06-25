@@ -31,6 +31,8 @@ public class TeamProvider implements Provider<Team> {
 
     @Override
     public List<String> provideSuggestions(String input, String lastArg, CoreCommandSender sender) {
-        return TeamsManager.getInstance().getTeams().stream().map(Team::getName).collect(java.util.stream.Collectors.toList());
+        return TeamsManager.getInstance().getTeams()
+                .values().stream()
+                .map(Team::getName).collect(java.util.stream.Collectors.toList());
     }
 }

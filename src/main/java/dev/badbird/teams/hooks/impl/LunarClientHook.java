@@ -45,7 +45,7 @@ public class LunarClientHook extends Hook {
         reload();
         if (plugin.getConfig().getBoolean("lunar.team-display.enable", true)) {
             teamDisplayColor = Color.decode(plugin.getConfig().getString("lunar.team-display.color", "#00ff44"));
-            Tasks.runAsyncTimer(() -> TeamsManager.getInstance().getTeams().forEach(this::refreshMembers), 1L, 1L);
+            Tasks.runAsyncTimer(() -> TeamsManager.getInstance().getTeams().forEach((_unused, team) -> refreshMembers(team)), 1L, 1L);
         }
     }
 

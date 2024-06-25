@@ -6,7 +6,7 @@ must-be-in-team: '%prefix% &cYou must be in a team to do that!'
 already-in-team: '%prefix% &cYou are already in a team!'
 player-not-found: '%prefix% &cCould not find that player!'
 cannot-create-blocked-name: '%prefix% &cYou cannot create a team with that name!'
-no-permission: '%prefix% &cYou do not have permission to do that! Ask a team leader to promote you! (/team promote %1)'
+no-permission: '%prefix% &cYou do not have permission to do that (%2)! Ask a team admin/leader to promote you! (/team promote %1)'
 canceled: '%prefix% &cCanceled!'
 chat:
   format-team: '&7[&aTeam&7] &a%1 &r: %2' # %1 = Player name | %2 = Message
@@ -207,3 +207,9 @@ staff:
     target-is-already-owner: '&c%1 is already the owner of that team!'
 kill-spam-prevention:
   message: '&cYou killed &6%1&c twice in the last &6%2&c minutes, the kill will not count towards your stats.'
+
+claim:
+  success: '&aSuccessfully claimed this chunk!'
+  already-claimed: '&cThis chunk is already claimed!'
+  not-enough-money: '&cYou don''t have enough money to claim this chunk! &e(%1)'
+  cannot-modify: '&cThis chunk is claimed by &6%1&c and you cannot modify it!'
