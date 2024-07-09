@@ -1,27 +1,32 @@
 package dev.badbird.teams.commands.provider;
 
-import dev.badbird.teams.commands.CommandManager;
-import dev.badbird.teams.commands.annotation.AllowOffline;
+import dev.badbird.teams.commands.annotation.Sender;
 import dev.badbird.teams.manager.PlayerManager;
-import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
-import net.octopvp.commander.bukkit.BukkitCommandSender;
-import net.octopvp.commander.bukkit.annotation.DefaultSelf;
-import net.octopvp.commander.command.CommandContext;
-import net.octopvp.commander.command.CommandInfo;
-import net.octopvp.commander.command.ParameterInfo;
-import net.octopvp.commander.exception.CommandException;
-import net.octopvp.commander.provider.Provider;
-import net.octopvp.commander.sender.CoreCommandSender;
-import org.bukkit.Bukkit;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.injection.ParameterInjector;
+import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
-import java.util.Deque;
-import java.util.List;
-import java.util.UUID;
+public class PlayerDataInjector implements ParameterInjector<CommandSourceStack, PlayerData> {
 
-public class PlayerDataProvider implements Provider<PlayerData> {
 
+    @Override
+    public @Nullable PlayerData create(@NonNull CommandContext<CommandSourceStack> context, @NonNull AnnotationAccessor annotationAccessor) {
+        CommandSender sender = context.sender().getSender();
+        if (sender instanceof Player player) {
+            if (annotationAccessor.annotation(Sender.class) != null) {
+                return PlayerManager.getData(player.getUniqueId());
+            }
+            return null;
+        }
+        throw new RuntimeException("Must be a player.");
+    }
+    /*
     @Override
     public PlayerData provide(CommandContext context, CommandInfo commandInfo, ParameterInfo parameterInfo, Deque<String> args) {
         if (context.getCommandInfo().getCommander().getPlatform().isSenderParameter(parameterInfo)) {
@@ -47,6 +52,8 @@ public class PlayerDataProvider implements Provider<PlayerData> {
 
     @Override
     public List<String> provideSuggestions(String input, String lastArg, CoreCommandSender sender) {
-        return CommandManager.getCommander().getArgumentProviders().get(Player.class).provideSuggestions(input, lastArg, sender);
+        return Arrays.asList(); // FIXME
+        // return CommandManager.getCommander().getArgumentProviders().get(Player.class).provideSuggestions(input, lastArg, sender);
     }
+     */
 }

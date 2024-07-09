@@ -3,8 +3,6 @@ package dev.badbird.teams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.badbird.teams.claims.ClaimHandler;
-import dev.badbird.teams.claims.ClaimInfo;
-import dev.badbird.teams.commands.CommandManager;
 import dev.badbird.teams.listeners.CombatListener;
 import dev.badbird.teams.listeners.MessageListener;
 import dev.badbird.teams.listeners.SessionListener;
@@ -17,6 +15,7 @@ import dev.badbird.teams.runnable.DataUpdateRunnable;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.util.Metrics;
 import dev.badbird.teams.util.TeamGsonAdapter;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.bLib;
@@ -28,6 +27,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.paper.PaperCommandManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,11 @@ public final class TeamsPlus extends JavaPlugin {
     private WaypointManager waypointManager;
     private MiniMessage miniMessage;
 
+    private final PaperCommandManager.Bootstrapped<CommandSourceStack> commandManager;
+    public TeamsPlus(PaperCommandManager.Bootstrapped<CommandSourceStack> commandManager) {
+        this.commandManager = commandManager;
+    }
+
     public static void reloadLang() {
         langFile = new YamlConfiguration();
         try {
@@ -81,7 +87,7 @@ public final class TeamsPlus extends JavaPlugin {
         new Metrics(this, 12438);
         miniMessage = MiniMessage.builder().build();
         //bLib.getCommandFramework().registerCommandsInPackage("net.badbird5907.teams.commands");
-        CommandManager.init();
+        commandManager.onEnable();
         Listener[] listeners = {new CombatListener(), new MessageListener(), new SessionListener()};
         for (Listener listener : listeners) {
             getServer().getPluginManager().registerEvents(listener, this);

@@ -67,7 +67,7 @@ public class ChunkBorderRenderer extends BukkitRunnable {
                             z += k;
                             break;
                     }
-                    player.spawnParticle(Particle.REDSTONE, x, y, z, 0, 0, 0, 0, 1, dustOptions);
+                    player.spawnParticle(Particle.DUST, x, y, z, 0, 0, 0, 0, 1, dustOptions);
                 }
             }
         }

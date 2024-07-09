@@ -1,9 +1,9 @@
 plugins {
-    `java`
+    java
     `maven-publish`
     signing
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.freefair.lombok") version "6.5.1"
+    id("io.github.goooler.shadow") version "8.1.8"
+    id("io.freefair.lombok") version "8.6"
 }
 
 group = "dev.badbird"
@@ -12,10 +12,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     mavenLocal()
-    maven {
-        name = "papermc-repo"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven {
         name = "sonatype"
         url = uri("https://oss.sonatype.org/content/groups/public/")
@@ -53,11 +50,19 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     implementation("net.badbird5907:bLib-Bukkit:2.1.11-REL")
-    implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
-        exclude(group = "org.reflections")
-    }
+    //implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
+    //    exclude(group = "org.reflections")
+    //}
+    implementation("org.reflections:reflections:0.10.2")
+
+    implementation("org.incendo:cloud-paper:2.0.0-beta.8")
+    implementation("org.incendo:cloud-annotations:2.0.0-rc.2")
+    annotationProcessor("org.incendo:cloud-annotations:2.0.0-rc.2")
+    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.8")
+    implementation("org.incendo:cloud-processors-cooldown:1.0.0-beta.3")
+
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
     implementation("net.objecthunter:exp4j:exp4j-0.4.3.BETA-1")
 
@@ -74,7 +79,7 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -91,7 +96,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.withType<ProcessResources> {
-    filesMatching("plugin.yml") {
+    filesMatching("paper-plugin.yml") {
         expand(project.properties)
     }
 }
@@ -126,7 +131,7 @@ tasks {
          */
 
         relocate("net.badbird5907.blib", "dev.badbird.teams.relocate.bLib")
-        relocate("net.octopvp.commander", "dev.badbird.teams.relocate.commander")
+        // relocate("net.octopvp.commander", "dev.badbird.teams.relocate.commander")
         relocate("com.mongodb", "dev.badbird.teams.relocate.mongodb")
         relocate("org.bson", "dev.badbird.teams.relocate.mongodb.bson")
 
