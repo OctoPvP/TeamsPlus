@@ -3,7 +3,6 @@ package dev.badbird.teams.commands.provider;
 import dev.badbird.teams.commands.annotation.Sender;
 import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.object.Team;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,10 +16,10 @@ import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
 import java.util.stream.Stream;
 
-public class TeamParser implements ParameterInjector<CommandSourceStack, Team> {
+public class TeamParser implements ParameterInjector<CommandSender, Team> {
 
     @Parser(suggestions = "suggestTeams")
-    public @NonNull Team parse(@NonNull CommandContext<@NonNull CommandSourceStack> commandContext, @NonNull CommandInput commandInput) {
+    public @NonNull Team parse(@NonNull CommandContext<@NonNull CommandSender> commandContext, @NonNull CommandInput commandInput) {
         if (commandInput.hasRemainingInput()) {
             String str = commandInput.readString();
             Team team = TeamsManager.getInstance().getTeamByName(str);
@@ -35,8 +34,9 @@ public class TeamParser implements ParameterInjector<CommandSourceStack, Team> {
     }
 
     @Override
-    public @Nullable Team create(@NonNull CommandContext<CommandSourceStack> context, @NonNull AnnotationAccessor annotationAccessor) {
-        CommandSender sender = context.sender().getSender();
+    public @Nullable Team create(@NonNull CommandContext<CommandSender> context, @NonNull AnnotationAccessor annotationAccessor) {
+        CommandSender sender = context.sender();
+
         if (sender instanceof Player player) {
             if (annotationAccessor.annotation(Sender.class) != null) {
                 return TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
@@ -47,7 +47,7 @@ public class TeamParser implements ParameterInjector<CommandSourceStack, Team> {
     }
 
     @Suggestions("suggestTeams")
-    public Stream<String> suggestTeams(CommandContext<CommandSourceStack> context, String input) {
+    public Stream<String> suggestTeams(CommandContext<CommandSender> context, String input) {
         return TeamsManager.getInstance().getTeams().values().stream().map(Team::getName);
     }
 

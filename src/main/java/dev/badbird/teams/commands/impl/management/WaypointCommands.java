@@ -1,4 +1,4 @@
-package dev.badbird.teams.commands.impl;
+package dev.badbird.teams.commands.impl.management;
 
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.commands.annotation.Sender;
@@ -14,8 +14,9 @@ import org.incendo.cloud.annotation.specifier.Greedy;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
+import org.incendo.cloud.annotations.processing.CommandContainer;
 
-// @CommandContainer
+@CommandContainer
 @Command("teamwaypoint|twp|tw")
 @CommandDescription("Team Waypoints")
 public class WaypointCommands {

@@ -3,7 +3,6 @@ package dev.badbird.teams.commands.provider;
 import dev.badbird.teams.commands.annotation.Sender;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.object.PlayerData;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -12,12 +11,12 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.injection.ParameterInjector;
 import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
-public class PlayerDataInjector implements ParameterInjector<CommandSourceStack, PlayerData> {
+public class PlayerDataInjector implements ParameterInjector<CommandSender, PlayerData> {
 
 
     @Override
-    public @Nullable PlayerData create(@NonNull CommandContext<CommandSourceStack> context, @NonNull AnnotationAccessor annotationAccessor) {
-        CommandSender sender = context.sender().getSender();
+    public @Nullable PlayerData create(@NonNull CommandContext<CommandSender> context, @NonNull AnnotationAccessor annotationAccessor) {
+        CommandSender sender = context.sender();
         if (sender instanceof Player player) {
             if (annotationAccessor.annotation(Sender.class) != null) {
                 return PlayerManager.getData(player.getUniqueId());
