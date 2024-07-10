@@ -20,15 +20,15 @@ import dev.badbird.teams.runnable.DataUpdateRunnable;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.util.Metrics;
 import dev.badbird.teams.util.TeamGsonAdapter;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.bLib;
 import net.badbird5907.blib.util.Logger;
 import dev.badbird.teams.api.TeamsPlusAPI;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,10 +42,10 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.AudienceProvider;
+import org.incendo.cloud.minecraft.extras.ImmutableMinecraftHelp;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
-import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.processors.cooldown.annotation.CooldownBuilderModifier;
 import org.incendo.cloud.setting.ManagerSetting;
 
@@ -56,6 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -82,7 +83,9 @@ public final class TeamsPlus extends JavaPlugin {
     private TeamsManager teamsManager;
     private WaypointManager waypointManager;
     private MiniMessage miniMessage;
+
     private LegacyPaperCommandManager<CommandSender> commandManager;
+    private MinecraftHelp<CommandSender> teamsHelp, chatHelp;
 
     public static void reloadLang() {
         langFile = new YamlConfiguration();
@@ -122,6 +125,7 @@ public final class TeamsPlus extends JavaPlugin {
                     .registerInjector(CommandSender.class, new CommandSenderInjector())
                     .registerInjector(PlayerData.class, new PlayerDataInjector());
 
+            Component prefix = LegacyComponentSerializer.legacyAmpersand().deserialize(getConfig().getString("prefix", "&7[&bTeams+&7]&r"));
             MinecraftExceptionHandler.create(new AudienceProvider<CommandSender>() {
                         @Override
                         public @NonNull Audience apply(@NonNull CommandSender sender) {
@@ -129,22 +133,12 @@ public final class TeamsPlus extends JavaPlugin {
                         }
                     })
                     .defaultInvalidSyntaxHandler().defaultInvalidSenderHandler().defaultNoPermissionHandler().defaultArgumentParsingHandler()
-                    .defaultCommandExecutionHandler().decorator(component -> text().append(text("[", NamedTextColor.DARK_GRAY))
-                            .append(text("TeamsPlus", NamedTextColor.GOLD)).append(text("] ", NamedTextColor.DARK_GRAY))
-                            .append(component).build()
+                    .defaultCommandExecutionHandler().decorator(component -> text().append(prefix).append(Component.space()).append(component).build()
                     ).registerTo(commandManager);
 
             AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(commandManager, CommandSender.class);
             AnnotationMappers.register(annotationParser, mgr);
             CooldownBuilderModifier.install(annotationParser);
-
-            MinecraftHelp<CommandSender> help = MinecraftHelp.<CommandSender>builder()
-                    .commandManager(commandManager)
-                    .audienceProvider(Audience::audience)
-                    .commandPrefix("/teamsplus")
-                    .colors(MinecraftHelp.helpColors(NamedTextColor.AQUA, NamedTextColor.GOLD, NamedTextColor.GREEN, NamedTextColor.WHITE, NamedTextColor.GRAY))
-                    .build();
-            commandManager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
 
             System.out.println("Registering commands");
             Class<?>[] classes = {
@@ -174,6 +168,18 @@ public final class TeamsPlus extends JavaPlugin {
                 annotationParser.parse(obj);
             }
             annotationParser.parseContainers();
+
+            Function<String, MinecraftHelp<CommandSender>> helpGenerator = (pfx) -> ImmutableMinecraftHelp.<CommandSender>builder()
+                    .commandManager(commandManager)
+                    .audienceProvider(AudienceProvider.nativeAudience())
+                    .commandPrefix("/" + pfx + " help")
+                    .commandFilter((command) -> command.rootComponent().name().equals(pfx))
+                    .build();
+            teamsHelp = helpGenerator.apply("teams");
+            chatHelp = helpGenerator.apply("chat");
+            //help = MinecraftHelp.createNative("/teams help", this.commandManager);
+            commandManager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

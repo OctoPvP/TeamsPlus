@@ -189,7 +189,7 @@ public enum Lang {
 
     WAYPOINT_FILTER_LORE("waypoint.filter.lore", new String[]{
             "",
-            "&eClick to filer entries",
+            "&eClick to filter entries",
     }),
 
     WAYPOINT_INFO_NAME("waypoint.info.name", "&aInfo"),
@@ -395,5 +395,14 @@ public enum Lang {
             );
         }
         return component;
+    }
+
+    public List<Component> getComponentList(Object... placeholders) {
+        List<Component> list = new ArrayList<>();
+        for (String s : messageList) {
+            Component component = LegacyComponentSerializer.legacyAmpersand().deserialize(StringUtils.replacePlaceholders(CC.translate(s).replace("%prefix%", PREFIX.getRaw()).replace("%separator%", CC.SEPARATOR), placeholders));
+            list.add(component);
+        }
+        return list;
     }
 }

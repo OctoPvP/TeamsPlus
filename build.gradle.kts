@@ -57,7 +57,7 @@ dependencies {
     //}
     implementation("org.reflections:reflections:0.10.2")
 
-    implementation("org.incendo:cloud-paper:2.0.0-beta.8")
+    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
     implementation("org.incendo:cloud-annotations:2.0.0-rc.2")
     annotationProcessor("org.incendo:cloud-annotations:2.0.0-rc.2")
     implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.8")
@@ -65,6 +65,7 @@ dependencies {
 
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
     implementation("net.objecthunter:exp4j:exp4j-0.4.3.BETA-1")
+    implementation("dev.octomc:agile-gui:1.3.0")
 
     compileOnly("net.badbird5907:AntiCombatLog:2.4.0")
     compileOnly("com.lunarclient:apollo-api:1.0.4")

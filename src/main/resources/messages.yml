@@ -56,7 +56,7 @@ team:
     header: '&7&m-------------------------------------'
     title: '&aAll Teams (%max_pages% total):'
     entry: '&7 - &a%1'
-    footer: '&7&m----------&r&7(&6Page &7%page%/%max_pages%)&7&m-----------'
+    footer: '&7&m------------&r&7(&6Page &7%page%/%max_pages%)&7&m--------------'
     invalid: '&cInvalid entry number! min: %1 max: %2'
 
 waypoint:

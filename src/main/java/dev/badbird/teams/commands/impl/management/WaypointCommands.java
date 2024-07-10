@@ -58,7 +58,7 @@ public class WaypointCommands {
         }
     }
 
-    @Command("listwp")
+    @Command("list")
     @CommandDescription("List all waypoints for your team.")
     public void list(@Sender CommandSender cs, @Sender Team team) {
         if (cs instanceof Player sender) {
@@ -66,4 +66,9 @@ public class WaypointCommands {
             new ListWaypointsMenu(team, sender.getUniqueId()).open(sender);
         }
     }
+    @Command("")
+    public void base(@Sender CommandSender cs, @Sender Team team) {
+        list(cs, team);
+    }
+
 }

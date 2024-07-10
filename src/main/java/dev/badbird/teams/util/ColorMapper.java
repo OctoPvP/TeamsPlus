@@ -71,9 +71,6 @@ public class ColorMapper {
                 return Material.BLUE_DYE;
             case DARK_AQUA:
                 return Material.CYAN_DYE;
-            case DARK_GRAY:
-            case GRAY:
-                return Material.GRAY_DYE;
             case DARK_GREEN:
             case GREEN:
                 return Material.GREEN_DYE;
@@ -89,8 +86,9 @@ public class ColorMapper {
                 return Material.YELLOW_DYE;
             case GOLD:
                 return Material.ORANGE_DYE;
+            case GRAY:
             default:
-                return null;
+                return Material.GRAY_DYE;
         }
     }
     public static Material dyeFromColor(Color color) {
