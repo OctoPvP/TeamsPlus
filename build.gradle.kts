@@ -64,7 +64,7 @@ dependencies {
     compileOnly("com.lunarclient:apollo-extra-adventure4:1.0.4")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.coreprotect:coreprotect:21.0")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT")
 
     compileOnly("net.octopvp:OctoCore-Core:1.0-SNAPSHOT")
     compileOnly("net.octopvp:OctoCore-common:1.0-SNAPSHOT")
