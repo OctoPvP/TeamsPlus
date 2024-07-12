@@ -68,7 +68,7 @@ dependencies {
 
     compileOnly("net.octopvp:OctoCore-Core:1.0-SNAPSHOT")
     compileOnly("net.octopvp:OctoCore-common:1.0-SNAPSHOT")
-    compileOnly("org.geysermc.geyser:api:2.2.0-SNAPSHOT")
+    compileOnly("org.geysermc.geyser:api:2.4.0-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 }
 
