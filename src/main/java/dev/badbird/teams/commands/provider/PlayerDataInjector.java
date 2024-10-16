@@ -19,8 +19,10 @@ public class PlayerDataInjector implements ParameterInjector<CommandSender, Play
         CommandSender sender = context.sender();
         if (sender instanceof Player player) {
             if (annotationAccessor.annotation(Sender.class) != null) {
+                System.out.println("Getting player data from player");
                 return PlayerManager.getData(player.getUniqueId());
             }
+            System.out.println("Returning null");
             return null;
         }
         throw new RuntimeException("Must be a player.");

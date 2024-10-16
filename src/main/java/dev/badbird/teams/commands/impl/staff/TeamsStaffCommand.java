@@ -16,6 +16,8 @@ import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 //@Command(name = "teamsstaff", description = "Manage teams")
 //@Permission(Permissions.STAFF)
 @CommandContainer
@@ -33,15 +35,15 @@ public class TeamsStaffCommand {
                     player.closeInventory();
                     if (bool) {
                         target.disband();
-                        player.sendMessage(Lang.STAFF_DISBAND_TEAM.toString(target.getName()));
+                        player.sendMessage(Lang.STAFF_DISBAND_TEAM.getComponent(tr("target", target.getName())));
                     } else {
-                        player.sendMessage(Lang.CANCELED.toString());
+                        player.sendMessage(Lang.CANCELED.getComponent());
                     }
                 }).open(player);
             }
         } else {
             target.disband();
-            sender.sendMessage(Lang.STAFF_DISBAND_TEAM.toString(target.getName()));
+            sender.sendMessage(Lang.STAFF_DISBAND_TEAM.getComponent(tr("target", target.getName())));
         }
     }
 
@@ -51,7 +53,10 @@ public class TeamsStaffCommand {
     @Permission("teamsplus.staff.forcejoin")
     public void forcejoin(CommandSender sender, @Argument Team target, @AllowOffline @Argument PlayerData player) {
         target.join(player);
-        sender.sendMessage(Lang.STAFF_FORCE_JOIN.toString(player.getName(), target.getName()));
+        sender.sendMessage(Lang.STAFF_FORCE_JOIN.getComponent(
+                tr("player", player.getName()),
+                tr("team", target.getName())
+        ));
     }
 
     //@Command(name = "forceleave", description = "Force a player to leave a team")
@@ -61,15 +66,20 @@ public class TeamsStaffCommand {
     public void forceleave(CommandSender sender, @Argument @AllowOffline PlayerData player) {
         Team target = player.getPlayerTeam();
         if (target == null) {
-            sender.sendMessage(Lang.TARGET_NOT_IN_TEAM.toString(player.getName()));
+            sender.sendMessage(Lang.TARGET_NOT_IN_TEAM.getComponent(
+                    tr("target", player.getName())
+            ));
             return;
         }
         if (target.getOwner().equals(player.getUuid())) {
-            sender.sendMessage(Lang.STAFF_FORCE_LEAVE_OWNER.toString());
+            sender.sendMessage(Lang.STAFF_FORCE_LEAVE_OWNER.getComponent());
             return;
         }
         target.leave(player);
-        sender.sendMessage(Lang.STAFF_FORCE_LEAVE.toString(player.getName(), target.getName()));
+        sender.sendMessage(Lang.STAFF_FORCE_LEAVE.getComponent(
+                tr("player", player.getName()),
+                tr("team", target.getName())
+        ));
     }
 
     @Command("forcerank <target> <player> <rank>")
@@ -77,7 +87,11 @@ public class TeamsStaffCommand {
     @Permission("teamsplus.staff.forcerank")
     public void forcerank(CommandSender sender, @Argument Team target, @Argument @AllowOffline PlayerData player, @Argument TeamRank rank) {
         target.setRank(player.getUuid(), rank);
-        sender.sendMessage(Lang.STAFF_FORCE_RANK.toString(player.getName(), rank.name(), target.getName()));
+        sender.sendMessage(Lang.STAFF_FORCE_RANK.getComponent(
+                tr("player", player.getName()),
+                tr("rank", rank.name()),
+                tr("team", target.getName())
+        ));
     }
 
     @Command("transfer <target> <team>")
@@ -87,23 +101,31 @@ public class TeamsStaffCommand {
         // check team valid
         Team playerTeam = target.getPlayerTeam();
         if (playerTeam == null || !playerTeam.getTeamId().equals(team.getTeamId())) {
-            sender.sendMessage(Lang.STAFF_FORCE_TRANSFER_TARGET_NOT_IN_TEAM.toString(target.getName()));
+            sender.sendMessage(Lang.STAFF_FORCE_TRANSFER_TARGET_NOT_IN_TEAM.getComponent(
+                    tr("target", target.getName())
+            ));
             return;
         }
         if (playerTeam.getOwner().equals(target.getUuid())) {
-            sender.sendMessage(Lang.STAFF_FORCE_TRANSFER_TARGET_IS_ALREADY_OWNER.toString());
+            sender.sendMessage(Lang.STAFF_FORCE_TRANSFER_TARGET_IS_ALREADY_OWNER.getComponent());
             return;
         }
         playerTeam.transferOwnership(target, (sender instanceof ConsoleCommandSender) ? "Console" : sender.getName());
+        sender.sendMessage(Lang.STAFF_FORCE_TRANSFER_SUCCESS.getComponent(
+                tr("target", target.getName()),
+                tr("team", team.getName())
+        ));
     }
 
     @Command("rename <target> <newName>")
     @CommandDescription("Rename a team")
     @Permission("teamsplus.staff.rename")
-
     public void rename(CommandSender sender, @Argument Team target, @Argument String newName) {
         String oldName = target.getName();
         target.setName(newName);
-        sender.sendMessage(Lang.STAFF_FORCE_RENAME.toString(oldName, newName));
+        sender.sendMessage(Lang.STAFF_FORCE_RENAME.getComponent(
+                tr("old", oldName),
+                tr("new", newName)
+        ));
     }
 }

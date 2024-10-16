@@ -1,11 +1,9 @@
 package dev.badbird.teams.hooks.impl;
 
+import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.hooks.Hook;
 import net.badbird5907.blib.util.CC;
-import dev.badbird.teams.TeamsPlus;
 import net.milkbowl.vault.chat.Chat;
-import net.octopvp.octocore.core.manager.impl.PlayerManager;
-import net.octopvp.octocore.core.objects.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -14,18 +14,19 @@ import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
-import net.badbird5907.blib.command.Sender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static dev.badbird.teams.util.ChatUtil.tr;
 
 @Getter
 @Setter
@@ -65,9 +66,9 @@ public class Team {
                     it.remove();
                 } else {
                     if (team != null) {
-                        team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), TeamRank.ADMIN, TeamRank.OWNER);
+                        team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.getComponent(tr("name", getName())), TeamRank.ADMIN, TeamRank.OWNER);
                     } else {
-                        data.sendMessage(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), true);
+                        data.sendMessage(Lang.ALLY_REQUEST_DENY_TIMEOUT.getComponent(tr("name", getName())), true);
                         data.save();
                     }
                     it.remove();
@@ -81,16 +82,16 @@ public class Team {
     }
 
     public void rename(Player sender, String name) {
-        broadcast(Lang.TEAM_RENAME.toString(sender.getName(), name));
+        broadcast(Lang.TEAM_RENAME.getComponent(tr("name", sender.getName()), tr("new_name", name)));
         this.name = name;
         save();
     }
 
-    public void broadcast(String message) {
+    public void broadcast(Component message) {
         broadcast(message, false);
     }
 
-    public void broadcast(String message, boolean offline) {
+    public void broadcast(Component message, boolean offline) {
         members.forEach((uuid, rank) -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -134,7 +135,7 @@ public class Team {
         members.put(data.getUuid(), TeamRank.RECRUIT);
         data.setTeamId(getTeamId());
         data.setAllyChatTeamId(null);
-        broadcast(Lang.TEAM_JOINED.toString(data.getName()));
+        broadcast(Lang.TEAM_JOINED.getComponent(tr("name", data.getName())));
         save();
         data.save();
     }
@@ -153,29 +154,29 @@ public class Team {
         team.getEnemiedTeams().remove(teamId);
         team.getAlliedTeams().remove(teamId);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
-            team.broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(this.name));
-            broadcast(Lang.TEAM_NEUTRAL_TEAM.toString(team.name));
+            team.broadcast(Lang.TEAM_NEUTRAL_TEAM.getComponent(tr("team", name)));
+            broadcast(Lang.TEAM_NEUTRAL_TEAM.getComponent(tr("team", team.getName())));
         }
         save();
         team.save();
     }
 
-    public void enableTempPvP(Sender sender) {
+    public void enableTempPvP(CommandSender sender) {
         if (TeamsPlus.getInstance().getConfig().getBoolean("team.temp-pvp.enable")) {
             tempPvPSeconds = TeamsPlus.getInstance().getConfig().getInt("team.temp-pvp.seconds");
-            broadcast(Lang.TEMP_PVP_ENABLED.toString(sender, tempPvPSeconds));
+            broadcast(Lang.TEMP_PVP_ENABLED.getComponent(tr("name", sender.name()), tr("time", tempPvPSeconds)));
         }
     }
 
     public void leave(PlayerData data) {
         if (owner.equals(data.getUuid())) {
-            data.sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.toString());
+            data.sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.getComponent());
             return;
         }
         members.remove(data.getUuid());
         data.setTeamId(null);
-        data.sendMessage(Lang.LEFT_TEAM.toString());
-        broadcast(Lang.PLAYER_LEAVE_TEAM.toString(data.getName()));
+        data.sendMessage(Lang.LEFT_TEAM.getComponent());
+        broadcast(Lang.PLAYER_LEAVE_TEAM.getComponent(tr("name", data.getName())));
         save();
     }
 
@@ -184,8 +185,9 @@ public class Team {
         list.add(rank);
         list.addAll(Arrays.asList(ranks));
         members.forEach((uuid, teamRank) -> {
-            if (list.contains(teamRank) && Bukkit.getPlayer(uuid) != null) {
-                Bukkit.getPlayer(uuid).sendMessage(message);
+            Player p = Bukkit.getPlayer(uuid);
+            if (list.contains(teamRank) && p != null) {
+                p.sendMessage(message);
             }
         });
     }
@@ -195,17 +197,22 @@ public class Team {
         list.add(rank);
         list.addAll(Arrays.asList(ranks));
         members.forEach((uuid, teamRank) -> {
-            if (list.contains(teamRank) && Bukkit.getPlayer(uuid) != null) {
-                Bukkit.getPlayer(uuid).sendMessage(message);
+            Player p = Bukkit.getPlayer(uuid);
+            if (list.contains(teamRank) && p != null) {
+                p.sendMessage(message);
             }
         });
     }
 
     public void requestToAlly(Team otherTeam) {
-        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_ALLY_TEAM_ASK.toString(otherTeam.getName()))
+        Component message = Lang.TEAM_ALLY_TEAM_ASK.getComponent(
+                        tr("name", otherTeam.getName()
+                        ))
                 .clickEvent(ClickEvent.runCommand("/team ally " + otherTeam.getName()))
-                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                        Lang.TEAM_ALLY_TEAM_ASK_HOVER.toString(otherTeam.getName()))));
+                .hoverEvent(HoverEvent.showText(
+                        Lang.TEAM_ALLY_TEAM_ASK_HOVER.getComponent(
+                                tr("name", otherTeam.getName())
+                        )));
         broadcastToRanks(message, TeamRank.OWNER, TeamRank.ADMIN);
         long timestamp = System.currentTimeMillis() + (TeamsPlus.getInstance().getConfig().getInt("ally.request-timeout") * 1000L);
         allyRequests.put(otherTeam.getTeamId(), timestamp);
@@ -220,7 +227,7 @@ public class Team {
             return;
         }
         otherTeam.requestToAlly(this);
-        broadcast(Lang.ALLY_SENT_REQUEST.toString(otherTeam.getName()));
+        broadcast(Lang.ALLY_SENT_REQUEST.getComponent(tr("target", otherTeam.getName())));
     }
 
     public void allyTeam(Team otherTeam, boolean... broadcast) {
@@ -228,8 +235,8 @@ public class Team {
         alliedTeams.put(otherTeam.getTeamId(), otherTeam.getName());
         otherTeam.alliedTeams.put(this.teamId, this.name);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
-            broadcast(Lang.ALLY_SUCCESS.toString(otherTeam.getName()));
-            otherTeam.broadcast(Lang.ALLY_SUCCESS.toString(this.name));
+            broadcast(Lang.ALLY_SUCCESS.getComponent(tr("team", otherTeam.getName())));
+            otherTeam.broadcast(Lang.ALLY_SUCCESS.getComponent(tr("team", this.name)));
         }
         save();
     }
@@ -239,14 +246,14 @@ public class Team {
         enemiedTeams.put(otherTeam.getTeamId(), otherTeam.getName());
         otherTeam.enemiedTeams.put(this.teamId, this.name);
         if (broadcast.length > 0 && broadcast[0] || broadcast.length == 0) {
-            broadcast(Lang.TEAM_ENEMY_TEAM.toString(otherTeam.getName()));
-            otherTeam.broadcast(Lang.TEAM_ENEMY_TEAM.toString(this.name));
+            broadcast(Lang.TEAM_ENEMY_TEAM.getComponent(tr("team", otherTeam.getName())));
+            otherTeam.broadcast(Lang.TEAM_ENEMY_TEAM.getComponent(tr("team", this.name)));
         }
         save();
     }
 
     public void disband() {
-        String message = Lang.TEAM_DISBANDED.toString(this.name);
+        Component message = Lang.TEAM_DISBANDED.getComponent(tr("team", name));
         members.entrySet().removeIf((entry) -> {
             PlayerData playerData = PlayerManager.getDataLoadIfNeedTo(entry.getKey());
             if (playerData != null) {
@@ -301,10 +308,14 @@ public class Team {
         target.setTeamId(null);
         target.setCurrentChannel(ChatChannel.GLOBAL);
         target.setAllyChatTeamId(null);
-        target.sendMessage(Lang.KICKED_FROM_TEAM.toString(reason), true);
+        target.sendMessage(Lang.KICKED_FROM_TEAM.getComponent(tr("reason", reason)), true);
         target.save();
 
-        broadcast(Lang.PLAYER_KICKED.toString(target.getName(), sender.getName(), reason), true);
+        broadcast(Lang.PLAYER_KICKED.getComponent(
+                tr("target", target.getName()),
+                tr("sender", sender.getName()),
+                tr("reason", reason)
+        ));
         save();
     }
 
@@ -334,49 +345,74 @@ public class Team {
         owner = target.getUuid();
         members.put(target.getUuid(), TeamRank.OWNER);
         members.put(ownerData.getUuid(), TeamRank.ADMIN);
-        broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(ownerData.getName(), target.getName()), true);
+        broadcast(
+                Lang.TEAM_TRANSFER_BROADCAST.getComponent(
+                        tr("sender", ownerData.getName()),
+                        tr("target", target.getName())
+                )
+        );
         save();
     }
+
     public void transferOwnership(PlayerData target, String invoker) {
         owner = target.getUuid();
         members.put(target.getUuid(), TeamRank.OWNER);
-        broadcast(Lang.TEAM_TRANSFER_BROADCAST.toString(invoker, target.getName()), true);
+        broadcast(
+                Lang.TEAM_TRANSFER_BROADCAST.getComponent(
+                        tr("sender", invoker),
+                        tr("target", target.getName())
+                )
+        );
         save();
     }
 
     public void promote(PlayerData target, PlayerData sender) {
         TeamRank currentRank = members.get(target.getUuid());
         if (currentRank == null) {
-            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_NOT_IN_SAME_TEAM.toString(target.getName()));
+            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_NOT_IN_SAME_TEAM.getComponent(
+                    tr("target", target.getName())
+            ));
             return;
         }
         TeamRank nextRank = TeamRank.getRank(currentRank.getPermissionLevel() + 1);
         if (nextRank.getPermissionLevel() >= getRank(sender.getUuid()).getPermissionLevel()) {
-            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER.toString());
+            sender.sendMessage(Lang.TEAM_PROMOTE_FAILED_CANNOT_PROMOTE_HIGHER.getComponent());
             return;
         }
         members.put(target.getUuid(), nextRank);
-        broadcast(Lang.TEAM_PROMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+        broadcast(
+                Lang.TEAM_PROMOTE_BROADCAST.getComponent(
+                        tr("sender", sender.getName()),
+                        tr("target", target.getName()),
+                        tr("rank", Utils.enumToString(nextRank))
+                )
+        );
         save();
     }
 
     public void demote(PlayerData target, PlayerData sender) {
         TeamRank currentRank = members.get(target.getUuid());
         if (currentRank == null) {
-            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_NOT_IN_SAME_TEAM.toString(target.getName()));
+            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_NOT_IN_SAME_TEAM.getComponent(tr("target", target.getName())));
             return;
         }
         if (currentRank == TeamRank.RECRUIT) {
-            sender.sendMessage(Lang.TEAM_CANNOT_DEMOTE_LOWER.toString());
+            sender.sendMessage(Lang.TEAM_CANNOT_DEMOTE_LOWER.getComponent());
             return;
         }
         TeamRank nextRank = TeamRank.getRank(currentRank.getPermissionLevel() - 1);
         if (nextRank.getPermissionLevel() >= getRank(sender.getUuid()).getPermissionLevel()) {
-            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_HIGHER.toString());
+            sender.sendMessage(Lang.TEAM_DEMOTE_FAILED_CANNOT_DEMOTE_HIGHER.getComponent());
             return;
         }
         members.put(target.getUuid(), nextRank);
-        broadcast(Lang.TEAM_DEMOTE_BROADCAST.toString(sender.getName(), target.getName(), Utils.enumToString(nextRank)), true);
+        broadcast(
+                Lang.TEAM_DEMOTE_BROADCAST.getComponent(
+                        tr("sender", sender.getName()),
+                        tr("target", target.getName()),
+                        tr("rank", Utils.enumToString(nextRank))
+                )
+        );
         save();
     }
 
@@ -391,13 +427,13 @@ public class Team {
     public ClaimResult claim(Player sender, Location location) {
         long hash = ClaimHandler.getInstance().hashChunk(location);
         if (ClaimHandler.getInstance().isClaimed(hash)) {
-            return new ClaimResult(false, Lang.CLAIM_ALREADY_CLAIMED.toString());
+            return new ClaimResult(false, Lang.CLAIM_ALREADY_CLAIMED.getComponent());
         }
         // TODO: add a claim cost
 
         ClaimInfo claim = new ClaimInfo(new ChunkWrapper(location), teamId);
         ClaimHandler.getInstance().addClaim(claim);
 
-        return new ClaimResult(true, Lang.CLAIM_SUCCESS.toString());
+        return new ClaimResult(true, Lang.CLAIM_SUCCESS.getComponent());
     }
 }

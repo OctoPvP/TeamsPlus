@@ -2,8 +2,9 @@ plugins {
     java
     `maven-publish`
     signing
-    id("io.github.goooler.shadow") version "8.1.8"
-    id("io.freefair.lombok") version "8.6"
+    id("com.gradleup.shadow") version "8.3.3"
+    id("io.freefair.lombok") version "8.10.2"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = "dev.badbird"
@@ -50,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     implementation("net.badbird5907:bLib-Bukkit:2.1.11-REL")
     //implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
     //    exclude(group = "org.reflections")
@@ -101,18 +102,6 @@ tasks.withType<ProcessResources> {
         expand(project.properties)
     }
 }
-tasks.create<Copy>("copyPlugin") {
-    from("build/libs/TeamsPlus.jar")
-    into("run/plugins")
-}
-tasks.getByName("copyPlugin").dependsOn(tasks.getByName("shadowJar"))
-tasks.create<JavaExec>("runDev") {
-    standardInput = System.`in`
-    classpath = files("run/paper.jar")
-    workingDir = file("run")
-    args = listOf("nogui")
-}
-tasks.getByName("runDev").dependsOn(tasks.getByName("copyPlugin"))
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
 }
@@ -141,6 +130,9 @@ tasks {
         exclude("*.md")
         exclude("LICENSE")
         exclude("AUTHORS")
+    }
+    runServer {
+        minecraftVersion("1.21.1")
     }
     build {
         dependsOn(shadowJar)

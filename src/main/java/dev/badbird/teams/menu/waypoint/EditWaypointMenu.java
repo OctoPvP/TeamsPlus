@@ -13,10 +13,13 @@ import dev.triumphteam.gui.guis.Gui;
 import lombok.RequiredArgsConstructor;
 import net.badbird5907.blib.objects.TypeCallback;
 import net.badbird5907.blib.util.QuestionConversation;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
+
+import static dev.badbird.teams.util.ChatUtil.tr;
 
 @SuppressWarnings("deprecation")
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class EditWaypointMenu extends Menu<Gui> {
     public void populateGui(Gui gui, Player player) {
         final ChatColor color = waypoint.getColor();
         gui.setItem(11, ItemBuilder.from(waypoint.getIcon())
-                .name(Lang.WAYPOINT_EDIT_ICON_NAME.getComponent(waypoint.getName()))
+                .name(Lang.WAYPOINT_EDIT_ICON_NAME.getComponent(tr("name", waypoint.getName())))
                 .lore(Lang.WAYPOINT_EDIT_ICON_LORE.getComponentList())
                 .asGuiItem(e -> new EditIconMenu(waypoint, team).open(player))
         );
@@ -46,15 +49,20 @@ public class EditWaypointMenu extends Menu<Gui> {
                 .asGuiItem(e -> {
                     player.closeInventory();
                     TeamsPlus.getInstance().getConversationFactory().withFirstPrompt(
-                                    new QuestionConversation(Lang.WAYPOINT_EDIT_NAME_MESSAGE.toString(), (TypeCallback<Prompt, String>) s -> {
-                                        TeamsPlus.getInstance().getWaypointManager().removeWaypoint(waypoint);
-                                        String prevName = waypoint.getName();
-                                        waypoint.setName(s);
-                                        team.save();
-                                        team.broadcast(Lang.WAYPOINT_NAME_EDITED.toString(player.getName(), prevName, s));
-                                        open(player);
-                                        return Prompt.END_OF_CONVERSATION;
-                                    }))
+                                    new QuestionConversation(LegacyComponentSerializer.legacySection().serialize(Lang.WAYPOINT_EDIT_NAME_MESSAGE.getComponent()),
+                                            (TypeCallback<Prompt, String>) s -> {
+                                                TeamsPlus.getInstance().getWaypointManager().removeWaypoint(waypoint);
+                                                String prevName = waypoint.getName();
+                                                waypoint.setName(s);
+                                                team.save();
+                                                team.broadcast(Lang.WAYPOINT_NAME_EDITED.getComponent(
+                                                        tr("player", player.getName()),
+                                                        tr("prev_name", prevName),
+                                                        tr("new_name", s)
+                                                ));
+                                                open(player);
+                                                return Prompt.END_OF_CONVERSATION;
+                                            }))
                             .withLocalEcho(false)
                             .buildConversation(player)
                             .begin();
@@ -70,7 +78,10 @@ public class EditWaypointMenu extends Menu<Gui> {
                 .lore(Lang.WAYPOINT_DELETE_BUTTON_LORE.getComponentList())
                 .asGuiItem(e -> {
                     team.removeWaypoint(waypoint);
-                    team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.toString(player.getName(), waypoint.getName()));
+                    team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
+                            tr("sender", player.getName()),
+                            tr("waypoint", waypoint.getName())
+                    ));
                     new ListWaypointsMenu(team, player.getUniqueId()).open(player);
                 })
         );
@@ -82,11 +93,11 @@ public class EditWaypointMenu extends Menu<Gui> {
                     .lore(toggled ? Lang.TOGGLE_LUNAR_LORE_ENABLED.getComponentList() : Lang.TOGGLE_LUNAR_LORE_DISABLED.getComponentList())
                     .asGuiItem(e -> {
                         if (!toggled) {
-                            player.sendMessage(Lang.TOGGLE_LUNAR_ON.toString());
+                            player.sendMessage(Lang.TOGGLE_LUNAR_ON.getComponent());
                             waypoint.getDisabledPlayers().remove(player.getUniqueId());
                             TeamsPlus.getInstance().getWaypointManager().updatePlayerWaypoints(player);
                         } else {
-                            player.sendMessage(Lang.TOGGLE_LUNAR_OFF.toString());
+                            player.sendMessage(Lang.TOGGLE_LUNAR_OFF.getComponent());
                             waypoint.getDisabledPlayers().add(player.getUniqueId());
                             TeamsPlus.getInstance().getWaypointManager().hideWaypointFromPlayer(player, waypoint);
                         }

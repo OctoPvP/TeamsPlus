@@ -1,11 +1,11 @@
 package dev.badbird.teams.object;
 
+import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.manager.StorageManager;
+import dev.badbird.teams.manager.TeamsManager;
 import lombok.Getter;
 import lombok.Setter;
-import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.manager.TeamsManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -14,9 +14,13 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static dev.badbird.teams.util.ChatUtil.tr;
 
 @Getter
 @Setter
@@ -123,8 +127,8 @@ public class PlayerData {
                 Team team = TeamsPlus.getInstance().getTeamsManager().getTeamById(entry.getKey());
                 if (team == null) return;
                 Bukkit.getPlayer(uuid).sendMessage(
-                        Lang.INVITE_EXPIRED.toString(
-                                team.getName()
+                        Lang.INVITE_EXPIRED.getComponent(
+                                tr("team", team.getName())
                         ));
                 return;
             }
@@ -140,11 +144,19 @@ public class PlayerData {
 
     public void invite(Team team, String sender) {
         pendingInvites.put(team.getTeamId(), TeamsPlus.getInstance().getConfig().getInt("invite-seconds"));
-        team.broadcast(Lang.INVITE_TEAM_MESSAGE.toString(sender, this.name));
-        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.INVITE.toString(sender, team.getName()))
+        team.broadcast(Lang.INVITE_TEAM_MESSAGE.getComponent(
+                tr("player", name),
+                tr("sender", sender)
+        ));
+        Component message = Lang.INVITE.getComponent(
+                        tr("sender", sender),
+                        tr("team", team.getName())
+                )
                 .clickEvent(ClickEvent.runCommand("/team join " + team.getName()))
-                .hoverEvent(HoverEvent.showText(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                        Lang.INVITE_HOVER.toString(team.getName()))));
+                .hoverEvent(HoverEvent.showText(
+                        Lang.INVITE_HOVER.getComponent(
+                                tr("team", team.getName())
+                        )));
 
         sendMessage(message);
     }
@@ -291,7 +303,7 @@ public class PlayerData {
 
     public void leaveTeam() {
         if (getPlayerTeam().getOwner().equals(getUuid())) {
-            sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.toString());
+            sendMessage(Lang.CANNOT_LEAVE_OWN_TEAM.getComponent());
             return;
         }
         getPlayerTeam().leave(this);
@@ -313,7 +325,9 @@ public class PlayerData {
                     it.remove();
                     continue;
                 } else {
-                    team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.toString(getName()), TeamRank.ADMIN, TeamRank.OWNER);
+                    team.broadcastToRanks(Lang.ALLY_REQUEST_DENY_TIMEOUT.getComponent(
+                            tr("name", getName())
+                    ), TeamRank.ADMIN, TeamRank.OWNER);
                     it.remove();
                 }
             }
@@ -325,7 +339,10 @@ public class PlayerData {
             long minutes = TeamsPlus.getInstance().getConfig().getLong("kill-spam-prevention.cooldown", 60);
             //check if last kill is same as this player and its
             if (lastKillID.equals(player.getUniqueId()) && lastKillTimestamp + (minutes * 60 * 1000) > System.currentTimeMillis()) {
-                sendMessage(Lang.KILL_SPAM_PREVENTION.toString(player.getName(), minutes));
+                sendMessage(Lang.KILL_SPAM_PREVENTION.getComponent(
+                        tr("minutes", minutes),
+                        tr("player", player.getName())
+                ));
                 return;
             }
         }

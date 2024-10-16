@@ -2,20 +2,21 @@ package dev.badbird.teams;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dev.badbird.teams.api.TeamsPlusAPI;
 import dev.badbird.teams.claims.ClaimHandler;
 import dev.badbird.teams.commands.annotation.AnnotationMappers;
+import dev.badbird.teams.commands.annotation.TeamPermission;
 import dev.badbird.teams.commands.provider.CommandSenderInjector;
 import dev.badbird.teams.commands.provider.PlayerDataInjector;
 import dev.badbird.teams.commands.provider.TeamParser;
 import dev.badbird.teams.listeners.CombatListener;
 import dev.badbird.teams.listeners.MessageListener;
 import dev.badbird.teams.listeners.SessionListener;
-import dev.badbird.teams.manager.HookManager;
-import dev.badbird.teams.manager.StorageManager;
-import dev.badbird.teams.manager.TeamsManager;
-import dev.badbird.teams.manager.WaypointManager;
+import dev.badbird.teams.manager.*;
+import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
+import dev.badbird.teams.object.TeamRank;
 import dev.badbird.teams.runnable.DataUpdateRunnable;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.util.Metrics;
@@ -24,7 +25,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.bLib;
 import net.badbird5907.blib.util.Logger;
-import dev.badbird.teams.api.TeamsPlusAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -33,6 +33,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -40,13 +41,18 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.bukkit.parser.location.LocationParser;
+import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InjectionException;
+import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.minecraft.extras.AudienceProvider;
 import org.incendo.cloud.minecraft.extras.ImmutableMinecraftHelp;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.processors.cooldown.annotation.CooldownBuilderModifier;
+import org.incendo.cloud.services.type.ConsumerService;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import java.io.File;
@@ -55,9 +61,11 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
 import static net.kyori.adventure.text.Component.text;
 
 @Getter
@@ -85,7 +93,7 @@ public final class TeamsPlus extends JavaPlugin {
     private MiniMessage miniMessage;
 
     private LegacyPaperCommandManager<CommandSender> commandManager;
-    private MinecraftHelp<CommandSender> teamsHelp, chatHelp;
+    private MinecraftHelp<CommandSender> teamsHelp, chatHelp, allHelp;
 
     public static void reloadLang() {
         langFile = new YamlConfiguration();
@@ -124,6 +132,11 @@ public final class TeamsPlus extends JavaPlugin {
                     .registerInjector(Team.class, new TeamParser())
                     .registerInjector(CommandSender.class, new CommandSenderInjector())
                     .registerInjector(PlayerData.class, new PlayerDataInjector());
+            mgr.exceptionController()
+                    .registerHandler(CommandExecutionException.class, ExceptionHandler.unwrappingHandler(InjectionException.class))
+                    .registerHandler(InjectionException.class, ctx -> {
+                        ctx.context().sender().sendRichMessage("<red>Injection failed: <gray>" + ctx.exception().getMessage());
+                    });
 
             Component prefix = LegacyComponentSerializer.legacyAmpersand().deserialize(getConfig().getString("prefix", "&7[&bTeams+&7]&r"));
             MinecraftExceptionHandler.create(new AudienceProvider<CommandSender>() {
@@ -139,6 +152,33 @@ public final class TeamsPlus extends JavaPlugin {
             AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(commandManager, CommandSender.class);
             AnnotationMappers.register(annotationParser, mgr);
             CooldownBuilderModifier.install(annotationParser);
+
+            CloudKey<TeamRank> teamRankKey = CloudKey.of("team-permission", TeamRank.class);
+            annotationParser.registerBuilderModifier(TeamPermission.class, (annotation, builder) -> {
+                System.out.println("Setting team rank key: " + annotation.value() + " | " + builder.commandDescription().description().textDescription());
+                return builder.meta(teamRankKey, annotation.value());
+            });
+            commandManager.registerCommandPostProcessor(ctx -> {
+                Map<CloudKey<?>, ?> all = ctx.command().commandMeta().all();
+                all.forEach((key, value) -> System.out.println(key + ": " + value));
+                if (ctx.command().commandMeta().contains(teamRankKey)) {
+                    TeamRank reqRank = ctx.command().commandMeta().get(teamRankKey);
+                    CommandSender sender = ctx.commandContext().sender();
+                    if (sender instanceof Player player) {
+                        PlayerData playerData = PlayerManager.getData(player);
+                        if (!playerData.isInTeam()) {
+                            player.sendMessage(Lang.MUST_BE_IN_TEAM.getComponent());
+                            ConsumerService.interrupt();
+                            // throw new CommandExecutionException(new RuntimeException("You must be in a team to use this command."));
+                        }
+                        if (!playerData.getPlayerTeam().isAtLeast(playerData.getUuid(), reqRank)) {
+                            player.sendMessage(Lang.NO_PERMISSION.getComponent(tr("name", player.getName()), tr("rank", reqRank.name())));
+                            ConsumerService.interrupt();
+                            // throw new CommandExecutionException(new RuntimeException("You must be at least " + reqRank.name() + " to use this command. Ask your team leader to promote you."));
+                        }
+                    }
+                }
+            });
 
             System.out.println("Registering commands");
             Class<?>[] classes = {
@@ -172,11 +212,12 @@ public final class TeamsPlus extends JavaPlugin {
             Function<String, MinecraftHelp<CommandSender>> helpGenerator = (pfx) -> ImmutableMinecraftHelp.<CommandSender>builder()
                     .commandManager(commandManager)
                     .audienceProvider(AudienceProvider.nativeAudience())
-                    .commandPrefix("/" + pfx + " help")
-                    .commandFilter((command) -> command.rootComponent().name().equals(pfx))
+                    .commandPrefix("/" + (pfx.isEmpty() ? "teams" : pfx) + " help")
+                    .commandFilter((command) -> pfx.isEmpty() || command.rootComponent().name().equals(pfx))
                     .build();
             teamsHelp = helpGenerator.apply("teams");
             chatHelp = helpGenerator.apply("chat");
+            allHelp = helpGenerator.apply("");
             //help = MinecraftHelp.createNative("/teams help", this.commandManager);
             commandManager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
 

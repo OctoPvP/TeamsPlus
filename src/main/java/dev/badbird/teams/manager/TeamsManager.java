@@ -59,7 +59,7 @@ public class TeamsManager {
     }
 
     public void removeTeam(Team team) {
-        teams.remove(team);
+        teams.remove(team.getTeamId());
         StorageManager.getStorageHandler().removeTeam(team);
         //saveTeams(StorageManager.getStorageHandler());
     }

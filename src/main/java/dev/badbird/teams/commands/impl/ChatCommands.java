@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 @CommandContainer
 @Command("chat|ch")
 @CommandDescription("Chat with your team/allies")
@@ -40,9 +42,7 @@ public class ChatCommands {
             final @NotNull CommandContext<CommandSender> ctx,
             final @NotNull String input
     ) {
-        return TeamsPlus.getInstance().getCommandManager().createHelpHandler(
-                        (cmd) -> cmd.rootComponent().name().equals("chat")
-                )
+        return TeamsPlus.getInstance().getChatHelp().helpHandler()
                 .queryRootIndex(ctx.sender())
                 .entries()
                 .stream()
@@ -57,18 +57,18 @@ public class ChatCommands {
             return;
         }
         sender.setCurrentChannel(ChatChannel.TEAM);
-        sender.sendMessage(Lang.CHAT_SWITCH_TO_TEAM.toString(team.getName()));
+        sender.sendMessage(Lang.CHAT_SWITCH_TO_TEAM.getComponent());
     }
 
     @Command("ally|al <team> <message>")
     @CommandDescription("Chat with your allies")
     public void allyChat(@Sender PlayerData sender, @Sender Team senderTeam, @Sender Player senderP, @Argument Team team, @Greedy @Nullable String message) {
         if (!senderTeam.isAlly(team)) {
-            sender.sendMessage(Lang.TEAM_NOT_ALLIED_WITH_TEAM.toString(team.getName()));
+            sender.sendMessage(Lang.TEAM_NOT_ALLIED_WITH_TEAM.getComponent());
             return;
         }
         if (senderTeam.getTeamId().equals(team.getTeamId())) {
-            sender.sendMessage(Lang.CANNOT_ALLY_CHAT_SELF.toString());
+            sender.sendMessage(Lang.CANNOT_ALLY_CHAT_SELF.getComponent());
             return;
         }
         if (message != null && !message.isEmpty()) {
@@ -77,7 +77,7 @@ public class ChatCommands {
         }
         sender.setCurrentChannel(ChatChannel.ALLY);
         sender.setAllyChatTeamId(team.getTeamId());
-        sender.sendMessage(Lang.CHAT_SWITCH_TO_ALLY.toString(team.getName()));
+        sender.sendMessage(Lang.CHAT_SWITCH_TO_ALLY.getComponent(tr("team", team.getName())));
     }
 
     @Command("all|global|g|a <message>")
@@ -88,6 +88,6 @@ public class ChatCommands {
             return;
         }
         sender.setCurrentChannel(ChatChannel.GLOBAL);
-        sender.sendMessage(Lang.CHAT_SWITCH_TO_GLOBAL.toString());
+        sender.sendMessage(Lang.CHAT_SWITCH_TO_GLOBAL.getComponent());
     }
 }

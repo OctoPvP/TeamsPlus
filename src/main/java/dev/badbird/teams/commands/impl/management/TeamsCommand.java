@@ -40,15 +40,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 @CommandContainer
-@Command("teams|team")
+@Command("team|teams")
 @CommandDescription("Main TeamsPlus command")
 public class TeamsCommand {
 
     private static final long TEAM_CACHE_TIME = 5 * 1000;
     private static final int MAX_PAGE_SIZE = 15;
     private long lastList = -1;
-    private Map<Integer, String> listCache;
+    private Map<Integer, List<Component>> listCache;
 
     @Command("help|h|? [query]")
     @CommandDescription("Get help")
@@ -62,18 +64,8 @@ public class TeamsCommand {
     }
 
     @Suggestions("team_help_queries")
-    public @NotNull List<@NotNull String> suggestHelpQueries(
-            final @NotNull CommandContext<CommandSender> ctx,
-            final @NotNull String input
-    ) {
-        return TeamsPlus.getInstance().getCommandManager().createHelpHandler(
-                        (cmd) -> cmd.rootComponent().name().equals("teams")
-                )
-                .queryRootIndex(ctx.sender())
-                .entries()
-                .stream()
-                .map(CommandEntry::syntax)
-                .toList();
+    public @NotNull List<@NotNull String> suggestHelpQueries(final @NotNull CommandContext<CommandSender> ctx, final @NotNull String input) {
+        return TeamsPlus.getInstance().getTeamsHelp().helpHandler().queryRootIndex(ctx.sender()).entries().stream().map(CommandEntry::syntax).toList();
     }
 
     public static void sendTeamInfo(CommandSender sender, Team targetTeam) {
@@ -82,49 +74,22 @@ public class TeamsCommand {
         if (targetTeam.getSettings().isShowAllies()) {
             Component alliesList = Component.text("");
             for (Map.Entry<UUID, String> uuidStringEntry : targetTeam.getAlliedTeams().entrySet()) {
-                alliesList = alliesList.append(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.toString()))
-                        .replaceText(TextReplacementConfig.builder()
-                                .matchLiteral("%1")
-                                .replacement(uuidStringEntry.getValue()).build())
-                        .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
+                alliesList = alliesList.append(Lang.TEAM_INFO_ALLIES_TEAM_ENTRY.getComponent(tr("ally", uuidStringEntry.getValue())).clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue())));
             }
-            allies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            Lang.TEAM_INFO_ALLIES_LIST.getRaw()
-                    )
-                    .replaceText(TextReplacementConfig.builder()
-                            .matchLiteral("%1")
-                            .replacement(targetTeam.getAlliedTeams().size() + "").build())
-                    .replaceText(TextReplacementConfig.builder()
-                            .matchLiteral("%2")
-                            .replacement(alliesList).build());
+            allies = Lang.TEAM_INFO_ALLIES_LIST.getComponent(tr("total_allies", targetTeam.getAlliedTeams().size()), tr("list", alliesList));
             //StringUtils.replacePlaceholders(.toString((targetTeam.getAlliedTeams().size()), sb.toString()))
-        } else allies = Component.text(targetTeam.getAlliedTeams().size())
-                .color(NamedTextColor.GREEN);
+        } else allies = Component.text(targetTeam.getAlliedTeams().size()).color(NamedTextColor.GREEN);
 
         Component enemies;
         if (targetTeam.getSettings().isShowEnemies()) {
             Component enemiesList = Component.text("");
             for (Map.Entry<UUID, String> uuidStringEntry : targetTeam.getEnemiedTeams().entrySet()) {
-                enemiesList = enemiesList.append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_ENEMIES_TEAM_ENTRY.toString()))
-                        .replaceText(TextReplacementConfig.builder()
-                                .matchLiteral("%1")
-                                .replacement(uuidStringEntry.getValue())
-                                .build())
-                        .clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue()));
+                enemiesList = enemiesList.append(Lang.TEAM_INFO_ENEMIES_TEAM_ENTRY.getComponent(tr("enemy", uuidStringEntry.getValue())).clickEvent(ClickEvent.runCommand("/teams info " + uuidStringEntry.getValue())));
             }
-            enemies = LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            Lang.TEAM_INFO_ENEMIES_LIST.getRaw()
-                    )
-                    .replaceText(TextReplacementConfig.builder()
-                            .matchLiteral("%1")
-                            .replacement(targetTeam.getEnemiedTeams().size() + "").build())
-                    .replaceText(TextReplacementConfig.builder()
-                            .matchLiteral("%2")
-                            .replacement(enemiesList).build());
+            enemies = Lang.TEAM_INFO_ENEMIES_LIST.getComponent(tr("total_enemies", targetTeam.getEnemiedTeams().size()), tr("list", enemiesList));
             //                    StringUtils.replacePlaceholders(.toString((targetTeam.getEnemiedTeams().size()), sb.toString()))
         } else {
-            enemies = Component.text(targetTeam.getEnemiedTeams().size())
-                    .color(NamedTextColor.RED);
+            enemies = Component.text(targetTeam.getEnemiedTeams().size()).color(NamedTextColor.RED);
         }
 
         Component members;
@@ -139,38 +104,14 @@ public class TeamsCommand {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null && !VanishHook.isVanished(player)) { //this is so messy
                 membersOnline.getAndIncrement();
-                component = component.append((a != 1 ? LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.toString()) : Component.text()))
-                        .append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.toString())
-                                .replaceText(TextReplacementConfig.builder()
-                                        .matchLiteral("%1")
-                                        .replacement(PlayerUtil.getPlayerName(uuid)).build()));
+                component = component.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.getComponent() : Component.text())).append(Lang.TEAM_INFO_ONLINE_MEMBER_ENTRY.getComponent(tr("member", PlayerUtil.getPlayerName(uuid)), tr("rank", rank.toString())));
             } else {
-                component = component.append((a != 1 ? LegacyComponentSerializer.legacySection().deserialize(
-                                Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.toString()
-                        ) : Component.text()))
-                        .append(LegacyComponentSerializer.legacySection().deserialize(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.toString())
-                                .replaceText(
-                                        TextReplacementConfig.builder()
-                                                .matchLiteral("%1")
-                                                .replacement(PlayerUtil.getPlayerName(uuid)).build()
-                                ));
+                component = component.append((a != 1 ? Lang.TEAM_INFO_MEMBER_ENTRY_SEPARATOR.getComponent() : Component.text())).append(Lang.TEAM_INFO_OFFLINE_MEMBER_ENTRY.getComponent(tr("member", PlayerUtil.getPlayerName(uuid)), tr("rank", rank.toString())));
             }
         }
-        members = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MEMBERS_LIST
-                        .getRaw())
-                .replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("%1")
-                        .replacement(membersOnline.toString()).build())
-                .replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("%2")
-                        .replacement(membersAll + "").build())
-                .replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("%3")
-                        .replacement(component).build())
-
-        ;
+        members = Lang.TEAM_INFO_MEMBERS_LIST.getComponent(tr("total_members", membersAll), tr("online_members", membersOnline.get()), tr("list", component));
         //.toString(membersOnline, membersAll, sb.toString());
-        Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MESSAGE.toString())
+        /*Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.TEAM_INFO_MESSAGE.toString())
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("%1")
                         .replacement(targetTeam.getName()).build())
@@ -185,7 +126,8 @@ public class TeamsCommand {
                         .replacement(enemies).build())
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("%5")
-                        .replacement(members).build());
+                        .replacement(members).build());*/
+        Component message = Lang.TEAM_INFO_MESSAGE.getComponent(tr("team_name", targetTeam.getName()), tr("owner", owner.getName()), tr("allies", allies), tr("enemies", enemies), tr("members", members), tr("separator", LegacyComponentSerializer.legacySection().deserialize(CC.SEPARATOR)));
         //.toString(targetTeam.getName(), owner.getName(), allies, enemies, members);
         sender.sendMessage(message);
     }
@@ -218,15 +160,15 @@ public class TeamsCommand {
     public void rename(@Sender Player sender, @Sender Team team, String name) {
         int max = TeamsPlus.getInstance().getConfig().getInt("max-name-length", 16);
         if (max < name.length()) {
-            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.toString(max));
+            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.getComponent(tr("max", max)));
             return;
         }
         if (TeamsPlus.getInstance().getTeamsManager().getTeamByName(name) != null) {
-            sender.sendMessage(Lang.TEAM_ALREADY_EXISTS.toString());
+            sender.sendMessage(Lang.TEAM_ALREADY_EXISTS.getComponent());
             return;
         }
         if (TeamsPlus.getInstance().getConfig().getStringList("team.blocked-names").contains(name.toLowerCase())) {
-            sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.toString());
+            sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.getComponent());
             return;
         }
         team.rename(sender, name);
@@ -238,7 +180,7 @@ public class TeamsCommand {
     public void leaveTeam(@Sender Player sender) {
         PlayerData playerData = PlayerManager.getData(sender);
         if (playerData.getPlayerTeam() == null) {
-            sender.sendMessage(Lang.MUST_BE_IN_TEAM.toString());
+            sender.sendMessage(Lang.MUST_BE_IN_TEAM.getComponent());
             return;
         }
         playerData.leaveTeam();
@@ -273,20 +215,20 @@ public class TeamsCommand {
     public void create(@Sender Player sender, String name) {
         PlayerData playerData = PlayerManager.getPlayers().get(sender.getUniqueId());
         if (playerData.getPlayerTeam() != null) {
-            sender.sendMessage(Lang.ALREADY_IN_TEAM.toString());
+            sender.sendMessage(Lang.ALREADY_IN_TEAM.getComponent());
             return;
         }
         int max = TeamsPlus.getInstance().getConfig().getInt("max-name-length", 16);
         if (max < name.length()) {
-            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.toString(max));
+            sender.sendMessage(Lang.TEAM_NAME_TOO_LONG.getComponent(tr("max", max)));
             return;
         }
         if (TeamsPlus.getApi().getTeamsManager().getTeamByName(name) != null) {
-            sender.sendMessage(Lang.TEAM_ALREADY_EXISTS.toString());
+            sender.sendMessage(Lang.TEAM_ALREADY_EXISTS.getComponent());
             return;
         }
         if (TeamsPlus.getInstance().getConfig().getStringList("team.blocked-names").contains(name.toLowerCase())) {
-            sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.toString());
+            sender.sendMessage(Lang.CANNOT_CREATE_TEAM_BLOCKED_NAME.getComponent());
             return;
         }
         Team team = new Team(name, sender.getUniqueId());
@@ -294,7 +236,7 @@ public class TeamsCommand {
         team.save();
         TeamsManager.getInstance().getTeams().put(team.getTeamId(), team);
         playerData.save();
-        sender.sendMessage(Lang.CREATED_TEAM.toString(team.getName()));
+        sender.sendMessage(Lang.CREATED_TEAM.getComponent(tr("team_name", team.getName())));
     }
 
 
@@ -309,7 +251,7 @@ public class TeamsCommand {
     public void player(@Sender Player sender, @Argument OfflinePlayer player) {
         Team targetTeam = TeamsPlus.getInstance().getTeamsManager().getPlayerTeam(player.getUniqueId());
         if (targetTeam == null) {
-            sender.sendMessage(Lang.PLAYER_NOT_IN_TEAM.toString(player.getName()));
+            sender.sendMessage(Lang.PLAYER_NOT_IN_TEAM.getComponent(tr("name", player.getName())));
             return;
         }
         sendTeamInfo(sender, targetTeam);
@@ -322,7 +264,7 @@ public class TeamsCommand {
         new ConfirmMenu("disband your team", (response) -> {
             if (response) {
                 team.disband();
-            } else senderP.sendMessage(Lang.CANCELED.toString());
+            } else senderP.sendMessage(Lang.CANCELED.getComponent());
             senderP.closeInventory();
         }).setPermanent(true).open(senderP);
     }
@@ -333,51 +275,61 @@ public class TeamsCommand {
         page = page - 1;
         if (listCache != null && lastList + TEAM_CACHE_TIME > System.currentTimeMillis()) {
             if (page >= listCache.size()) {
-                sender.sendMessage(Lang.INVALID_ENTRY_NUMBER.toString(1, listCache.size()));
+                sender.sendMessage(Lang.INVALID_ENTRY_NUMBER.getComponent(tr("min", 1), tr("max", listCache.size())));
                 return;
             }
             if (page < 0) page = 0;
-            sender.sendMessage(listCache.get(page));
+            for (Component component : listCache.get(page)) {
+                sender.sendMessage(component);
+            }
             return;
         }
         lastList = System.currentTimeMillis();
-        StringBuilder sb = new StringBuilder();
-        sb.append(Lang.LIST_HEADER)
-                .append("\n")
-                .append(Lang.LIST_TITLE);
+        List<Component> components = new ArrayList<>();
+        components.add(Lang.LIST_HEADER.getComponent());
+        components.add(Lang.LIST_TITLE.getComponent());
         int current = 0;
-        Map<Integer, String> pages = new HashMap<>();
+        Map<Integer, List<Component>> pages = new HashMap<>();
         for (Team team : TeamsManager.getInstance().getTeams().values()) {
             current++;
-            sb.append("\n").append(Lang.LIST_ENTRY.toString(team.getName()));
+            // sb.append("\n").append(Lang.LIST_ENTRY.getComponent(tr("name", team.getName())));
+            components.add(Lang.LIST_ENTRY.getComponent(tr("name", team.getName())));
             if (current % MAX_PAGE_SIZE == 0) {
-                sb.append("\n").append(Lang.LIST_FOOTER);
-                pages.put(pages.size(), sb.toString());
-                sb = new StringBuilder(Lang.LIST_HEADER.toString());
-                sb.append("\n")
-                        .append(Lang.LIST_TITLE);
+                components.add(Lang.LIST_FOOTER.getComponent());
+                pages.put(pages.size(), components);
+                // sb = new StringBuilder(Lang.LIST_HEADER.toString());
+                components = new ArrayList<>();
+                components.add(Lang.LIST_HEADER.getComponent());
+                components.add(Lang.LIST_TITLE.getComponent());
                 current = 0;
             }
         }
         if (current > 0) {
-            sb.append("\n").append(Lang.LIST_FOOTER);
-            pages.put(pages.size(), sb.toString());
+            components.add(Lang.LIST_FOOTER.getComponent());
+            pages.put(pages.size(), components);
         }
         int totalPages = pages.size();
         //go through all pages and replace %page% with the page number
-        Map<Integer, String> finalPages = new HashMap<>();
+        Map<Integer, List<Component>> finalPages = new HashMap<>();
+
+
         pages.forEach((pageNumber, content) -> {
-            String finalContent = content.replace("%page%", String.valueOf(pageNumber + 1))
-                    .replace("%max_pages%", String.valueOf(totalPages));
+            // String finalContent = content.replace("%page%", String.valueOf(pageNumber + 1))
+            //        .replace("%max_pages%", String.valueOf(totalPages));
+            TextReplacementConfig pageReplacement = TextReplacementConfig.builder().matchLiteral("{page}").replacement(String.valueOf(pageNumber + 1)).build();
+            TextReplacementConfig maxPagesReplacement = TextReplacementConfig.builder().matchLiteral("{max_pages}").replacement(String.valueOf(totalPages)).build();
+            List<Component> finalContent = content.stream().map(entry -> entry.replaceText(pageReplacement).replaceText(maxPagesReplacement)).toList();
             finalPages.put(pageNumber, finalContent);
         });
 
         listCache = finalPages;
         if (page >= finalPages.size()) {
-            sender.sendMessage(Lang.INVALID_ENTRY_NUMBER.toString(1, listCache.size()));
+            sender.sendMessage(Lang.INVALID_ENTRY_NUMBER.getComponent(tr("min", 1), tr("max", finalPages.size())));
             return;
         }
-        sender.sendMessage(finalPages.get(page));
+        for (Component component : finalPages.get(page)) {
+            sender.sendMessage(component);
+        }
     }
 
 }

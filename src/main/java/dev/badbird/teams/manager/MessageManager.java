@@ -9,11 +9,16 @@ import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import net.badbird5907.blib.util.CC;
 import net.badbird5907.blib.utils.StringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import static dev.badbird.teams.util.ChatUtil.mm;
+import static dev.badbird.teams.util.ChatUtil.tr;
 
 public class MessageManager {
     private static final ComponentLogger logger = ComponentLogger.logger("Chat");
@@ -26,13 +31,10 @@ public class MessageManager {
             return;
         }
         String displayName = getDisplayName(player);
-        targetTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(displayName, targetTeam.getName(), senderTeam.getName(), message));
-        senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY.toString(displayName, senderTeam.getName(), targetTeam.getName(), message));
-        logger.info(
-                LegacyComponentSerializer.legacySection().deserialize(
-                        Lang.CHAT_FORMAT_ALLY.toString(displayName, senderTeam.getName(), targetTeam.getName(), message)
-                )
-        );
+        Component from = Lang.CHAT_FORMAT_ALLY_FROM.getComponent(tr("name", displayName), tr("from", senderTeam.getName()), tr("to", targetTeam.getName()), tr("message", message));
+        targetTeam.broadcast(from);
+        senderTeam.broadcast(Lang.CHAT_FORMAT_ALLY_TO.getComponent(tr("name", displayName), tr("from", senderTeam.getName()), tr("to", targetTeam.getName()), tr("message", message)));
+        logger.info(from);
 
         HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
             if (h.isEnabled()) {
@@ -42,11 +44,9 @@ public class MessageManager {
     }
 
     public static void handleTeam(Player player, String message, Team team) {
-        team.broadcast(Lang.CHAT_FORMAT_TEAM.toString(MessageManager.getDisplayName(player), message));
+        team.broadcast(Lang.CHAT_FORMAT_TEAM.getComponent(tr("name", MessageManager.getDisplayName(player)), tr("message", message)));
         logger.info(
-                LegacyComponentSerializer.legacySection().deserialize(
-                        Lang.CHAT_FORMAT_TEAM_LOG.toString(team.getName(), MessageManager.getDisplayName(player), message)
-                )
+                Lang.CHAT_FORMAT_TEAM_LOG.getComponent(tr("team_name", team.getName()), tr("player_name", MessageManager.getDisplayName(player)), tr("message", message))
         );
         HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
             if (h.isEnabled()) {
@@ -70,10 +70,12 @@ public class MessageManager {
                 onlinePlayer.sendMessage(MessageManager.formatGlobal(message, player, onlinePlayer, displayName));
             }
         }
-        String teamLog = data.isInTeam() ? "&7[&a" + data.getPlayerTeam().getName() + "&7] " : "";
+        // String teamLog = data.isInTeam() ? "&7[&a" + data.getPlayerTeam().getName() + "&7] " : "";
         logger.info(
-                LegacyComponentSerializer.legacySection().deserialize(
-                        Lang.CHAT_FORMAT_GLOBAL_LOG.toString(teamLog, displayName, message)
+                Lang.CHAT_FORMAT_GLOBAL_LOG.getComponent(
+                        tr("team", data.isInTeam() ? Component.text("[", NamedTextColor.GRAY).append(Component.text(data.getPlayerTeam().getName(), NamedTextColor.GREEN)).append(Component.text("]", NamedTextColor.GRAY)) : ""),
+                        tr("name", displayName),
+                        tr("message", message)
                 )
         );
         HookManager.getHook(CoreProtectHook.class).ifPresent((h) -> {
@@ -84,25 +86,28 @@ public class MessageManager {
         return true;
     }
 
-    public static String formatGlobal(String rawMessage, Player player, Player receiver, String displayName) {
+    public static Component formatGlobal(String rawMessage, Player player, Player receiver, String displayName) {
         PlayerData senderData = PlayerManager.getData(player), receiverData = PlayerManager.getData(player);
         String format = senderData.isInTeam() ?
-                Lang.CHAT_FORMAT_GLOBAL_INTEAM.toString() :
-                Lang.CHAT_FORMAT_GLOBAL_NOTEAM.toString();
+                Lang.CHAT_FORMAT_GLOBAL_INTEAM.getMiniMessage() :
+                Lang.CHAT_FORMAT_GLOBAL_NOTEAM.getMiniMessage();
         //String format = TeamsPlus.getInstance().getConfig().getString("chat.custom." + (senderData.isInTeam() ? "format-global-inteam" : "format-global-noteam"));
-        String message;
+        Component message;
         if (senderData.isInTeam()) {
-            String color = CC.AQUA;
+            String color = "<aqua>";
             if (receiverData.isInTeam() && senderData.getPlayerTeam().getRank(receiverData.getUuid()) != null) {
-                color = CC.GREEN;
+                color = "<green>";
             }
             if (senderData.isEnemy(receiver)) {
-                color = CC.RED;
+                color = "<red>";
             } else if (senderData.isAlly(receiver))
-                color = CC.PINK;
-            message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), displayName, handleMentions(receiver, rawMessage));
+                color = "<light_purple>";
+            // message = StringUtils.replacePlaceholders(format, color, senderData.getPlayerTeam().getName(), displayName, handleMentions(receiver, rawMessage));
+            String miniMessage = format.replace("<color>", color);
+            message = mm(miniMessage, tr("team", senderData.getPlayerTeam().getName()), tr("name", displayName), tr("message", handleMentions(receiver, rawMessage)), tr("message", handleMentions(receiver, rawMessage)));
         } else {
-            message = StringUtils.replacePlaceholders(format, CC.AQUA, displayName, handleMentions(receiver, rawMessage));
+            // message = StringUtils.replacePlaceholders(format, CC.AQUA, displayName, handleMentions(receiver, rawMessage));
+            message = mm(format, tr("name", displayName), tr("message", handleMentions(receiver, rawMessage)));
         }
         return message;
     }

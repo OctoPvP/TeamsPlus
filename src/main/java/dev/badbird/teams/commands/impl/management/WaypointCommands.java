@@ -7,6 +7,7 @@ import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamWaypoint;
 import net.badbird5907.blib.util.StoredLocation;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,6 +16,8 @@ import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.processing.CommandContainer;
+
+import static dev.badbird.teams.util.ChatUtil.tr;
 
 @CommandContainer
 @Command("teamwaypoint|twp|tw")
@@ -27,14 +30,17 @@ public class WaypointCommands {
     public void waypoint(@Sender CommandSender cs, @Sender Team team, @Argument @Greedy String name) {
         if (cs instanceof Player sender) {
             if (team.getWaypoints().stream().anyMatch(w -> w.getName().equalsIgnoreCase(name))) {
-                sender.sendMessage(Lang.WAYPOINT_EXISTS.toString());
+                sender.sendMessage(Lang.WAYPOINT_EXISTS.getComponent());
                 return;
             }
             TeamWaypoint w = new TeamWaypoint(name, team);
             w.setLocation(new StoredLocation(sender.getLocation()));
             w.setWorld(sender.getWorld().getName());
             team.getWaypoints().add(w);
-            team.broadcast(Lang.WAYPOINT_CREATED.toString(sender.getName(), name));
+            team.broadcast(Lang.WAYPOINT_CREATED.getComponent(
+                    tr("player", sender.getName()),
+                    tr("waypoint", name)
+            ).clickEvent(ClickEvent.runCommand("/teamwaypoint list")));
             team.updateWaypoints();
             team.save();
         }
@@ -46,13 +52,16 @@ public class WaypointCommands {
     public void waypoint(@Sender CommandSender cs, @Sender Team team, @Argument Location location, @Argument @Greedy String name) {
         if (cs instanceof Player sender) {
             if (team.getWaypoints().stream().anyMatch(w -> w.getName().equalsIgnoreCase(name))) {
-                sender.sendMessage(Lang.WAYPOINT_EXISTS.toString());
+                sender.sendMessage(Lang.WAYPOINT_EXISTS.getComponent());
                 return;
             }
             TeamWaypoint w = new TeamWaypoint(name, team);
             w.setLocation(new StoredLocation(location));
             team.getWaypoints().add(w);
-            team.broadcast(Lang.WAYPOINT_CREATED.toString(sender.getName(), name));
+            team.broadcast(Lang.WAYPOINT_CREATED.getComponent(
+                    tr("player", sender.getName()),
+                    tr("waypoint", name)
+            ));
             team.updateWaypoints();
             team.save();
         }

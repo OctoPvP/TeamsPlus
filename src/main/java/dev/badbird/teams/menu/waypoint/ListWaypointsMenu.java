@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 @RequiredArgsConstructor
 public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
     private final Team team;
@@ -70,12 +72,20 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
     private GuiItem waypointBtn(final TeamWaypoint waypoint) {
         return ItemBuilder.from(waypoint.getIcon())
                 .name(Component.text(waypoint.getName(), NamedTextColor.WHITE))
-                .lore(Lang.WAYPOINT_LORE.getComponentList(waypoint.getLocation().getX(), waypoint.getLocation().getY(), waypoint.getLocation().getZ(), waypoint.getLocation().getWorld().getName()))
+                .lore(Lang.WAYPOINT_LORE.getComponentList(
+                        tr("x", waypoint.getLocation().getX()),
+                        tr("y", waypoint.getLocation().getY()),
+                        tr("z", waypoint.getLocation().getZ()),
+                        tr("world", waypoint.getLocation().getWorld().getName())
+                ))
                 .asGuiItem(e -> {
                     Player player = (Player) e.getWhoClicked();
                     if (e.getClick().isShiftClick()) {
                         team.removeWaypoint(waypoint);
-                        team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.toString(player.getName(), waypoint.getName()));
+                        team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
+                                tr("sender", player.getName()),
+                                tr("waypoint", waypoint.getName())
+                        ));
                         update(player);
                     } else new EditWaypointMenu(waypoint, team).open(player);
                 });

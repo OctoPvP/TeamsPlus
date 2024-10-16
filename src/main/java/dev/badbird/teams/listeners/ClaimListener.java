@@ -19,6 +19,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 public class ClaimListener implements Listener {
     // TODO: staff mode = allow staff to break blocks
     @EventHandler
@@ -35,6 +37,7 @@ public class ClaimListener implements Listener {
             Material.STONECUTTER,
             Material.GRINDSTONE
     );
+
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (event.getInteractionPoint() == null) return;
@@ -50,10 +53,12 @@ public class ClaimListener implements Listener {
         ClaimInfo claim = ClaimHandler.getInstance().getClaim(wrapper.getHash());
         if (claim != null && !claim.canPlayerModify(player.getUniqueId(), team)) {
             event.setCancelled(true);
-            if (Cooldown.isOnCooldown( "claim-msg", player.getUniqueId())) {
+            if (Cooldown.isOnCooldown("claim-msg", player.getUniqueId())) {
                 return;
             }
-            player.sendMessage(Lang.CLAIM_CANNOT_MODIFY.toString(TeamsManager.getInstance().getTeamName(claim.getOwningTeam())));
+            player.sendMessage(Lang.CLAIM_CANNOT_MODIFY.getComponent(
+                    tr("claimer", TeamsManager.getInstance().getTeamName(claim.getOwningTeam()))
+            ));
             Cooldown.addCooldown("claim-msg", player.getUniqueId(), 3);
         }
     }

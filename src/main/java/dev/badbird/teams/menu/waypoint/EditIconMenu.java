@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.badbird.teams.util.ChatUtil.tr;
+
 @RequiredArgsConstructor
 public class EditIconMenu extends PaginatedMenu<PaginatedGui> {
     private final TeamWaypoint waypoint;
@@ -35,7 +37,11 @@ public class EditIconMenu extends PaginatedMenu<PaginatedGui> {
                     .asGuiItem(e -> {
                         waypoint.setIcon(allowedIcon);
                         //player.closeInventory();
-                        team.broadcast(Lang.WAYPOINT_SELECT_ICON_BROADCAST.toString(player.getName(), waypoint.getName(), Utils.enumToString(allowedIcon)));
+                        team.broadcast(Lang.WAYPOINT_SELECT_ICON_BROADCAST.getComponent(
+                                tr("player", player.name()),
+                                tr("icon", Utils.enumToString(allowedIcon)),
+                                tr("waypoint", waypoint.getName())
+                        ));
                         new EditWaypointMenu(waypoint, team).open(player);
                     })
             );

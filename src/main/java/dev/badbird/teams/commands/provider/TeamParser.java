@@ -1,5 +1,6 @@
 package dev.badbird.teams.commands.provider;
 
+import dev.badbird.teams.commands.CmdInjectException;
 import dev.badbird.teams.commands.annotation.Sender;
 import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.object.Team;
@@ -11,7 +12,9 @@ import org.incendo.cloud.annotations.parser.Parser;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.CommandExecutionException;
 import org.incendo.cloud.injection.ParameterInjector;
+import org.incendo.cloud.services.type.ConsumerService;
 import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
 import java.util.stream.Stream;
@@ -30,7 +33,7 @@ public class TeamParser implements ParameterInjector<CommandSender, Team> {
             }
             return team;
         }
-        throw new RuntimeException("No team name provided");
+        throw new CommandExecutionException(new RuntimeException("No team name provided"));
     }
 
     @Override
@@ -39,11 +42,19 @@ public class TeamParser implements ParameterInjector<CommandSender, Team> {
 
         if (sender instanceof Player player) {
             if (annotationAccessor.annotation(Sender.class) != null) {
-                return TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
+                System.out.println("Getting team from player");
+                Team t = TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
+                if (t == null) {
+                    // throw new IllegalArgumentException("Must be in a team to use this command.");
+                    //throw new InjectionException("<red>You must be in a team to use this command.", new Exception());
+                    player.sendRichMessage("<red>You must be in a team to use this command.");
+                    ConsumerService.interrupt();
+                }
+                return t;
             }
             return null;
         }
-        throw new RuntimeException("Must be a player.");
+        throw new CmdInjectException("Must be a player!");
     }
 
     @Suggestions("suggestTeams")
