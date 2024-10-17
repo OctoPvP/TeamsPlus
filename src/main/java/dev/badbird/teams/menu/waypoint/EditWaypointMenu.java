@@ -26,6 +26,7 @@ import static dev.badbird.teams.util.ChatUtil.tr;
 public class EditWaypointMenu extends Menu<Gui> {
     private final TeamWaypoint waypoint;
     private final Team team;
+    private final boolean staffMode;
 
     @Override
     public Gui createGui(Player player) {
@@ -41,7 +42,7 @@ public class EditWaypointMenu extends Menu<Gui> {
         gui.setItem(11, ItemBuilder.from(waypoint.getIcon())
                 .name(Lang.WAYPOINT_EDIT_ICON_NAME.getComponent(tr("name", waypoint.getName())))
                 .lore(Lang.WAYPOINT_EDIT_ICON_LORE.getComponentList())
-                .asGuiItem(e -> new EditIconMenu(waypoint, team).open(player))
+                .asGuiItem(e -> new EditIconMenu(waypoint, team, staffMode).open(player))
         );
         gui.setItem(13, ItemBuilder.from(Material.NAME_TAG)
                 .name(Lang.WAYPOINT_EDIT_NAME.getComponent())
@@ -55,11 +56,13 @@ public class EditWaypointMenu extends Menu<Gui> {
                                                 String prevName = waypoint.getName();
                                                 waypoint.setName(s);
                                                 team.save();
-                                                team.broadcast(Lang.WAYPOINT_NAME_EDITED.getComponent(
-                                                        tr("player", player.getName()),
-                                                        tr("prev_name", prevName),
-                                                        tr("new_name", s)
-                                                ));
+                                                if (!staffMode) {
+                                                    team.broadcast(Lang.WAYPOINT_NAME_EDITED.getComponent(
+                                                            tr("player", player.getName()),
+                                                            tr("prev_name", prevName),
+                                                            tr("new_name", s)
+                                                    ));
+                                                }
                                                 open(player);
                                                 return Prompt.END_OF_CONVERSATION;
                                             }))
@@ -71,23 +74,25 @@ public class EditWaypointMenu extends Menu<Gui> {
         gui.setItem(15, ItemBuilder.from(ColorMapper.dyeFromChatColor(color))
                 .name(Lang.WAYPOINT_COLOR_NAME.getComponent())
                 .lore(Lang.WAYPOINT_COLOR_LORE.getComponentList())
-                .asGuiItem(e -> new SelectColorMenu(waypoint, team, player.getUniqueId()).open(player))
+                .asGuiItem(e -> new SelectColorMenu(waypoint, team, player.getUniqueId(), staffMode).open(player))
         );
         gui.setItem(26, ItemBuilder.from(Material.REDSTONE_BLOCK)
                 .name(Lang.WAYPOINT_DELETE_BUTTON_NAME.getComponent())
                 .lore(Lang.WAYPOINT_DELETE_BUTTON_LORE.getComponentList())
                 .asGuiItem(e -> {
                     team.removeWaypoint(waypoint);
-                    team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
-                            tr("sender", player.getName()),
-                            tr("waypoint", waypoint.getName())
-                    ));
-                    new ListWaypointsMenu(team, player.getUniqueId()).open(player);
+                    if (!staffMode) {
+                        team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
+                                tr("sender", player.getName()),
+                                tr("waypoint", waypoint.getName())
+                        ));
+                    }
+                    new ListWaypointsMenu(team, player.getUniqueId(), staffMode).open(player);
                 })
         );
         boolean lunar = HookManager.getHook(LunarClientHook.class).map(LunarClientHook::isEnabled).orElse(false);
         boolean toggled = !waypoint.getDisabledPlayers().contains(player.getUniqueId());
-        if (lunar) {
+        if (lunar && !staffMode) {
             gui.setItem(0, ItemBuilder.from(Material.LEVER)
                     .name(Lang.TOGGLE_LUNAR_NAME.getComponent())
                     .lore(toggled ? Lang.TOGGLE_LUNAR_LORE_ENABLED.getComponentList() : Lang.TOGGLE_LUNAR_LORE_DISABLED.getComponentList())

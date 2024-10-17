@@ -155,12 +155,12 @@ public final class TeamsPlus extends JavaPlugin {
 
             CloudKey<TeamRank> teamRankKey = CloudKey.of("team-permission", TeamRank.class);
             annotationParser.registerBuilderModifier(TeamPermission.class, (annotation, builder) -> {
-                System.out.println("Setting team rank key: " + annotation.value() + " | " + builder.commandDescription().description().textDescription());
+                // System.out.println("Setting team rank key: " + annotation.value() + " | " + builder.commandDescription().description().textDescription());
                 return builder.meta(teamRankKey, annotation.value());
             });
             commandManager.registerCommandPostProcessor(ctx -> {
                 Map<CloudKey<?>, ?> all = ctx.command().commandMeta().all();
-                all.forEach((key, value) -> System.out.println(key + ": " + value));
+                // all.forEach((key, value) -> System.out.println(key + ": " + value));
                 if (ctx.command().commandMeta().contains(teamRankKey)) {
                     TeamRank reqRank = ctx.command().commandMeta().get(teamRankKey);
                     CommandSender sender = ctx.commandContext().sender();
@@ -233,11 +233,16 @@ public final class TeamsPlus extends JavaPlugin {
         File messages = new File(getDataFolder() + "/messages.yml");
         if (!messages.getParentFile().exists())
             messages.getParentFile().mkdirs();
-        if (!messages.exists()) {
-            InputStream stream = getResource("messages.yml");
-            Files.copy(Objects.requireNonNull(stream), messages.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
         langFile = new YamlConfiguration();
+        if (!messages.exists()) {
+            messages.createNewFile();
+            String comment = "# This is the message override file for TeamsPlus. You can change any message in here to whatever you want.";
+            Files.write(messages.toPath(), comment.getBytes());
+            /*for (Lang value : Lang.values()) {
+                langFile.set(value.getConfigPath(), value.getDefault());
+            }
+            langFile.save(messages);*/
+        }
         langFile.load(messages);
 
         Logger.info("Hooking into plugins...");

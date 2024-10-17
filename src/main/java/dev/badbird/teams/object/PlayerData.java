@@ -145,7 +145,7 @@ public class PlayerData {
     public void invite(Team team, String sender) {
         pendingInvites.put(team.getTeamId(), TeamsPlus.getInstance().getConfig().getInt("invite-seconds"));
         team.broadcast(Lang.INVITE_TEAM_MESSAGE.getComponent(
-                tr("player", name),
+                tr("target", name),
                 tr("sender", sender)
         ));
         Component message = Lang.INVITE.getComponent(

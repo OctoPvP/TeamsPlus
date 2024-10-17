@@ -12,7 +12,6 @@ import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.object.TeamWaypoint;
 import lombok.Getter;
-import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -39,6 +38,7 @@ public class LunarClientHook extends Hook {
     public void init(TeamsPlus plugin) {
         if (!plugin.getConfig().getBoolean("lunar.enable", true))
             return;
+        plugin.getLogger().info("Enabling Lunar Client Hook");
         enabled = true;
         waypointModule = Apollo.getModuleManager().getModule(WaypointModule.class);
         teamModule = Apollo.getModuleManager().getModule(TeamModule.class);
@@ -47,6 +47,7 @@ public class LunarClientHook extends Hook {
             teamDisplayColor = Color.decode(plugin.getConfig().getString("lunar.team-display.color", "#00ff44"));
             Tasks.runAsyncTimer(() -> TeamsManager.getInstance().getTeams().forEach((_unused, team) -> refreshMembers(team)), 1L, 1L);
         }
+        plugin.getLogger().info("Lunar Client Hook Enabled");
     }
 
     @Override
@@ -65,7 +66,11 @@ public class LunarClientHook extends Hook {
     }
 
     public void sendWaypoint(Player player, TeamWaypoint teamWaypoint) {
-        if (!enabled || waypointModule == null) return;
+        if (!enabled || waypointModule == null) {
+            TeamsPlus.getInstance().getLogger().info("Not enabled or waypoint module is null");
+            return;
+        }
+        TeamsPlus.getInstance().getLogger().info("Sending waypoint to " + player.getName());
         removeWaypoint(player, teamWaypoint);
         // Waypoint Waypoint = new Waypoint(teamWaypoint.getName(), teamWaypoint.getLocation().getLocation(), ColorMapper.fromChatColor(teamWaypoint.getColor()).asRGB(), false, !teamWaypoint.getDisabledPlayers().contains(player.getUniqueId()));
         // LunarClientAPI.getInstance().sendWaypoint(player, Waypoint);

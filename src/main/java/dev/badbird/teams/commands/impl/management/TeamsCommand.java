@@ -313,11 +313,9 @@ public class TeamsCommand {
         Map<Integer, List<Component>> finalPages = new HashMap<>();
 
 
+        TextReplacementConfig maxPagesReplacement = TextReplacementConfig.builder().matchLiteral("{max_pages}").replacement(String.valueOf(totalPages)).build();
         pages.forEach((pageNumber, content) -> {
-            // String finalContent = content.replace("%page%", String.valueOf(pageNumber + 1))
-            //        .replace("%max_pages%", String.valueOf(totalPages));
             TextReplacementConfig pageReplacement = TextReplacementConfig.builder().matchLiteral("{page}").replacement(String.valueOf(pageNumber + 1)).build();
-            TextReplacementConfig maxPagesReplacement = TextReplacementConfig.builder().matchLiteral("{max_pages}").replacement(String.valueOf(totalPages)).build();
             List<Component> finalContent = content.stream().map(entry -> entry.replaceText(pageReplacement).replaceText(maxPagesReplacement)).toList();
             finalPages.put(pageNumber, finalContent);
         });

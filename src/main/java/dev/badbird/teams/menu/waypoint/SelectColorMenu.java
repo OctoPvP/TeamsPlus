@@ -19,7 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +31,7 @@ public class SelectColorMenu extends PaginatedMenu<PaginatedGui> {
     private final TeamWaypoint waypoint;
     private final Team team;
     private final UUID uuid;
+    private final boolean staffMode;
 
 
     @Override
@@ -49,12 +49,14 @@ public class SelectColorMenu extends PaginatedMenu<PaginatedGui> {
                         waypoint.setColor(value);
                         team.save();
                         team.updateWaypoints();
-                        team.broadcast(Lang.WAYPOINT_COLOR_SET_BROADCAST.getComponent(
-                                tr("player", player.name()),
-                                tr("waypoint", waypoint.getName()),
-                                tr("color", Component.text(Utils.enumToString(value)).color(ChatUtil.chatColorToNamedTextColor(value)))
-                        ));
-                        new EditWaypointMenu(waypoint, team).open(player);
+                        if (!staffMode) {
+                            team.broadcast(Lang.WAYPOINT_COLOR_SET_BROADCAST.getComponent(
+                                    tr("player", player.name()),
+                                    tr("waypoint", waypoint.getName()),
+                                    tr("color", Component.text(Utils.enumToString(value)).color(ChatUtil.chatColorToNamedTextColor(value)))
+                            ));
+                        }
+                        new EditWaypointMenu(waypoint, team, staffMode).open(player);
                     });
             items.add(item);
         }

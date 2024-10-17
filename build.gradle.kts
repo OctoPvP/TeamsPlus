@@ -66,7 +66,7 @@ dependencies {
 
     implementation("org.mongodb:mongodb-driver-sync:4.2.2")
     implementation("net.objecthunter:exp4j:exp4j-0.4.3.BETA-1")
-    implementation("dev.octomc:agile-gui:1.3.0")
+    implementation("dev.octomc:agile-gui:1.4.0")
 
     compileOnly("net.badbird5907:AntiCombatLog:2.4.0")
     compileOnly("com.lunarclient:apollo-api:1.0.4")

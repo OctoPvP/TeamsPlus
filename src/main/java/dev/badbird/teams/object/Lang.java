@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static dev.badbird.teams.util.ChatUtil.mm;
@@ -34,7 +35,7 @@ public enum Lang {
     CHAT_FORMAT_TEAM_LOG("chat.format-team-log", "<gray>[<green>Team<gray>] <gray>[<green><team_name><gray>] <green><player_name><reset>: <message>"),
     CHAT_FORMAT_ALLY_FROM("chat.format-ally.from", "<gray>[<light_purple>Ally<gray>] <green><name> <gray>(<from> -> <to>) <reset>: <message>"),
     CHAT_FORMAT_ALLY_TO("chat.format-ally.to", "<gray>[<light_purple>Ally<gray>] <green><name> <gray>(<to> <- <from>) <reset>: <message>"),
-    CHAT_FORMAT_GLOBAL_INTEAM("chat.format-global.inteam", "<target_color>[<team>] <name><reset><gray>:<white> <message>"),
+    CHAT_FORMAT_GLOBAL_INTEAM("chat.format-global.inteam", "<color>[<team>] <name><reset><gray>:<white> <message>"),
     CHAT_FORMAT_GLOBAL_NOTEAM("chat.format-global.noteam", "<color><name><gray>:<white> <message>"),
     CHAT_FORMAT_GLOBAL_LOG("chat.format-global.log", "<team><name><gray>:<white> <message>"),
 
@@ -66,7 +67,7 @@ public enum Lang {
 
     TEAM_RENAME("team.rename", "<gold><name><green> has renamed the team to <gold><new_name>"),
 
-    INVITE("invite.player", "<gold><sender<<aqua> has invited you to join the team <gold><team><aqua> do <green>/team join <team><aqua> to join!"),
+    INVITE("invite.player", "<gold><sender><aqua> has invited you to join the team <gold><team><aqua>! Do <green>/team join <team><aqua> to join!"),
 
     INVITE_HOVER("invite.hover", "<green>Click to join <gold><team>"),
 
@@ -177,7 +178,7 @@ public enum Lang {
     WAYPOINT_LORE("waypoint.item-lore", new String[]{
             "<gray>X: <x> <gray>Y: <y> <gray>Z: <z>",
             "",
-            "<red>lick to edit!",
+            "<yellow>Click to edit!",
             "<yellow>Shift-click to remove!"
     }),
 
@@ -186,6 +187,12 @@ public enum Lang {
     WAYPOINT_FILTER_LORE("waypoint.filter.lore", new String[]{
             "",
             "<yellow>Click to filter entries",
+    }),
+
+    WAYPOINT_FILTER_CLEAR_LORE("waypoint.filter.clear-lore", new String[]{
+            "<gray>Current Filter: <yellow><filter>",
+            "",
+            "<yellow>Click to clear filter",
     }),
 
     WAYPOINT_INFO_NAME("waypoint.info.name", "<green>Info"),
@@ -320,40 +327,68 @@ public enum Lang {
     ;
     @Getter
     private final String configPath;
-    private final String finalMessage;
-    @Getter
     private String def;
+    private String[] defArr;
 
-    private List<String> messageList;
+    private boolean stringArr = false;
+
 
     Lang(String configPath, String def) {
         this.configPath = configPath;
         this.def = def;
-        finalMessage = def;// TeamsPlus.getLangFile().getString(configPath, def);
     }
 
-    Lang(String configPath, String[] def) { //TODO reload
+    Lang(String configPath, String[] def) {
         this.configPath = configPath;
-        messageList = TeamsPlus.getLangFile().getStringList(configPath);
-        if (true || messageList.isEmpty())
-            messageList = Arrays.asList(def);
-        StringBuilder sb = new StringBuilder();
-        for (String s : messageList) {
-            sb.append(s).append("\n");
+        this.stringArr = true;
+        this.defArr = def;
+    }
+
+    private List<String> getFMList() {
+        if (stringArr) {
+            if (!TeamsPlus.getLangFile().contains(configPath)) {
+                return Arrays.asList(defArr);
+            }
+            List<String> messageList;
+            if (TeamsPlus.getLangFile().isList(configPath)) {
+                messageList = TeamsPlus.getLangFile().getStringList(configPath);
+            } else {
+                String str = TeamsPlus.getLangFile().getString(configPath);
+                if (str == null || str.isEmpty()) {
+                    return Collections.singletonList(TeamsPlus.getLangFile().getString(configPath, def));
+                }
+                messageList = Arrays.asList(str.split("\n"));
+            }
+            if (messageList.isEmpty())
+                messageList = Arrays.asList(defArr);
+            return messageList;
+        } else {
+            return Collections.singletonList(TeamsPlus.getLangFile().getString(configPath, def));
         }
-        finalMessage = sb.toString();
+    }
+
+    private String getFinalMessage() {
+        if (stringArr) {
+            return String.join("\n", getFMList());
+        } else {
+            return TeamsPlus.getLangFile().getString(configPath, def);
+        }
     }
 
     public Component getComponent(TagResolver... placeholders) {
-        return mm(finalMessage, placeholders);
+        return mm(getFinalMessage(), placeholders);
     }
 
     public List<Component> getComponentList(TagResolver... placeholders) {
-        return messageList.stream().map(s -> mm(s, placeholders)).toList();
+        return getFMList().stream().map(s -> mm(s, placeholders)).toList();
     }
 
     public String getMiniMessage() {
-        return finalMessage;
+        return getFinalMessage();
+    }
+
+    public String getDefault() {
+        return def;
     }
 
     @Deprecated(forRemoval = true)

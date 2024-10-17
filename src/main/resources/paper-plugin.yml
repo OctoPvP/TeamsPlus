@@ -6,16 +6,16 @@ api-version: '1.20'
 dependencies:
   server:
     Apollo-Bukkit:
-      load: AFTER
+      load: BEFORE
       required: true
     AntiCombatLog:
-      load: AFTER
+      load: BEFORE
       required: false
     Vault:
-      load: AFTER
+      load: BEFORE
       required: false
     CoreProtect:
-      load: AFTER
+      load: BEFORE
       required: false
     OctoCore:
       load: BEFORE

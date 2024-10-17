@@ -5,8 +5,6 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -54,6 +52,6 @@ public class ConfirmMenu extends Menu<Gui> {
         }));
         gui.setItem(13, ItemBuilder.from(Material.PAPER).name(Component.text("Are you sure you want to " + action + "?", NamedTextColor.RED))
                 .lore(MiniMessage.miniMessage().deserialize("<gray>Click <green>Yes<gray> to confirm, or <red>No<gray> to cancel."),
-                permanent ? Component.text("This action cannot be undone.", NamedTextColor.RED) : null).asGuiItem());
+                        permanent ? Component.text("This action cannot be undone.", NamedTextColor.RED) : null).asGuiItem());
     }
 }

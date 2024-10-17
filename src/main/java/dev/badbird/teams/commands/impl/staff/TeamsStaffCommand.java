@@ -1,7 +1,9 @@
 package dev.badbird.teams.commands.impl.staff;
 
 import dev.badbird.teams.commands.annotation.AllowOffline;
+import dev.badbird.teams.commands.annotation.Sender;
 import dev.badbird.teams.menu.ConfirmMenu;
+import dev.badbird.teams.menu.waypoint.ListWaypointsMenu;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
@@ -127,5 +129,12 @@ public class TeamsStaffCommand {
                 tr("old", oldName),
                 tr("new", newName)
         ));
+    }
+
+    @Command("waypoints <target>")
+    @CommandDescription("List waypoints of a team")
+    @Permission("teamsplus.staff.waypoints")
+    public void waypoints(@Sender Player sender, @Argument Team target) {
+        new ListWaypointsMenu(target, sender.getUniqueId(), true).open(sender);
     }
 }

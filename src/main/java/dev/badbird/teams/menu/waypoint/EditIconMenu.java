@@ -26,6 +26,7 @@ import static dev.badbird.teams.util.ChatUtil.tr;
 public class EditIconMenu extends PaginatedMenu<PaginatedGui> {
     private final TeamWaypoint waypoint;
     private final Team team;
+    private final boolean staffMode;
 
     @Override
     public List<GuiItem> getItems(Player player) {
@@ -37,12 +38,14 @@ public class EditIconMenu extends PaginatedMenu<PaginatedGui> {
                     .asGuiItem(e -> {
                         waypoint.setIcon(allowedIcon);
                         //player.closeInventory();
-                        team.broadcast(Lang.WAYPOINT_SELECT_ICON_BROADCAST.getComponent(
-                                tr("player", player.name()),
-                                tr("icon", Utils.enumToString(allowedIcon)),
-                                tr("waypoint", waypoint.getName())
-                        ));
-                        new EditWaypointMenu(waypoint, team).open(player);
+                        if (!staffMode) {
+                            team.broadcast(Lang.WAYPOINT_SELECT_ICON_BROADCAST.getComponent(
+                                    tr("player", player.name()),
+                                    tr("icon", Utils.enumToString(allowedIcon)),
+                                    tr("waypoint", waypoint.getName())
+                            ));
+                        }
+                        new EditWaypointMenu(waypoint, team, staffMode).open(player);
                     })
             );
         }

@@ -72,7 +72,7 @@ public class WaypointCommands {
     public void list(@Sender CommandSender cs, @Sender Team team) {
         if (cs instanceof Player sender) {
             TeamsPlus.getInstance().getWaypointManager().updatePlayerWaypoints(sender);
-            new ListWaypointsMenu(team, sender.getUniqueId()).open(sender);
+            new ListWaypointsMenu(team, sender.getUniqueId(), false).open(sender);
         }
     }
     @Command("")

@@ -14,6 +14,7 @@ import net.badbird5907.blib.objects.TypeCallback;
 import net.badbird5907.blib.util.QuestionConversation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ import static dev.badbird.teams.util.ChatUtil.tr;
 public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
     private final Team team;
     private final UUID uuid;
+    private final boolean staffMode;
 
     private String searchTerm = "";
 
@@ -46,14 +48,24 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
 
     @Override
     public void addStaticButtons() {
-        gui.setItem(52, ItemBuilder.from(Material.HOPPER)
+
+    }
+
+    @Override
+    public GuiItem getFilterButton() {
+        return ItemBuilder.from(Material.HOPPER)
                 .name(Lang.WAYPOINT_FILTER_NAME.getComponent())
-                .lore(Lang.WAYPOINT_FILTER_LORE.getComponentList())
+                .lore(!searchTerm.isEmpty() ? Lang.WAYPOINT_FILTER_CLEAR_LORE.getComponentList(tr("filter", searchTerm)) : Lang.WAYPOINT_FILTER_LORE.getComponentList())
                 .asGuiItem(e -> {
                     Player player = (Player) e.getWhoClicked();
+                    if (!searchTerm.isEmpty()) {
+                        searchTerm = "";
+                        open(player);
+                        return;
+                    }
                     player.closeInventory();
                     TeamsPlus.getInstance().getConversationFactory().withFirstPrompt(
-                                    new QuestionConversation(Lang.WAYPOINT_SEARCH_MESSAGE.toString(), (TypeCallback<Prompt, String>) s -> {
+                                    new QuestionConversation(LegacyComponentSerializer.legacySection().serialize(Lang.WAYPOINT_SEARCH_MESSAGE.getComponent()), (TypeCallback<Prompt, String>) s -> {
                                         searchTerm = s;
                                         open(player);
                                         return Prompt.END_OF_CONVERSATION;
@@ -61,12 +73,12 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
                             .withLocalEcho(false)
                             .buildConversation(player)
                             .begin();
-                }));
+                });
     }
 
     @Override
     public PaginatedGui createGui(Player player) {
-        return Gui.paginated().title("Waypoints").rows(6).create();
+        return Gui.paginated().title("Waypoints" + (staffMode ? " (Staff Mode)" : "")).rows(6).create();
     }
 
     private GuiItem waypointBtn(final TeamWaypoint waypoint) {
@@ -82,12 +94,14 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
                     Player player = (Player) e.getWhoClicked();
                     if (e.getClick().isShiftClick()) {
                         team.removeWaypoint(waypoint);
-                        team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
-                                tr("sender", player.getName()),
-                                tr("waypoint", waypoint.getName())
-                        ));
+                        if (!staffMode) {
+                            team.broadcast(Lang.WAYPOINT_DELETED_BROADCAST.getComponent(
+                                    tr("sender", player.getName()),
+                                    tr("waypoint", waypoint.getName())
+                            ));
+                        }
                         update(player);
-                    } else new EditWaypointMenu(waypoint, team).open(player);
+                    } else new EditWaypointMenu(waypoint, team, staffMode).open(player);
                 });
     }
 }
