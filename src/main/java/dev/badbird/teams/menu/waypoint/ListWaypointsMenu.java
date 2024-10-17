@@ -84,7 +84,7 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
     private GuiItem waypointBtn(final TeamWaypoint waypoint) {
         return ItemBuilder.from(waypoint.getIcon())
                 .name(Component.text(waypoint.getName(), NamedTextColor.WHITE))
-                .lore(Lang.WAYPOINT_LORE.getComponentList(
+                .lore((staffMode ? Lang.WAYPOINT_STAFF_LORE : Lang.WAYPOINT_LORE).getComponentList(
                         tr("x", waypoint.getLocation().getX()),
                         tr("y", waypoint.getLocation().getY()),
                         tr("z", waypoint.getLocation().getZ()),
@@ -92,6 +92,11 @@ public class ListWaypointsMenu extends PaginatedMenu<PaginatedGui> {
                 ))
                 .asGuiItem(e -> {
                     Player player = (Player) e.getWhoClicked();
+                    if (staffMode && e.isRightClick()) {
+                        player.closeInventory();
+                        player.teleport(waypoint.getLocation().getLocation());
+                        return;
+                    }
                     if (e.getClick().isShiftClick()) {
                         team.removeWaypoint(waypoint);
                         if (!staffMode) {

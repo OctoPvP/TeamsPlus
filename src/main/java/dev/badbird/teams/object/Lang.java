@@ -182,6 +182,15 @@ public enum Lang {
             "<yellow>Shift-click to remove!"
     }),
 
+    WAYPOINT_STAFF_LORE("waypoint.staff-lore", new String[]{
+            "<gray>X: <x> <gray>Y: <y> <gray>Z: <z>",
+            "<gray>World: <world>",
+            "",
+            "<yellow>Click to edit!",
+            "<yellow>Shift-click to remove!",
+            "<yellow>Right click to teleport! [STAFF]"
+    }),
+
     WAYPOINT_FILTER_NAME("waypoint.filter.name", "<green>Filter"),
 
     WAYPOINT_FILTER_LORE("waypoint.filter.lore", new String[]{
