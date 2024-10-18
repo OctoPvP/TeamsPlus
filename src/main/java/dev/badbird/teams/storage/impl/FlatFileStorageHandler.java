@@ -1,14 +1,15 @@
 package dev.badbird.teams.storage.impl;
 
 import com.google.gson.JsonObject;
+import dev.badbird.teams.TeamsPlus;
+import dev.badbird.teams.object.PlayerData;
+import dev.badbird.teams.object.Team;
 import dev.badbird.teams.storage.StorageHandler;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.Tasks;
 import net.badbird5907.blib.utils.FileUtils;
-import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.object.PlayerData;
-import dev.badbird.teams.object.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * flat file bad
@@ -64,9 +63,9 @@ public class FlatFileStorageHandler implements StorageHandler {
         }
         return
                 TeamsPlus.getGson().fromJson(
-                        FileUtils.readFileToString(
-                                datafile),
-                        PlayerData.class)
+                                FileUtils.readFileToString(
+                                        datafile),
+                                PlayerData.class)
                         .onLoad();
     }
 
@@ -132,6 +131,57 @@ public class FlatFileStorageHandler implements StorageHandler {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private File getClaimSaveFile(UUID teamId, UUID worldId) {
+        return new File(TeamsPlus.getInstance().getDataFolder() + "/claims/" + worldId + "/" + teamId + ".json");
+    }
+
+    @Override
+    public LongSet getClaimedChunks(UUID teamId, UUID worldId) {
+        File file = getClaimSaveFile(teamId, worldId);
+        if (!file.exists()) return null;
+        JsonObject object = TeamsPlus.getGson().fromJson(FileUtils.readFileToString(file), JsonObject.class);
+        return TeamsPlus.getGson().fromJson(object.get("chunks"), LongSet.class);
+    }
+
+    @Override
+    public void saveClaimedChunks(UUID teamId, UUID worldId, LongSet claimedChunks) {
+        File file = getClaimSaveFile(teamId, worldId);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        try {
+            if (!file.exists())
+                file.createNewFile();
+            JsonObject object = new JsonObject();
+            object.add("chunks", TeamsPlus.getGson().toJsonTree(claimedChunks));
+            String json = TeamsPlus.getGson().toJson(object);
+            Files.write(file.toPath(), json.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Map<UUID, LongSet> getClaimedChunksInWorld(UUID worldId) {
+        Map<UUID, LongSet> map = new HashMap<>();
+        File dir = new File(TeamsPlus.getInstance().getDataFolder() + "/claims/" + worldId);
+        if (!dir.exists()) return map;
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            UUID teamId = UUID.fromString(file.getName().substring(0, file.getName().length() - 5)); // .json
+            LongSet set = getClaimedChunks(teamId, worldId);
+            if (set != null)
+                map.put(teamId, set);
+        }
+        return map;
+    }
+
+    @Override
+    public void saveClaimedChunksInWorld(UUID worldId, Map<UUID, LongSet> claimedChunks) {
+        for (Map.Entry<UUID, LongSet> entry : claimedChunks.entrySet()) {
+            saveClaimedChunks(entry.getKey(), worldId, entry.getValue());
         }
     }
 }

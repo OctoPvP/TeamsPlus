@@ -269,6 +269,20 @@ public class TeamsCommand {
         }).setPermanent(true).open(senderP);
     }
 
+    @Command("claimdescription <description>")
+    @CommandDescription("Set the description of your team's claims")
+    @TeamPermission(TeamRank.ADMIN)
+    public void setDescription(@Sender Player sender, @Sender Team team, @Greedy String description) {
+        int max = TeamsPlus.getInstance().getConfig().getInt("claims.description-max-length", 64);
+        if (description.length() > max) {
+            sender.sendMessage(Lang.CLAIM_DESCRIPTION_TOO_LONG.getComponent(tr("max", max)));
+            return;
+        }
+        team.setClaimDescription(description);
+        team.save();
+        sender.sendMessage(Lang.DESCRIPTION_SET.getComponent(tr("description", description)));
+    }
+
     @Command("list [page]")
     @CommandDescription("List all teams")
     public void list(@Sender CommandSender sender, @Default(value = "1") @Range(min = "1") @Argument("page") int page) { //fuck this... :/

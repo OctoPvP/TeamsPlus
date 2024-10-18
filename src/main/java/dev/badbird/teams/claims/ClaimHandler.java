@@ -1,6 +1,5 @@
 package dev.badbird.teams.claims;
 
-import com.google.common.collect.ImmutableMap;
 import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.claims.chunkrenderer.ChunkBorderRenderer;
 import dev.badbird.teams.claims.chunkrenderer.ChunkRendererListener;
@@ -9,12 +8,16 @@ import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.object.Team;
 import lombok.Getter;
 import net.badbird5907.blib.util.Cooldown;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ClaimHandler {
     @Getter
@@ -23,7 +26,7 @@ public class ClaimHandler {
     private ClaimHandler() {
     }
 
-    private Map<Long, ClaimInfo> claimMap = new HashMap<>();
+    private Map<UUID, WorldClaimTracker> worldTrackers = new HashMap<>(); // worldId -> tracker
 
     @Getter
     private boolean enabled = false;
@@ -46,11 +49,11 @@ public class ClaimHandler {
     }
 
     public void loadClaims() {
-        Map<Long, ClaimInfo> cm = new HashMap<>();
-        for (Team team : TeamsManager.getInstance().getTeams().values()) {
-            cm.putAll(team.getClaims());
+        for (World world : Bukkit.getWorlds()) {
+            WorldClaimTracker tracker = new WorldClaimTracker(world);
+            worldTrackers.put(world.getUID(), tracker);
+            tracker.loadClaims();
         }
-        claimMap = cm;
     }
 
     public long hashChunk(int cx, int cz) {
@@ -76,37 +79,15 @@ public class ClaimHandler {
         return hashChunk(location.getChunk());
     }
 
-    public ClaimInfo getClaim(long hash) {
-        return claimMap.get(hash);
+    public WorldClaimTracker getTracker(World world) {
+        return worldTrackers.computeIfAbsent(world.getUID(), k -> new WorldClaimTracker(world));
     }
 
-    public ClaimInfo getClaim(Chunk chunk) {
-        return getClaim(hashChunk(chunk));
-    }
-
-    public ClaimInfo getClaim(Location location) {
-        return getClaim(hashChunk(location));
-    }
-
-    public boolean isClaimed(long chunkHash) {
-        return claimMap.containsKey(chunkHash);
-    }
-
-    public boolean isClaimed(Chunk chunk) {
-        return isClaimed(hashChunk(chunk));
-    }
-
-    public void addClaim(ClaimInfo claim) {
-        claimMap.put(claim.getChunkHash(), claim);
-        if (!claim.isAdminClaim()) {
-            Team team = TeamsManager.getInstance().getTeamById(claim.getOwningTeam());
-            if (team != null) {
-                team.getClaims().put(claim.getChunkHash(), claim);
-            }
-        }
+    public WorldClaimTracker getTracker(UUID world) {
+        return worldTrackers.computeIfAbsent(world, k -> new WorldClaimTracker(Objects.requireNonNull(Bukkit.getWorld(world))));
     }
 
     public int getClaimCount() {
-        return claimMap.size();
+        return worldTrackers.values().stream().mapToInt(WorldClaimTracker::getClaimCount).sum();
     }
 }

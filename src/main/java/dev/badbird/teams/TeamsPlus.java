@@ -20,7 +20,6 @@ import dev.badbird.teams.object.TeamRank;
 import dev.badbird.teams.runnable.DataUpdateRunnable;
 import dev.badbird.teams.storage.impl.FlatFileStorageHandler;
 import dev.badbird.teams.util.Metrics;
-import dev.badbird.teams.util.TeamGsonAdapter;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.bLib;
@@ -57,12 +56,9 @@ import org.incendo.cloud.setting.ManagerSetting;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static dev.badbird.teams.util.ChatUtil.tr;
@@ -71,7 +67,7 @@ import static net.kyori.adventure.text.Component.text;
 @Getter
 public final class TeamsPlus extends JavaPlugin {
     @Getter
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Team.class, new TeamGsonAdapter()).create();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @Getter
     private static final Gson cleanGson = new GsonBuilder().setPrettyPrinting().create();
     @Getter

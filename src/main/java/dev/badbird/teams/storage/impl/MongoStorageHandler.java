@@ -13,6 +13,7 @@ import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.storage.StorageHandler;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import lombok.Getter;
 import net.badbird5907.blib.util.Logger;
 import net.badbird5907.blib.util.PlayerUtil;
@@ -150,6 +151,41 @@ public class MongoStorageHandler implements StorageHandler {
     @Override
     public void removeTeam(Team team) {
         teamsCollection.deleteOne(Filters.eq("teamId", team.getTeamId().toString()));
+    }
+
+    @Override
+    public LongSet getClaimedChunks(UUID teamId, UUID worldId) {
+        Document doc = teamsCollection.find(Filters.and(Filters.eq("teamId", teamId.toString()), Filters.eq("worldId", worldId.toString()))).first();
+        if (doc == null)
+            return null;
+        return gson.fromJson(doc.toJson(jsonWriterSettings), LongSet.class);
+    }
+
+    @Override
+    public void saveClaimedChunks(UUID teamId, UUID worldId, LongSet claimedChunks) {
+        Document doc = new Document("teamId", teamId.toString())
+                .append("worldId", worldId.toString())
+                .append("claimedChunks", claimedChunks);
+        teamsCollection.insertOne(doc);
+    }
+
+    @Override
+    public Map<UUID, LongSet> getClaimedChunksInWorld(UUID worldId) {
+        Map<UUID, LongSet> map = new HashMap<>();
+        for (Document document : teamsCollection.find(Filters.eq("worldId", worldId.toString()))) {
+            map.put(UUID.fromString(document.getString("teamId")), gson.fromJson(document.toJson(jsonWriterSettings), LongSet.class));
+        }
+        return map;
+    }
+
+    @Override
+    public void saveClaimedChunksInWorld(UUID worldId, Map<UUID, LongSet> claimedChunks) {
+        claimedChunks.forEach((teamId, chunks) -> {
+            Document doc = new Document("teamId", teamId.toString())
+                    .append("worldId", worldId.toString())
+                    .append("claimedChunks", chunks);
+            teamsCollection.insertOne(doc);
+        });
     }
 
     public boolean doesTeamDocumentExist(UUID teamId) {

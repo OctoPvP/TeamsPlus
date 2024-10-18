@@ -1,9 +1,7 @@
 package dev.badbird.teams.object;
 
 import dev.badbird.teams.TeamsPlus;
-import dev.badbird.teams.claims.ChunkWrapper;
 import dev.badbird.teams.claims.ClaimHandler;
-import dev.badbird.teams.claims.ClaimInfo;
 import dev.badbird.teams.claims.ClaimResult;
 import dev.badbird.teams.hooks.impl.LunarClientHook;
 import dev.badbird.teams.hooks.impl.VanishHook;
@@ -21,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,8 +39,9 @@ public class Team {
     private ConcurrentHashMap<UUID, String> enemiedTeams = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, String> alliedTeams = new ConcurrentHashMap<>();
 
+    private String claimDescription = "";
+
     private CopyOnWriteArrayList<TeamWaypoint> waypoints = new CopyOnWriteArrayList<>();
-    private transient Map<Long, ClaimInfo> claims = new HashMap<>();
     private transient ConcurrentHashMap<UUID, Long> allyRequests = new ConcurrentHashMap<>();
     private transient int tempPvPSeconds = -1;
 
@@ -426,14 +426,22 @@ public class Team {
 
     public ClaimResult claim(Player sender, Location location) {
         long hash = ClaimHandler.getInstance().hashChunk(location);
-        if (ClaimHandler.getInstance().isClaimed(hash)) {
+        if (ClaimHandler.getInstance().getTracker(location.getWorld()).isClaimed(hash)) {
             return new ClaimResult(false, Lang.CLAIM_ALREADY_CLAIMED.getComponent());
         }
         // TODO: add a claim cost
 
-        ClaimInfo claim = new ClaimInfo(new ChunkWrapper(location), teamId);
-        ClaimHandler.getInstance().addClaim(claim);
+        ClaimHandler.getInstance().getTracker(location.getWorld()).addClaim(teamId, ClaimHandler.getInstance().hashChunk(location.getChunk()));
 
         return new ClaimResult(true, Lang.CLAIM_SUCCESS.getComponent());
+    }
+
+    public ClaimResult unclaim(Player sender, @NotNull Location location) {
+        long hash = ClaimHandler.getInstance().hashChunk(location);
+        if (!ClaimHandler.getInstance().getTracker(location.getWorld()).isClaimed(hash)) {
+            return new ClaimResult(false, Lang.NOT_CLAIMED.getComponent());
+        }
+        ClaimHandler.getInstance().getTracker(location.getWorld()).removeClaim(teamId, ClaimHandler.getInstance().hashChunk(location.getChunk()));
+        return new ClaimResult(true, Lang.UNCLAIM_SUCCESS.getComponent());
     }
 }

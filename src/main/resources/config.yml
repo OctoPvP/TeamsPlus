@@ -73,6 +73,7 @@ kill-spam-prevention: # Won't count a kill towards a player's stats if they've k
   cooldown: 60 # minutes
 claim:
   enable: true
+  description-max-length: 64
   vault:
     cost-formula: 'TODO'
 

@@ -333,6 +333,16 @@ public enum Lang {
     CLAIM_ALREADY_CLAIMED("claim.already-claimed", "<red>This chunk is already claimed!"),
     CLAIM_NOT_ENOUGH_MONEY("claim.not-enough-money", "<red>You don't have enough money to claim this chunk! <yellow>(<cost>)"),
     CLAIM_CANNOT_MODIFY("claim.cannot-modify", "<red>This chunk is claimed by <gold><claimer><red> and you cannot modify it!"),
+    DESCRIPTION_SET("claim.description.set", "<green>Successfully set the description of your team's claims to <gold>'<description>'"),
+    CLAIM_DESCRIPTION_TOO_LONG("claim.description.too-long", "<red>Claim description too long! Max: <max>"),
+    NO_CLAIM_DESCRIPTION("claim.description.none", "<click:suggest_command:/teams claimdescription><red>Your team has no claim description set! Use /teams claimdescription <description> to set one!</click>"),
+    NOT_CLAIMED("claim.not-claimed", "<red>This chunk is not claimed!"),
+    MUST_CONFIRM_UNCLAIM("claim.unclaim.confirm", "<red>You must confirm unclaiming this chunk! Do <green>/unclaim confirm<red> to confirm!"),
+    UNCLAIM_SUCCESS("claim.unclaim.success", "<green>Successfully unclaimed this chunk!"),
+    CLAIM_ENTER_TITLE("claim.enter.title", "<green><team>'s Claim"),
+    CLAIM_ENTER_SUBTITLE("claim.enter.subtitle", "<message>"),
+    CLAIM_LEAVE_TITLE("claim.leave.title", "<green>Leaving <team>'s Claim"),
+    CLAIM_LEAVE_SUBTITLE("claim.leave.subtitle", ""),
     ;
     @Getter
     private final String configPath;
