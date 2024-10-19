@@ -1,0 +1,84 @@
+data-storage: FLATFILE #FLATFILE | SQL | MONGO
+mongo:
+  host: localhost
+  port: 27017
+  db: TeamsPlus
+  auth:
+    enabled: false
+    username: default
+    password: default
+    db: "admin"
+sql:
+  username: default
+  password: default
+  db: default
+  url: localhost
+  port: 3306
+
+invite-seconds: 30
+
+chat:
+  enable: true
+  ping-player-on-mention: true
+
+team:
+  temp-pvp: #teams can do /team temppvp to enable pvping teammates, for duels etc...
+    enable: true
+    seconds: 300
+  blocked-names:
+    - player # messes with the /team info command
+    - self
+    - admin
+    - staff
+    - owner
+  max-name-length: 16
+  max-allies: -1
+  max-size: -1
+ally:
+  request-timeout: 300 # 5 minutes
+pvp:
+  pvp-team: false
+  pvp-ally: false
+enable-vanish-hook: true
+waypoint:
+  allowed-icons:
+    - NAME_TAG
+    - REDSTONE
+    - STRING
+    - SADDLE
+    - SALMON
+    - OAK_LOG
+    - CROSSBOW
+    - SPRUCE_LOG
+    - OBSIDIAN
+    - CRYING_OBSIDIAN
+    - BEACON
+    - COOKED_BEEF
+    - NETHERRACK
+    - HOPPER
+    - GOLDEN_SWORD
+    - GOLD_NUGGET
+    - NETHERITE_PICKAXE
+    - NETHERITE_SWORD
+    - NETHERITE_AXE
+    - CRAFTING_TABLE
+    - ANVIL
+    - ENCHANTING_TABLE
+    - BOOKSHELF
+    - ENDER_EYE
+    - SPAWNER
+  default-icon: NAME_TAG
+kill-spam-prevention: # Won't count a kill towards a player's stats if they've killed the same person twice
+  enabled: true
+  cooldown: 60 # minutes
+claim:
+  enable: true
+  description-max-length: 64
+  vault:
+    cost-formula: 'TODO'
+
+lunar: # Lunar Client integration
+  enable: true
+  team-display:
+    enable: true
+    color: "#00ff04"

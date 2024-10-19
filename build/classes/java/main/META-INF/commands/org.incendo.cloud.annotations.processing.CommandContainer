@@ -1,0 +1,11 @@
+dev.badbird.teams.commands.impl.LCUtils
+dev.badbird.teams.commands.impl.management.TeamMemberManagement
+dev.badbird.teams.commands.impl.TestCmd
+dev.badbird.teams.commands.impl.LCTest
+dev.badbird.teams.commands.impl.management.TeamRelationsCommand
+dev.badbird.teams.commands.impl.ClaimCommand
+dev.badbird.teams.commands.impl.ChatCommands
+dev.badbird.teams.commands.impl.ChunkBorderCommand
+dev.badbird.teams.commands.impl.management.TeamsCommand
+dev.badbird.teams.commands.impl.staff.TeamsStaffCommand
+dev.badbird.teams.commands.impl.management.WaypointCommands

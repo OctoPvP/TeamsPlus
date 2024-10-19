@@ -5,6 +5,7 @@ import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.object.PlayerData;
 import dev.badbird.teams.object.Team;
 import dev.badbird.teams.storage.StorageHandler;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import lombok.SneakyThrows;
 import net.badbird5907.blib.util.Logger;
@@ -143,7 +144,7 @@ public class FlatFileStorageHandler implements StorageHandler {
         File file = getClaimSaveFile(teamId, worldId);
         if (!file.exists()) return null;
         JsonObject object = TeamsPlus.getGson().fromJson(FileUtils.readFileToString(file), JsonObject.class);
-        return TeamsPlus.getGson().fromJson(object.get("chunks"), LongSet.class);
+        return TeamsPlus.getGson().fromJson(object.get("chunks"), LongOpenHashSet.class);
     }
 
     @Override

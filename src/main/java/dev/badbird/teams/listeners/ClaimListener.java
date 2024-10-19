@@ -1,12 +1,11 @@
 package dev.badbird.teams.listeners;
 
-import dev.badbird.teams.claims.ChunkWrapper;
-import dev.badbird.teams.claims.ClaimHandler;
-import dev.badbird.teams.claims.WorldClaimTracker;
+import dev.badbird.teams.claims.*;
 import dev.badbird.teams.manager.PlayerManager;
 import dev.badbird.teams.manager.TeamsManager;
 import dev.badbird.teams.object.Lang;
 import dev.badbird.teams.object.Team;
+import lombok.SneakyThrows;
 import net.badbird5907.blib.util.Cooldown;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -23,6 +22,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.MapInitializeEvent;
+import org.bukkit.map.MapView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -137,5 +138,20 @@ public class ClaimListener implements Listener {
             ));
             Cooldown.addCooldown("claim-msg", player.getUniqueId(), 3);
         }
+    }
+
+
+    @SneakyThrows
+    @EventHandler
+    public void onMapInit(MapInitializeEvent event) {
+        MapView mv = event.getMap();
+        // CraftMapRenderer mapRenderer = (CraftMapRenderer) mv.getRenderers().get(0);
+        mv.getRenderers().clear();
+        /*CraftMapView craftMapView = (CraftMapView) mv;
+        Field worldMap = mapRenderer.getClass().getDeclaredField("worldMap");
+        worldMap.setAccessible(true);
+        MapItemSavedData mapData = (MapItemSavedData) worldMap.get(mapRenderer);*/
+
+        mv.addRenderer(new ClaimMapRenderer());
     }
 }

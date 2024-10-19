@@ -1,0 +1,23 @@
+name: TeamsPlus
+version: '1.0-SNAPSHOT'
+main: dev.badbird.teams.TeamsPlus
+bootstrapper: dev.badbird.teams.TeamsPlusBootstrapper
+api-version: '1.20'
+dependencies:
+  server:
+    Apollo-Bukkit:
+      load: BEFORE
+      required: true
+    AntiCombatLog:
+      load: BEFORE
+      required: false
+    Vault:
+      load: BEFORE
+      required: false
+    CoreProtect:
+      load: BEFORE
+      required: false
+    OctoCore:
+      load: BEFORE
+      required: false
+description: Teams plugin

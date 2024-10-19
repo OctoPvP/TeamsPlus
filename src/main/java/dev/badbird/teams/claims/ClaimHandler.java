@@ -4,8 +4,6 @@ import dev.badbird.teams.TeamsPlus;
 import dev.badbird.teams.claims.chunkrenderer.ChunkBorderRenderer;
 import dev.badbird.teams.claims.chunkrenderer.ChunkRendererListener;
 import dev.badbird.teams.listeners.ClaimListener;
-import dev.badbird.teams.manager.TeamsManager;
-import dev.badbird.teams.object.Team;
 import lombok.Getter;
 import net.badbird5907.blib.util.Cooldown;
 import org.bukkit.Bukkit;

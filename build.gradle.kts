@@ -5,6 +5,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.3"
     id("io.freefair.lombok") version "8.10.2"
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("io.papermc.paperweight.userdev") version "1.7.3"
 }
 
 group = "dev.badbird"
@@ -51,6 +52,7 @@ repositories {
 }
 
 dependencies {
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     implementation("net.badbird5907:bLib-Bukkit:2.1.11-REL")
     //implementation("net.octopvp:Commander-Bukkit:0.0.7-REL") {
