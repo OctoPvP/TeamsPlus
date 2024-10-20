@@ -8,17 +8,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.bukkit.HeightMap;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapRenderer;
-import org.bukkit.map.MapView;
+import org.bukkit.map.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.awt.*;
 
 public class ClaimMapRenderer extends MapRenderer {
 
@@ -65,27 +64,20 @@ public class ClaimMapRenderer extends MapRenderer {
         int endX = centerX + mapSize / 2;
         int endZ = centerZ + mapSize / 2;
 
-        Team playerTeam = TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
-
         // go through each few blocks (pixelsPerBlock) and get the block color
         for (int x = startX; x < endX; x += pixelsPerBlock) {
             for (int z = startZ; z < endZ; z += pixelsPerBlock) {
-                Pair<MapColor, MapColor.Brightness> colorBrightnessPair;
-                ChunkWrapper chunk = new ChunkWrapper(x >> 4, z >> 4, world.getUID());
-                if (tracker.isClaimed(chunk.getHash())) {
-                    UUID claimingTeam = tracker.getClaimingTeam(chunk.getHash());
-                    boolean isOwnTeam = playerTeam != null && playerTeam.getTeamId().equals(claimingTeam);
-                    colorBrightnessPair = new Pair<>(isOwnTeam ? MapColor.COLOR_LIGHT_GREEN : MapColor.NETHER, MapColor.Brightness.HIGH);
-                } else {
-                    colorBrightnessPair = getBlockColor(world, x, z, world.hasCeiling());
-                }
+                Pair<MapColor, MapColor.Brightness> colorBrightnessPair = getBlockColor(world, x, z, world.hasCeiling());
                 MapColor color = colorBrightnessPair.getValue0();
                 MapColor.Brightness brightness = colorBrightnessPair.getValue1();
+                Color rgb = new Color(color.calculateRGBColor(brightness));
+                Color overlayedColor = getClaimOverlayedColor(world, x, z, rgb, player, tracker);
 
                 // set the pixels
                 for (int i = 0; i < pixelsPerBlock; i++) {
                     for (int j = 0; j < pixelsPerBlock; j++) {
-                        canvas.setPixel(x + i - startX, z + j - startZ, color.getPackedId(brightness));
+                        canvas.setPixelColor(x + i - startX, z + j - startZ, overlayedColor);
+                        //canvas.setPixel(x + i - startX, z + j - startZ, color.getPackedId(brightness));
                     }
                 }
             }
@@ -106,6 +98,23 @@ public class ClaimMapRenderer extends MapRenderer {
 //                }
 //            }
 //        }
+    }
+    private static final int CLAIM_OVERLAY_INTENSITY = 100;
+    private Color getClaimOverlayedColor(World world, int x, int z, Color color, Player player, WorldClaimTracker tracker) {
+        Location location = new Location(world, x, 0 , z);
+        long chunkKey = location.getChunk().getChunkKey();
+        if (!tracker.isClaimed(location.getChunk().getChunkKey())) return color;
+        TeamsManager manager = TeamsManager.getInstance();
+        Team claimTeam = manager.getTeamById(tracker.getClaimingTeam(location.getChunk().getChunkKey()));
+        Team playerTeam = TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
+
+        if (claimTeam.getTeamId() == playerTeam.getTeamId() || claimTeam.isAlly(playerTeam)) {
+            return new Color(color.getRed(), Math.clamp(color.getGreen() + CLAIM_OVERLAY_INTENSITY, 0, 255), color.getBlue());
+        }
+        if (claimTeam.isEnemy(playerTeam)) {
+            return new Color(Math.clamp(color.getRed() + CLAIM_OVERLAY_INTENSITY, 0, 255), color.getGreen(), color.getBlue());
+        }
+        return new Color(color.getRed(), color.getGreen(), Math.clamp(color.getBlue() + CLAIM_OVERLAY_INTENSITY, 0, 255));
     }
 
     private Pair<MapColor, MapColor.Brightness> getBlockColor(World world, int x, int z, boolean ceil) {
