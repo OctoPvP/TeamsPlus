@@ -1,23 +1,24 @@
 package dev.badbird.teams.claims;
 
+import dev.badbird.teams.manager.TeamsManager;
+import dev.badbird.teams.object.Team;
 import net.badbird5907.blib.objects.tuple.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.map.*;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.UUID;
 
 public class ClaimMapRenderer extends MapRenderer {
 
@@ -64,10 +65,20 @@ public class ClaimMapRenderer extends MapRenderer {
         int endX = centerX + mapSize / 2;
         int endZ = centerZ + mapSize / 2;
 
+        Team playerTeam = TeamsManager.getInstance().getPlayerTeam(player.getUniqueId());
+
         // go through each few blocks (pixelsPerBlock) and get the block color
         for (int x = startX; x < endX; x += pixelsPerBlock) {
             for (int z = startZ; z < endZ; z += pixelsPerBlock) {
-                Pair<MapColor, MapColor.Brightness> colorBrightnessPair = getBlockColor(world, x, z, world.hasCeiling());
+                Pair<MapColor, MapColor.Brightness> colorBrightnessPair;
+                ChunkWrapper chunk = new ChunkWrapper(x >> 4, z >> 4, world.getUID());
+                if (tracker.isClaimed(chunk.getHash())) {
+                    UUID claimingTeam = tracker.getClaimingTeam(chunk.getHash());
+                    boolean isOwnTeam = playerTeam != null && playerTeam.getTeamId().equals(claimingTeam);
+                    colorBrightnessPair = new Pair<>(isOwnTeam ? MapColor.COLOR_LIGHT_GREEN : MapColor.NETHER, MapColor.Brightness.HIGH);
+                } else {
+                    colorBrightnessPair = getBlockColor(world, x, z, world.hasCeiling());
+                }
                 MapColor color = colorBrightnessPair.getValue0();
                 MapColor.Brightness brightness = colorBrightnessPair.getValue1();
 
@@ -96,6 +107,7 @@ public class ClaimMapRenderer extends MapRenderer {
 //            }
 //        }
     }
+
     private Pair<MapColor, MapColor.Brightness> getBlockColor(World world, int x, int z, boolean ceil) {
         if (ceil) {
             return new Pair<>(MapColor.COLOR_GRAY, MapColor.Brightness.NORMAL);
